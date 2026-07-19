@@ -28,7 +28,9 @@
       overClear: "挖光了！",
       overScore: "本局得分",
       restart: "再来一局",
-      start: "开始挖矿"
+      start: "开始挖矿",
+      boomTitle: "💥 砰！抓到炸弹",
+      boomSub: "整局失败，再试一次吧"
     },
     en: {
       score: "Score",
@@ -40,7 +42,9 @@
       overClear: "All cleared!",
       overScore: "Final score",
       restart: "Play again",
-      start: "Start"
+      start: "Start",
+      boomTitle: "💥 Boom! A bomb!",
+      boomSub: "Game over — try again"
     }
   };
   const tg = k => (GAME_I18N[currentLang] || GAME_I18N.zh)[k] || k;
@@ -59,8 +63,13 @@
     { key: "goldBig",   r: 30, value: 500, weight: 3,   color: "#E8B33A", n: 2 },
     { key: "goldSmall", r: 16, value: 200, weight: 1.6, color: "#F0C24E", n: 3 },
     { key: "diamond",   r: 11, value: 600, weight: 0.7, color: "#8FD8E8", n: 2 },
-    { key: "rock",      r: 20, value: 50,  weight: 4,   color: "#9A8468", n: 3 }
+    { key: "rock",      r: 20, value: 50,  weight: 4,   color: "#9A8468", n: 3 },
+    { key: "bomb",      r: 14, value: 0,   weight: 1.2, color: "#3A3A3A", n: 2 }
   ];
+
+  // 矿工角色图片（抠图自用户照片）
+  const minerImg = new Image();
+  minerImg.src = "assets/miner.png";
 
   const canvas = document.getElementById("game-canvas");
   const ctx = canvas.getContext("2d");
@@ -72,6 +81,7 @@
   let grabbed = null;
   let items = [], speckles = [];
   let score = 0, timeLeft = ROUND_TIME;
+  let fail = false;
   let lastT = 0;
 
   // ===== 回合初始化 =====
@@ -103,6 +113,7 @@
     angle = 0; swingDir = 1;
     ropeLen = BASE_LEN;
     grabbed = null;
+    fail = false;
     spawnItems();
     state = "swing";
     startBtn.textContent = tg("restart");
@@ -136,8 +147,13 @@
       // 碰撞检测
       for (const it of items) {
         if (Math.hypot(it.x - p.x, it.y - p.y) < it.r + 10) {
-          grabbed = it;
           items = items.filter(x => x !== it);
+          if (it.key === "bomb") {
+            fail = true;          // 抓到炸弹：整局失败
+            state = "over";
+            return;
+          }
+          grabbed = it;
           state = "retract";
           break;
         }
@@ -161,7 +177,32 @@
   function drawItem(it, x, y) {
     ctx.save();
     ctx.translate(x, y);
-    if (it.key === "diamond") {
+    if (it.key === "bomb") {
+      // 炸弹主体
+      ctx.fillStyle = it.color;
+      ctx.strokeStyle = "#4A3226";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(0, 2, it.r, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      // 高光
+      ctx.fillStyle = "rgba(255,255,255,0.35)";
+      ctx.beginPath();
+      ctx.ellipse(-it.r * 0.35, -it.r * 0.25, it.r * 0.22, it.r * 0.14, -0.6, 0, Math.PI * 2);
+      ctx.fill();
+      // 引信
+      ctx.strokeStyle = "#4A3226";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, 2 - it.r);
+      ctx.quadraticCurveTo(4, -it.r - 6, 8, -it.r - 7);
+      ctx.stroke();
+      // 火星
+      ctx.fillStyle = "#F2A65A";
+      ctx.beginPath();
+      ctx.arc(9, -it.r - 8, 3, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (it.key === "diamond") {
       ctx.rotate(it.rot);
       ctx.fillStyle = it.color;
       ctx.strokeStyle = "#4A3226";
@@ -250,6 +291,13 @@
     // 物品
     items.forEach(it => drawItem(it, it.x, it.y));
 
+    // 矿工角色（站在绞盘左侧，脚踩地面）
+    if (minerImg.complete && minerImg.naturalWidth) {
+      const mh = 74;
+      const mw = mh * (minerImg.naturalWidth / minerImg.naturalHeight);
+      ctx.drawImage(minerImg, PIVOT.x - 26 - mw, SOIL_TOP - mh + 2, mw, mh);
+    }
+
     // 绞盘
     ctx.fillStyle = "#D95550";
     ctx.strokeStyle = "#4A3226";
@@ -283,8 +331,12 @@
     if (state === "ready") {
       drawOverlay(tg("readyTitle"), [tg("readySub"), tg("hint")]);
     } else if (state === "over") {
-      drawOverlay(items.length ? tg("overTitle") : tg("overClear"),
-        [`${tg("overScore")}: ${score}`, tg("restart") + " →"]);
+      if (fail) {
+        drawOverlay(tg("boomTitle"), [tg("boomSub"), `${tg("overScore")}: ${score}`]);
+      } else {
+        drawOverlay(items.length ? tg("overTitle") : tg("overClear"),
+          [`${tg("overScore")}: ${score}`, tg("restart") + " →"]);
+      }
     }
   }
 
