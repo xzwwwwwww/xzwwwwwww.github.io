@@ -17,6 +17,7 @@
           <a href="#notes" class="nav-link" data-i18n="navNotes">读书笔记</a>
           <a href="#life" class="nav-link" data-i18n="navLife">生活记录</a>
           <a href="#about" class="nav-link" data-i18n="navAbout">关于我</a>
+          <a href="#inbox" class="nav-link" data-i18n="navInbox">留言信箱</a>
         </nav>
         <button id="lang-toggle" class="lang-toggle" aria-label="Switch language">EN</button>
       </div>
@@ -72,6 +73,22 @@
       </div>
     </section>
 
+    <!-- 留言信箱 -->
+    <section id="inbox" class="page">
+      <h2 class="section-title" data-i18n="inboxTitle">留言信箱</h2>
+      <div class="inbox-form-card">
+        <input id="msg-username" type="text" maxlength="20">
+        <textarea id="msg-content" rows="4" maxlength="500"></textarea>
+        <button id="msg-submit" class="inbox-submit"></button>
+        <p id="msg-status" class="inbox-status"></p>
+      </div>
+      <div id="msg-wall" class="msg-wall"></div>
+      <div class="owner-entry">
+        <button id="owner-toggle" class="owner-toggle"></button>
+      </div>
+      <div id="owner-panel" class="owner-panel hidden"></div>
+    </section>
+
   </main>
 
   <!-- 笔记阅读弹层 -->
@@ -88,7 +105,10 @@
     <p data-i18n="footer">© 2026 我的小站 · 用心记录每一天</p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/inbox.js"></script>
 </body>
 </html>

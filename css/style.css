@@ -302,3 +302,97 @@ a:hover { text-decoration: underline; }
   .mario, .ground, .cloud, .qblock, .coin { animation: none; }
   .coin { opacity: 1; }
 }
+
+/* ===== 留言信箱 ===== */
+.inbox-form-card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 24px;
+}
+.inbox-form-card input, .inbox-form-card textarea,
+.owner-login input, .reply-input {
+  font-family: inherit; font-size: 14px; color: var(--text);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px; resize: vertical;
+}
+.inbox-form-card input:focus, .inbox-form-card textarea:focus,
+.owner-login input:focus, .reply-input:focus {
+  outline: none; border-color: var(--accent);
+}
+.inbox-submit {
+  align-self: flex-end; padding: 8px 22px;
+  font-size: 14px; font-family: inherit; cursor: pointer;
+  color: #fff; background: var(--accent);
+  border: none; border-radius: 999px;
+}
+.inbox-submit:hover { opacity: 0.88; }
+.inbox-submit:disabled { opacity: 0.5; cursor: default; }
+.inbox-status { font-size: 13px; min-height: 20px; }
+.inbox-status.ok { color: #3a9a5b; }
+.inbox-status.error { color: #c0392b; }
+
+.inbox-notice { color: var(--muted); font-size: 14px; }
+
+/* 留言墙 */
+.msg-wall { display: flex; flex-direction: column; gap: 12px; }
+.msg-card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 18px;
+}
+.msg-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px;
+}
+.msg-head b { color: var(--accent); }
+.msg-head span { font-size: 12px; color: var(--muted); }
+.msg-body { font-size: 15px; white-space: pre-wrap; }
+.msg-reply {
+  margin-top: 10px; padding: 10px 12px;
+  background: var(--accent-soft); border-left: 3px solid var(--accent);
+  border-radius: 6px; font-size: 14px;
+}
+
+/* 站长入口与面板 */
+.owner-entry { margin-top: 36px; text-align: center; }
+.owner-toggle {
+  background: none; border: none; cursor: pointer;
+  font-size: 12px; color: var(--muted);
+  border-bottom: 1px dashed var(--muted); padding-bottom: 1px;
+}
+.owner-toggle:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.owner-panel { margin-top: 16px; }
+.owner-login {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  max-width: 320px; margin: 0 auto;
+}
+.owner-login button {
+  padding: 8px; font-family: inherit; cursor: pointer;
+  color: #fff; background: var(--accent);
+  border: none; border-radius: 8px;
+}
+
+.admin-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.admin-tab {
+  padding: 4px 14px; font-size: 13px; font-family: inherit; cursor: pointer;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 999px; color: var(--muted);
+}
+.admin-tab.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+.admin-list { display: flex; flex-direction: column; gap: 12px; }
+.admin-item {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+}
+.admin-item .reply-input { width: 100%; margin-top: 8px; }
+.admin-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.admin-actions button {
+  padding: 4px 14px; font-size: 13px; font-family: inherit; cursor: pointer;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 999px; color: var(--text);
+}
+.admin-actions button:hover { border-color: var(--accent); color: var(--accent); }
+.admin-actions button.danger:hover { border-color: #c0392b; color: #c0392b; }

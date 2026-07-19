@@ -18,7 +18,9 @@ const I18N = {
     aboutIntro: "这里写一段自我介绍：你是谁，喜欢什么，为什么建这个小站。",
     aboutContact: "联系方式：",
     footer: "© 2026 我的小站 · 用心记录每一天",
-    all: "全部"
+    all: "全部",
+    navInbox: "留言信箱",
+    inboxTitle: "留言信箱"
   },
   en: {
     logo: "My Corner",
@@ -36,7 +38,9 @@ const I18N = {
     aboutIntro: "Write a short intro here: who you are, what you love, and why you built this site.",
     aboutContact: "Contact: ",
     footer: "© 2026 My Corner · Recording every day with care",
-    all: "All"
+    all: "All",
+    navInbox: "Guestbook",
+    inboxTitle: "Guestbook"
   }
 };
 
@@ -55,6 +59,7 @@ function applyLang(lang) {
   });
   document.getElementById("lang-toggle").textContent = lang === "zh" ? "EN" : "中";
   renderTags(); // “全部”标签需要跟随语言
+  document.dispatchEvent(new CustomEvent("langchange")); // 通知信箱模块重绘
 }
 
 // ===== 单页导航切换 =====
