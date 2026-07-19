@@ -21,6 +21,7 @@
           <a href="#life" class="nav-link" data-i18n="navLife">生活记录</a>
           <a href="#about" class="nav-link" data-i18n="navAbout">关于我</a>
           <a href="#inbox" class="nav-link" data-i18n="navInbox">留言信箱</a>
+          <a href="#game" class="nav-link" data-i18n="navGame">小游戏</a>
         </nav>
         <button id="lang-toggle" class="lang-toggle" aria-label="Switch language">EN</button>
       </div>
@@ -100,6 +101,17 @@
       <div id="owner-panel" class="owner-panel hidden"></div>
     </section>
 
+    <!-- 小游戏 -->
+    <section id="game" class="page">
+      <h2 class="section-title" data-i18n="gameTitle">黄金矿工</h2>
+      <div class="game-card">
+        <canvas id="game-canvas" width="760" height="500"></canvas>
+        <div class="game-bar">
+          <button id="game-start" class="inbox-submit"></button>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- 笔记阅读弹层 -->
@@ -121,5 +133,6 @@
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
   <script src="js/inbox.js"></script>
+  <script src="js/game.js"></script>
 </body>
 </html>

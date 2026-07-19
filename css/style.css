@@ -411,3 +411,22 @@ h1, h2, .logo, .section-title {
   .bear, .steam { animation: none; }
   .steam { opacity: 0.6; }
 }
+
+/* ===== 小游戏 ===== */
+.game-card {
+  background: var(--panel); border: 2px solid var(--border);
+  border-radius: 16px; padding: 16px;
+  box-shadow: var(--shadow);
+}
+#game-canvas {
+  display: block; width: 100%; height: auto;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: #FFF3E4;
+  cursor: pointer;
+  touch-action: none;
+}
+.game-bar {
+  display: flex; justify-content: center;
+  margin-top: 14px;
+}

@@ -20,7 +20,9 @@ const I18N = {
     footer: "© 2026 我的小站 · 用心记录每一天",
     all: "全部",
     navInbox: "留言信箱",
-    inboxTitle: "留言信箱"
+    inboxTitle: "留言信箱",
+    navGame: "小游戏",
+    gameTitle: "黄金矿工"
   },
   en: {
     logo: "My Corner",
@@ -40,7 +42,9 @@ const I18N = {
     footer: "© 2026 My Corner · Recording every day with care",
     all: "All",
     navInbox: "Guestbook",
-    inboxTitle: "Guestbook"
+    inboxTitle: "Guestbook",
+    navGame: "Mini Game",
+    gameTitle: "Gold Miner"
   }
 };
 
