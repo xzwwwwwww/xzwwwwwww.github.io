@@ -134,3 +134,160 @@ a:hover { text-decoration: underline; }
   .nav-link { margin-left: 14px; font-size: 14px; }
   .reader-panel { padding: 28px 22px; }
 }
+
+/* ===== 玻璃卡片：马里奥小场景 ===== */
+.mario-card {
+  margin: 28px 0 8px;
+  padding: 18px 18px 14px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.55), rgba(255,255,255,0.25));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 10px 30px rgba(181, 119, 74, 0.12);
+}
+
+.mario-scene {
+  position: relative;
+  height: 190px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(#8ed0ff 0%, #cfeaff 70%, #e8f6ff 100%);
+}
+
+/* 地面：向左滚动的砖块 */
+.ground {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 24px;
+  background:
+    repeating-linear-gradient(90deg,
+      #c84c0c 0 22px, #a03a08 22px 24px);
+  border-top: 3px solid #e8925a;
+  animation: ground-scroll 0.9s linear infinite;
+}
+@keyframes ground-scroll {
+  from { background-position-x: 0; }
+  to   { background-position-x: -24px; }
+}
+
+/* 云朵 */
+.cloud {
+  position: absolute; width: 46px; height: 16px;
+  background: #fff; border-radius: 999px; opacity: 0.95;
+}
+.cloud::before, .cloud::after {
+  content: ""; position: absolute; background: #fff; border-radius: 50%;
+}
+.cloud::before { width: 20px; height: 20px; top: -10px; left: 8px; }
+.cloud::after  { width: 14px; height: 14px; top: -6px; left: 26px; }
+.cloud-1 { top: 26px; animation: cloud-drift 11s linear infinite; }
+.cloud-2 { top: 58px; transform: scale(0.7); animation: cloud-drift 16s linear infinite; animation-delay: -6s; }
+@keyframes cloud-drift {
+  from { left: -60px; }
+  to   { left: 100%; }
+}
+
+/* 小山坡 */
+.hill {
+  position: absolute; bottom: 24px; right: 40px;
+  width: 90px; height: 34px;
+  background: #4caf50;
+  border-radius: 90px 90px 0 0;
+}
+
+/* 问号砖块 */
+.qblock {
+  position: absolute; bottom: 96px; left: 190px;
+  width: 30px; height: 30px;
+  background: #f8b800;
+  border: 3px solid #c77800;
+  border-radius: 4px;
+  color: #fff; font-weight: 700; font-size: 17px;
+  display: flex; align-items: center; justify-content: center;
+  text-shadow: 1px 1px 0 #c77800;
+  animation: block-bump 1.8s ease-in-out infinite;
+}
+@keyframes block-bump {
+  0%, 12%, 100% { transform: translateY(0); }
+  6%            { transform: translateY(-8px); }
+}
+
+/* 金币：从砖块上方弹出 */
+.coin {
+  position: absolute; bottom: 130px; left: 198px;
+  width: 14px; height: 14px;
+  background: #ffd800;
+  border: 3px solid #c79000;
+  border-radius: 50%;
+  opacity: 0;
+  animation: coin-pop 1.8s ease-out infinite;
+}
+@keyframes coin-pop {
+  0%       { transform: translateY(6px) scaleY(1);  opacity: 0; }
+  8%       { opacity: 1; }
+  30%      { transform: translateY(-30px) scaleY(1); opacity: 1; }
+  34%      { transform: translateY(-30px) scaleY(0.2); opacity: 1; }
+  38%      { transform: translateY(-30px) scaleY(1); opacity: 1; }
+  55%, 100% { transform: translateY(6px); opacity: 0; }
+}
+
+/* 像素马里奥（12x16，每像素 5px） */
+.mario {
+  position: absolute; bottom: 24px; left: 60px;
+  width: 5px; height: 5px;
+  animation: mario-run 0.36s steps(2) infinite;
+  box-shadow:
+  15px 0px 0 #e52521, 20px 0px 0 #e52521, 25px 0px 0 #e52521, 30px 0px 0 #e52521, 35px 0px 0 #e52521,
+  10px 5px 0 #e52521, 15px 5px 0 #e52521, 20px 5px 0 #e52521, 25px 5px 0 #e52521, 30px 5px 0 #e52521,
+  35px 5px 0 #e52521, 40px 5px 0 #e52521, 45px 5px 0 #e52521, 50px 5px 0 #e52521,
+  10px 10px 0 #5c3a0e, 15px 10px 0 #5c3a0e, 20px 10px 0 #5c3a0e, 25px 10px 0 #ffcfa3, 30px 10px 0 #ffcfa3,
+  35px 10px 0 #1a1a1a, 40px 10px 0 #ffcfa3,
+  5px 15px 0 #5c3a0e, 10px 15px 0 #ffcfa3, 15px 15px 0 #5c3a0e, 20px 15px 0 #ffcfa3, 25px 15px 0 #ffcfa3,
+  30px 15px 0 #ffcfa3, 35px 15px 0 #1a1a1a, 40px 15px 0 #ffcfa3, 45px 15px 0 #ffcfa3, 50px 15px 0 #ffcfa3,
+  5px 20px 0 #5c3a0e, 10px 20px 0 #ffcfa3, 15px 20px 0 #5c3a0e, 20px 20px 0 #5c3a0e, 25px 20px 0 #ffcfa3,
+  30px 20px 0 #ffcfa3, 35px 20px 0 #ffcfa3, 40px 20px 0 #ffcfa3, 45px 20px 0 #1a1a1a, 50px 20px 0 #ffcfa3,
+  55px 20px 0 #ffcfa3,
+  5px 25px 0 #5c3a0e, 10px 25px 0 #5c3a0e, 15px 25px 0 #ffcfa3, 20px 25px 0 #ffcfa3, 25px 25px 0 #ffcfa3,
+  30px 25px 0 #ffcfa3, 35px 25px 0 #ffcfa3, 40px 25px 0 #1a1a1a, 45px 25px 0 #1a1a1a, 50px 25px 0 #1a1a1a,
+  15px 30px 0 #ffcfa3, 20px 30px 0 #ffcfa3, 25px 30px 0 #ffcfa3, 30px 30px 0 #ffcfa3, 35px 30px 0 #ffcfa3,
+  40px 30px 0 #ffcfa3, 45px 30px 0 #ffcfa3,
+  10px 35px 0 #3a5bd7, 15px 35px 0 #3a5bd7, 20px 35px 0 #3a5bd7, 25px 35px 0 #e52521, 30px 35px 0 #3a5bd7,
+  35px 35px 0 #3a5bd7, 40px 35px 0 #3a5bd7,
+  5px 40px 0 #3a5bd7, 10px 40px 0 #3a5bd7, 15px 40px 0 #3a5bd7, 20px 40px 0 #e52521, 25px 40px 0 #3a5bd7,
+  30px 40px 0 #3a5bd7, 35px 40px 0 #e52521, 40px 40px 0 #3a5bd7, 45px 40px 0 #3a5bd7, 50px 40px 0 #3a5bd7,
+  0px 45px 0 #3a5bd7, 5px 45px 0 #3a5bd7, 10px 45px 0 #3a5bd7, 15px 45px 0 #3a5bd7, 20px 45px 0 #e52521,
+  25px 45px 0 #e52521, 30px 45px 0 #e52521, 35px 45px 0 #e52521, 40px 45px 0 #3a5bd7, 45px 45px 0 #3a5bd7,
+  50px 45px 0 #3a5bd7, 55px 45px 0 #3a5bd7,
+  0px 50px 0 #ffcfa3, 5px 50px 0 #ffcfa3, 10px 50px 0 #3a5bd7, 15px 50px 0 #e52521, 20px 50px 0 #ffd800,
+  25px 50px 0 #e52521, 30px 50px 0 #e52521, 35px 50px 0 #ffd800, 40px 50px 0 #e52521, 45px 50px 0 #3a5bd7,
+  50px 50px 0 #ffcfa3, 55px 50px 0 #ffcfa3,
+  0px 55px 0 #ffcfa3, 5px 55px 0 #ffcfa3, 10px 55px 0 #ffcfa3, 15px 55px 0 #e52521, 20px 55px 0 #e52521,
+  25px 55px 0 #e52521, 30px 55px 0 #e52521, 35px 55px 0 #e52521, 40px 55px 0 #e52521, 45px 55px 0 #ffcfa3,
+  50px 55px 0 #ffcfa3, 55px 55px 0 #ffcfa3,
+  0px 60px 0 #ffcfa3, 5px 60px 0 #ffcfa3, 10px 60px 0 #e52521, 15px 60px 0 #e52521, 20px 60px 0 #e52521,
+  25px 60px 0 #e52521, 30px 60px 0 #e52521, 35px 60px 0 #e52521, 40px 60px 0 #e52521, 45px 60px 0 #e52521,
+  50px 60px 0 #ffcfa3, 55px 60px 0 #ffcfa3,
+  10px 65px 0 #e52521, 15px 65px 0 #e52521, 20px 65px 0 #e52521, 35px 65px 0 #e52521, 40px 65px 0 #e52521,
+  45px 65px 0 #e52521,
+  5px 70px 0 #5c3a0e, 10px 70px 0 #5c3a0e, 15px 70px 0 #5c3a0e, 40px 70px 0 #5c3a0e, 45px 70px 0 #5c3a0e,
+  50px 70px 0 #5c3a0e,
+  0px 75px 0 #5c3a0e, 5px 75px 0 #5c3a0e, 10px 75px 0 #5c3a0e, 15px 75px 0 #5c3a0e, 40px 75px 0 #5c3a0e,
+  45px 75px 0 #5c3a0e, 50px 75px 0 #5c3a0e, 55px 75px 0 #5c3a0e;
+}
+@keyframes mario-run {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+.mario-caption {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* 尊重系统“减少动态效果”设置 */
+@media (prefers-reduced-motion: reduce) {
+  .mario, .ground, .cloud, .qblock, .coin { animation: none; }
+  .coin { opacity: 1; }
+}
