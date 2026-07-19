@@ -67,10 +67,6 @@
     { key: "bomb",      r: 14, value: 0,   weight: 1.2, color: "#3A3A3A", n: 2 }
   ];
 
-  // 矿工角色图片（抠图自用户照片）
-  const minerImg = new Image();
-  minerImg.src = "assets/miner.png";
-
   const canvas = document.getElementById("game-canvas");
   const ctx = canvas.getContext("2d");
   const startBtn = document.getElementById("game-start");
@@ -248,6 +244,46 @@
     ctx.restore();
   }
 
+  // 自嘲熊头：白脸 + 圆耳 + ∪形笑眼 + 橘色腮黄（与首页风格一致）
+  function drawBearHead(cx, cy, R) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#4A3226";
+    // 耳朵
+    for (const s of [-1, 1]) {
+      ctx.fillStyle = "#FFFFFF";
+      ctx.beginPath();
+      ctx.arc(s * R * 0.68, -R * 0.72, R * 0.36, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#FBE3CE";
+      ctx.beginPath();
+      ctx.arc(s * R * 0.68, -R * 0.72, R * 0.17, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // 脸
+    ctx.fillStyle = "#FFFFFF";
+    ctx.beginPath();
+    ctx.arc(0, 0, R, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+    // ∪形笑眼
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = "round";
+    for (const s of [-1, 1]) {
+      ctx.beginPath();
+      ctx.arc(s * R * 0.38, -R * 0.08, R * 0.15, Math.PI * 0.15, Math.PI * 0.85);
+      ctx.stroke();
+    }
+    // 腮黄
+    ctx.fillStyle = "#F2A65A";
+    for (const s of [-1, 1]) {
+      ctx.beginPath();
+      ctx.ellipse(s * R * 0.56, R * 0.3, R * 0.2, R * 0.11, s * 0.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
   function drawOverlay(title, lines) {
     ctx.fillStyle = "rgba(74, 50, 38, 0.45)";
     ctx.fillRect(0, 0, W, H);
@@ -291,21 +327,6 @@
     // 物品
     items.forEach(it => drawItem(it, it.x, it.y));
 
-    // 矿工角色（站在绞盘左侧，脚踩地面）
-    if (minerImg.complete && minerImg.naturalWidth) {
-      const mh = 74;
-      const mw = mh * (minerImg.naturalWidth / minerImg.naturalHeight);
-      ctx.drawImage(minerImg, PIVOT.x - 26 - mw, SOIL_TOP - mh + 2, mw, mh);
-    }
-
-    // 绞盘
-    ctx.fillStyle = "#D95550";
-    ctx.strokeStyle = "#4A3226";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(PIVOT.x, PIVOT.y - 6, 14, 0, Math.PI * 2);
-    ctx.fill(); ctx.stroke();
-
     // 绳子 + 钩爪（+ 抓到的物品）
     const a = state === "swing" ? angle : launchAngle;
     const p = tip();
@@ -317,6 +338,9 @@
     ctx.stroke();
     if (grabbed) drawItem(grabbed, p.x, p.y + grabbed.r * 0.8);
     drawClaw(p, a);
+
+    // 自嘲熊头（代替绞盘，盖住绳子起点）
+    drawBearHead(PIVOT.x, PIVOT.y - 8, 20);
 
     // HUD
     ctx.textAlign = "left";
