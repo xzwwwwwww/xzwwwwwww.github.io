@@ -3,20 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的小站</title>
+  <title>我的小站 · My Corner</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <!-- 顶部导航 -->
   <header class="site-header">
     <div class="container header-inner">
-      <a class="logo" href="#home">小站</a>
-      <nav class="nav">
-        <a href="#home" class="nav-link active">首页</a>
-        <a href="#notes" class="nav-link">读书笔记</a>
-        <a href="#life" class="nav-link">生活记录</a>
-        <a href="#about" class="nav-link">关于我</a>
-      </nav>
+      <a class="logo" href="#home" data-i18n="logo">小站</a>
+      <div class="header-right">
+        <nav class="nav">
+          <a href="#home" class="nav-link active" data-i18n="navHome">首页</a>
+          <a href="#notes" class="nav-link" data-i18n="navNotes">读书笔记</a>
+          <a href="#life" class="nav-link" data-i18n="navLife">生活记录</a>
+          <a href="#about" class="nav-link" data-i18n="navAbout">关于我</a>
+        </nav>
+        <button id="lang-toggle" class="lang-toggle" aria-label="Switch language">EN</button>
+      </div>
     </div>
   </header>
 
@@ -25,8 +28,8 @@
     <!-- 首页 -->
     <section id="home" class="page active">
       <div class="hero">
-        <h1>你好，欢迎来到我的小站</h1>
-        <p class="hero-sub">在这里记录生活，存放读过的书与想过的路。</p>
+        <h1 data-i18n="heroTitle">你好，欢迎来到我的小站</h1>
+        <p class="hero-sub" data-i18n="heroSub">在这里记录生活，存放读过的书与想过的路。</p>
       </div>
 
       <!-- 玻璃卡片：马里奥小场景 -->
@@ -40,32 +43,32 @@
           <div class="mario"></div>
           <div class="ground"></div>
         </div>
-        <p class="mario-caption">人生就像闯关，慢慢跑，别忘了吃金币 🍄</p>
+        <p class="mario-caption" data-i18n="marioCaption">人生就像闯关，慢慢跑，别忘了吃金币 🍄</p>
       </div>
 
-      <h2 class="section-title">最近更新</h2>
+      <h2 class="section-title" data-i18n="recentTitle">最近更新</h2>
       <div id="recent-notes" class="card-grid"></div>
     </section>
 
     <!-- 读书笔记 -->
     <section id="notes" class="page">
-      <h2 class="section-title">读书笔记</h2>
+      <h2 class="section-title" data-i18n="notesTitle">读书笔记</h2>
       <div id="tag-filter" class="tag-filter"></div>
       <div id="note-list" class="note-list"></div>
     </section>
 
     <!-- 生活记录 -->
     <section id="life" class="page">
-      <h2 class="section-title">生活记录</h2>
+      <h2 class="section-title" data-i18n="lifeTitle">生活记录</h2>
       <div id="life-timeline" class="timeline"></div>
     </section>
 
     <!-- 关于我 -->
     <section id="about" class="page">
-      <h2 class="section-title">关于我</h2>
+      <h2 class="section-title" data-i18n="aboutTitle">关于我</h2>
       <div class="about-card">
-        <p>这里写一段自我介绍：你是谁，喜欢什么，为什么建这个小站。</p>
-        <p>联系方式：<a href="mailto:you@example.com">you@example.com</a></p>
+        <p data-i18n="aboutIntro">这里写一段自我介绍：你是谁，喜欢什么，为什么建这个小站。</p>
+        <p><span data-i18n="aboutContact">联系方式：</span><a href="mailto:you@example.com">you@example.com</a></p>
       </div>
     </section>
 
@@ -82,7 +85,7 @@
   </div>
 
   <footer class="site-footer">
-    <p>© 2026 我的小站 · 用心记录每一天</p>
+    <p data-i18n="footer">© 2026 我的小站 · 用心记录每一天</p>
   </footer>
 
   <script src="js/data.js"></script>

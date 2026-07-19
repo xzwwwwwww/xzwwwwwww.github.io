@@ -1,4 +1,61 @@
-/* 站点逻辑：页面切换、笔记渲染与筛选、阅读弹层、生活时间线 */
+/* 站点逻辑：中英文切换、页面切换、笔记渲染与筛选、阅读弹层、生活时间线 */
+
+// ===== 中英文切换 =====
+const I18N = {
+  zh: {
+    logo: "小站",
+    navHome: "首页",
+    navNotes: "读书笔记",
+    navLife: "生活记录",
+    navAbout: "关于我",
+    heroTitle: "你好，欢迎来到我的小站",
+    heroSub: "在这里记录生活，存放读过的书与想过的路。",
+    marioCaption: "人生就像闯关，慢慢跑，别忘了吃金币 🍄",
+    recentTitle: "最近更新",
+    notesTitle: "读书笔记",
+    lifeTitle: "生活记录",
+    aboutTitle: "关于我",
+    aboutIntro: "这里写一段自我介绍：你是谁，喜欢什么，为什么建这个小站。",
+    aboutContact: "联系方式：",
+    footer: "© 2026 我的小站 · 用心记录每一天",
+    all: "全部"
+  },
+  en: {
+    logo: "My Corner",
+    navHome: "Home",
+    navNotes: "Book Notes",
+    navLife: "Life",
+    navAbout: "About",
+    heroTitle: "Hi, welcome to my corner",
+    heroSub: "A place for my life, the books I've read, and the roads I've wandered.",
+    marioCaption: "Life is a game — take your time, and don't forget the coins 🍄",
+    recentTitle: "Recent Updates",
+    notesTitle: "Book Notes",
+    lifeTitle: "Life Moments",
+    aboutTitle: "About Me",
+    aboutIntro: "Write a short intro here: who you are, what you love, and why you built this site.",
+    aboutContact: "Contact: ",
+    footer: "© 2026 My Corner · Recording every day with care",
+    all: "All"
+  }
+};
+
+let currentLang = localStorage.getItem("lang") || "zh";
+
+function t(key) {
+  return I18N[currentLang][key] || key;
+}
+
+function applyLang(lang) {
+  currentLang = lang;
+  localStorage.setItem("lang", lang);
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.textContent = I18N[lang][el.dataset.i18n] || el.textContent;
+  });
+  document.getElementById("lang-toggle").textContent = lang === "zh" ? "EN" : "中";
+  renderTags(); // “全部”标签需要跟随语言
+}
 
 // ===== 单页导航切换 =====
 const navLinks = document.querySelectorAll(".nav-link");
@@ -19,6 +76,10 @@ navLinks.forEach(link => {
   });
 });
 switchPage(location.hash);
+
+document.getElementById("lang-toggle").addEventListener("click", () => {
+  applyLang(currentLang === "zh" ? "en" : "zh");
+});
 
 // ===== 工具 =====
 function escapeHtml(s) {
@@ -43,17 +104,19 @@ recentBox.innerHTML = sortedNotes.slice(0, 3).map((note, i) => `
 const tagFilterBox = document.getElementById("tag-filter");
 const noteListBox = document.getElementById("note-list");
 
-const allTags = ["全部", ...new Set(sortedNotes.flatMap(n => n.tags))];
-let currentTag = "全部";
+const ALL_TAG = "__ALL__";
+const allTags = [ALL_TAG, ...new Set(sortedNotes.flatMap(n => n.tags))];
+let currentTag = ALL_TAG;
 
 function renderTags() {
-  tagFilterBox.innerHTML = allTags.map(t =>
-    `<span class="tag ${t === currentTag ? "active" : ""}" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</span>`
-  ).join("");
+  tagFilterBox.innerHTML = allTags.map(tag => {
+    const label = tag === ALL_TAG ? t("all") : tag;
+    return `<span class="tag ${tag === currentTag ? "active" : ""}" data-tag="${escapeHtml(tag)}">${escapeHtml(label)}</span>`;
+  }).join("");
 }
 
 function renderNoteList() {
-  const list = currentTag === "全部"
+  const list = currentTag === ALL_TAG
     ? sortedNotes
     : sortedNotes.filter(n => n.tags.includes(currentTag));
   noteListBox.innerHTML = list.map(note => `
@@ -69,6 +132,7 @@ function renderNoteList() {
 
 renderTags();
 renderNoteList();
+applyLang(currentLang);
 
 tagFilterBox.addEventListener("click", e => {
   const tagEl = e.target.closest(".tag");
