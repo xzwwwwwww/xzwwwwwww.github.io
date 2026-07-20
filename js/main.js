@@ -25,7 +25,8 @@ const I18N = {
     gameTitle: "小游戏",
     tabMiner: "黄金矿工",
     tabPvz: "植物大战僵尸",
-    tabSweeper: "扫雷"
+    tabSweeper: "扫雷",
+    tabSnake: "贪吃蛇"
   },
   en: {
     logo: "My Corner",
@@ -50,7 +51,8 @@ const I18N = {
     gameTitle: "Mini Games",
     tabMiner: "Gold Miner",
     tabPvz: "Plants vs. Zombies",
-    tabSweeper: "Minesweeper"
+    tabSweeper: "Minesweeper",
+    tabSnake: "Snake"
   }
 };
 
