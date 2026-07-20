@@ -368,7 +368,8 @@
   function loop(t) {
     const dt = Math.min((t - lastT) / 1000 || 0, 0.05);
     lastT = t;
-    const sectionActive = document.getElementById("game").classList.contains("active");
+    const sectionActive = document.getElementById("game").classList.contains("active") &&
+      document.getElementById("panel-miner").classList.contains("active");
     if (sectionActive && !document.hidden) update(dt);
     draw();
     requestAnimationFrame(loop);

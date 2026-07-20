@@ -22,7 +22,9 @@ const I18N = {
     navInbox: "留言信箱",
     inboxTitle: "留言信箱",
     navGame: "小游戏",
-    gameTitle: "黄金矿工"
+    gameTitle: "小游戏",
+    tabMiner: "黄金矿工",
+    tabPvz: "植物大战僵尸"
   },
   en: {
     logo: "My Corner",
@@ -44,7 +46,9 @@ const I18N = {
     navInbox: "Guestbook",
     inboxTitle: "Guestbook",
     navGame: "Mini Game",
-    gameTitle: "Gold Miner"
+    gameTitle: "Mini Games",
+    tabMiner: "Gold Miner",
+    tabPvz: "Plants vs. Zombies"
   }
 };
 
@@ -85,6 +89,16 @@ navLinks.forEach(link => {
   });
 });
 switchPage(location.hash);
+
+// ===== 小游戏标签切换 =====
+document.querySelectorAll(".game-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".game-tab").forEach(t =>
+      t.classList.toggle("active", t === tab));
+    document.querySelectorAll(".game-panel").forEach(p =>
+      p.classList.toggle("active", p.id === "panel-" + tab.dataset.game));
+  });
+});
 
 document.getElementById("lang-toggle").addEventListener("click", () => {
   applyLang(currentLang === "zh" ? "en" : "zh");

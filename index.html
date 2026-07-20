@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -103,11 +103,25 @@
 
     <!-- 小游戏 -->
     <section id="game" class="page">
-      <h2 class="section-title" data-i18n="gameTitle">黄金矿工</h2>
-      <div class="game-card">
-        <canvas id="game-canvas" width="760" height="500"></canvas>
-        <div class="game-bar">
-          <button id="game-start" class="inbox-submit"></button>
+      <h2 class="section-title" data-i18n="gameTitle">小游戏</h2>
+      <div class="game-tabs">
+        <button class="game-tab active" data-game="miner" data-i18n="tabMiner">黄金矿工</button>
+        <button class="game-tab" data-game="pvz" data-i18n="tabPvz">植物大战僵尸</button>
+      </div>
+      <div id="panel-miner" class="game-panel active">
+        <div class="game-card">
+          <canvas id="game-canvas" width="760" height="500"></canvas>
+          <div class="game-bar">
+            <button id="game-start" class="inbox-submit"></button>
+          </div>
+        </div>
+      </div>
+      <div id="panel-pvz" class="game-panel">
+        <div class="game-card">
+          <canvas id="pvz-canvas" width="800" height="600"></canvas>
+          <div class="game-bar">
+            <button id="pvz-start" class="inbox-submit"></button>
+          </div>
         </div>
       </div>
     </section>
@@ -129,10 +143,11 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=5"></script>
-  <script src="js/data.js?v=5"></script>
-  <script src="js/main.js?v=5"></script>
-  <script src="js/inbox.js?v=5"></script>
-  <script src="js/game.js?v=5"></script>
+  <script src="js/config.js?v=6"></script>
+  <script src="js/data.js?v=6"></script>
+  <script src="js/main.js?v=6"></script>
+  <script src="js/inbox.js?v=6"></script>
+  <script src="js/game.js?v=6"></script>
+  <script src="js/pvz.js?v=6"></script>
 </body>
 </html>

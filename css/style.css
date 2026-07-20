@@ -430,3 +430,16 @@ h1, h2, .logo, .section-title {
   display: flex; justify-content: center;
   margin-top: 14px;
 }
+
+/* 游戏标签页 */
+.game-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.game-tab {
+  padding: 5px 18px; font-size: 14px; font-family: inherit; cursor: pointer;
+  background: var(--panel); border: 2px solid var(--border);
+  border-radius: 999px; color: var(--muted);
+  transition: all 0.15s ease;
+}
+.game-tab:hover { border-color: var(--accent); color: var(--accent); }
+.game-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.game-panel { display: none; }
+.game-panel.active { display: block; }
