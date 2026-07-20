@@ -83,13 +83,18 @@
   // ===== 回合初始化 =====
   function spawnItems() {
     items = [];
-    for (const t of TYPES) {
+    for (const t of TYPES) {   // TYPES 中 bomb 排在最后，优先生成宝藏
       for (let i = 0; i < t.n; i++) {
         let pos = null;
         for (let attempt = 0; attempt < 300 && !pos; attempt++) {
           const x = 50 + Math.random() * (W - 100);
           const y = SOIL_TOP + 60 + Math.random() * (H - SOIL_TOP - 110);
-          if (items.every(it => Math.hypot(it.x - x, it.y - y) > it.r + t.r + 14)) {
+          // 与其他物品保持距离；炸弹额外避开黄金/钻石的正上方（不挡钩线路径）
+          const clear = items.every(it => Math.hypot(it.x - x, it.y - y) > it.r + t.r + 14);
+          const aboveTreasure = t.key === "bomb" && items.some(g =>
+            (g.key.startsWith("gold") || g.key === "diamond") &&
+            Math.abs(g.x - x) < g.r + 30 && y < g.y);
+          if (clear && !aboveTreasure) {
             pos = { x, y };
           }
         }
@@ -116,6 +121,10 @@
   }
 
   // ===== 更新 =====
+  // 还剩多少黄金/钻石：抓完即通关，不必清石头
+  const valuablesLeft = () =>
+    items.some(it => it.key.startsWith("gold") || it.key === "diamond");
+
   function tip() {
     const a = state === "swing" ? angle : launchAngle;
     return { x: PIVOT.x + Math.sin(a) * ropeLen, y: PIVOT.y + Math.cos(a) * ropeLen };
@@ -162,7 +171,7 @@
         if (grabbed) {
           score += grabbed.value;
           grabbed = null;
-          if (!items.length) { state = "over"; return; }
+          if (!valuablesLeft()) { state = "over"; return; }
         }
         state = timeLeft <= 0 ? "over" : "swing";
       }
@@ -358,7 +367,7 @@
       if (fail) {
         drawOverlay(tg("boomTitle"), [tg("boomSub"), `${tg("overScore")}: ${score}`]);
       } else {
-        drawOverlay(items.length ? tg("overTitle") : tg("overClear"),
+        drawOverlay(valuablesLeft() ? tg("overTitle") : tg("overClear"),
           [`${tg("overScore")}: ${score}`, tg("restart") + " →"]);
       }
     }

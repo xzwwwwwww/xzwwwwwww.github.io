@@ -10,6 +10,7 @@
       time: "时间",
       win: "🎉 恭喜，排雷成功！",
       lose: "💥 踩到雷了，再试一次！",
+      restart: "重新开始",
       hint: "左键翻格 · 右键/长按插旗"
     },
     en: {
@@ -18,6 +19,7 @@
       time: "Time",
       win: "🎉 You cleared the field!",
       lose: "💥 Boom! Try again!",
+      restart: "Play again",
       hint: "Left-click to reveal · Right-click / long-press to flag"
     }
   };
@@ -36,6 +38,7 @@
   const statusEl = document.getElementById("ms-status");
   const levelsEl = document.getElementById("ms-levels");
   const resetBtn = document.getElementById("ms-reset");
+  const restartBtn = document.getElementById("ms-restart");
 
   let levelIdx = 0;
   let board = null;        // {mine, open, flag, n}
@@ -64,6 +67,8 @@
     board = Array.from({ length: L().rows * L().cols },
       () => ({ mine: false, open: false, flag: false, n: 0 }));
     resetBtn.textContent = "😀";
+    restartBtn.classList.remove("show");
+    restartBtn.textContent = tm("restart");
     statusEl.textContent = tm("hint");
     statusEl.className = "inbox-status";
     renderLevels();
@@ -165,6 +170,10 @@
     }
     statusEl.textContent = tm(win ? "win" : "lose");
     statusEl.className = "inbox-status " + (win ? "ok" : "error");
+    if (!win) {
+      restartBtn.textContent = tm("restart");
+      restartBtn.classList.add("show");
+    }
   }
 
   // ===== 事件 =====
@@ -176,6 +185,7 @@
   });
 
   resetBtn.addEventListener("click", newGame);
+  restartBtn.addEventListener("click", newGame);
 
   gridEl.addEventListener("click", e => {
     const el = e.target.closest(".ms-cell");
@@ -213,6 +223,7 @@
   document.addEventListener("langchange", () => {
     renderLevels();
     updateBar();
+    restartBtn.textContent = tm("restart");
     if (!over) statusEl.textContent = tm("hint");
   });
 

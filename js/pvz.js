@@ -341,7 +341,7 @@
   }
 
   function drawCard(card, i) {
-    const x = 130 + i * 68, y = 8, w = 60, h = 74;
+    const x = 200 + i * 68, y = 8, w = 60, h = 74;
     const info = PLANTS[card.key];
     const affordable = sun >= info.cost;
     ctx.save();
@@ -492,7 +492,7 @@
     // 点卡片
     if (y < LAWN_Y) {
       for (let i = 0; i < cards.length; i++) {
-        const cx = 130 + i * 68;
+        const cx = 200 + i * 68;
         if (x >= cx && x <= cx + 60 && y >= 8 && y <= 82) {
           const card = cards[i];
           if (card.cdLeft <= 0 && sun >= PLANTS[card.key].cost) {

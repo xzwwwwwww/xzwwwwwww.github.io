@@ -413,6 +413,8 @@ h1, h2, .logo, .section-title {
 }
 
 /* ===== 小游戏 ===== */
+/* 小游戏页激活时加宽容器：扫雷困难/专家（30 列）无需横向滚动 */
+.container:has(> #game.active) { max-width: 1100px; }
 .game-card {
   background: var(--panel); border: 2px solid var(--border);
   border-radius: 16px; padding: 16px;
@@ -466,6 +468,8 @@ h1, h2, .logo, .section-title {
 .ms-reset:hover { border-color: var(--accent); }
 
 .ms-scroll { overflow-x: auto; padding-bottom: 6px; }
+.ms-restart { display: none; margin-top: 8px; }
+.ms-restart.show { display: inline-block; }
 .ms-grid {
   display: grid; gap: 3px;
   width: max-content; margin: 0 auto;
