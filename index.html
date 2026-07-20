@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="stylesheet" href="css/style.css?v=7">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -107,6 +107,7 @@
       <div class="game-tabs">
         <button class="game-tab active" data-game="miner" data-i18n="tabMiner">黄金矿工</button>
         <button class="game-tab" data-game="pvz" data-i18n="tabPvz">植物大战僵尸</button>
+        <button class="game-tab" data-game="sweeper" data-i18n="tabSweeper">扫雷</button>
       </div>
       <div id="panel-miner" class="game-panel active">
         <div class="game-card">
@@ -122,6 +123,20 @@
           <div class="game-bar">
             <button id="pvz-start" class="inbox-submit"></button>
           </div>
+        </div>
+      </div>
+      <div id="panel-sweeper" class="game-panel">
+        <div class="game-card">
+          <div id="ms-levels" class="ms-levels"></div>
+          <div class="ms-bar">
+            <span id="ms-mines"></span>
+            <button id="ms-reset" class="ms-reset">😀</button>
+            <span id="ms-time"></span>
+          </div>
+          <div class="ms-scroll">
+            <div id="ms-grid" class="ms-grid"></div>
+          </div>
+          <p id="ms-status" class="inbox-status"></p>
         </div>
       </div>
     </section>
@@ -143,11 +158,12 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=6"></script>
-  <script src="js/data.js?v=6"></script>
-  <script src="js/main.js?v=6"></script>
-  <script src="js/inbox.js?v=6"></script>
-  <script src="js/game.js?v=6"></script>
-  <script src="js/pvz.js?v=6"></script>
+  <script src="js/config.js?v=7"></script>
+  <script src="js/data.js?v=7"></script>
+  <script src="js/main.js?v=7"></script>
+  <script src="js/inbox.js?v=7"></script>
+  <script src="js/game.js?v=7"></script>
+  <script src="js/pvz.js?v=7"></script>
+  <script src="js/minesweeper.js?v=7"></script>
 </body>
 </html>
