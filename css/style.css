@@ -432,6 +432,10 @@ h1, h2, .logo, .section-title {
   display: flex; justify-content: center;
   margin-top: 14px;
 }
+#pvz-canvas, #snake-canvas {
+  display: block; margin: 0 auto;
+  max-width: 100%; height: auto;
+}
 
 /* 游戏标签页 */
 .game-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
