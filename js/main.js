@@ -26,7 +26,9 @@ const I18N = {
     tabMiner: "黄金矿工",
     tabPvz: "植物大战僵尸",
     tabSweeper: "扫雷",
-    tabSnake: "贪吃蛇"
+    tabSnake: "贪吃蛇",
+    navSpace: "你和我",
+    spaceTitle: "你和我"
   },
   en: {
     logo: "My Corner",
@@ -52,7 +54,9 @@ const I18N = {
     tabMiner: "Gold Miner",
     tabPvz: "Plants vs. Zombies",
     tabSweeper: "Minesweeper",
-    tabSnake: "Snake"
+    tabSnake: "Snake",
+    navSpace: "You & Me",
+    spaceTitle: "You & Me"
   }
 };
 

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=11">
+  <link rel="stylesheet" href="css/style.css?v=12">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -22,6 +22,7 @@
           <a href="#about" class="nav-link" data-i18n="navAbout">关于我</a>
           <a href="#inbox" class="nav-link" data-i18n="navInbox">留言信箱</a>
           <a href="#game" class="nav-link" data-i18n="navGame">小游戏</a>
+          <a href="#space" class="nav-link" data-i18n="navSpace">你和我</a>
         </nav>
         <button id="lang-toggle" class="lang-toggle" aria-label="Switch language">EN</button>
       </div>
@@ -151,6 +152,19 @@
       </div>
     </section>
 
+    <!-- 你和我 -->
+    <section id="space" class="page">
+      <h2 class="section-title" data-i18n="spaceTitle">你和我</h2>
+      <div id="space-login" class="inbox-form-card space-login">
+        <p id="space-hint" class="space-hint"></p>
+        <input id="space-username" type="text" maxlength="30" autocomplete="username">
+        <input id="space-password" type="password" maxlength="30" autocomplete="current-password">
+        <button id="space-login-btn" class="inbox-submit"></button>
+        <p id="space-status" class="inbox-status"></p>
+      </div>
+      <div id="space-content" class="hidden"></div>
+    </section>
+
   </main>
 
   <!-- 笔记阅读弹层 -->
@@ -168,13 +182,15 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=11"></script>
-  <script src="js/data.js?v=11"></script>
-  <script src="js/main.js?v=11"></script>
-  <script src="js/inbox.js?v=11"></script>
-  <script src="js/game.js?v=11"></script>
-  <script src="js/pvz.js?v=11"></script>
-  <script src="js/minesweeper.js?v=11"></script>
-  <script src="js/snake.js?v=11"></script>
+  <script src="js/config.js?v=12"></script>
+  <script src="js/data.js?v=12"></script>
+  <script src="js/main.js?v=12"></script>
+  <script src="js/inbox.js?v=12"></script>
+  <script src="js/game.js?v=12"></script>
+  <script src="js/pvz.js?v=12"></script>
+  <script src="js/minesweeper.js?v=12"></script>
+  <script src="js/snake.js?v=12"></script>
+  <script src="js/space-data.js?v=12"></script>
+  <script src="js/space.js?v=12"></script>
 </body>
 </html>
