@@ -17,30 +17,30 @@
 
 const SPACE_USERS = [
   {
-    username: "user1",
-    password: "pass1",
+    username: "szddddddd",
+    password: "051224",
     label: "给你的小天地 🌷",
     entries: [
       {
-        date: "2026-07-20",
+        date: "2026-07-22",
         title: "第一封信",
         text: [
           "这里是只有你能看到的内容。",
-          "把这段话改成你想对 TA 说的话吧。"
+          "你好，我的新朋友。"
         ],
         photos: []
       }
     ]
   },
   {
-    username: "user2",
-    password: "pass2",
+    username: "carysssssss",
+    password: "1123",
     label: "秘密基地 ⭐",
     entries: [
       {
         date: "2026-07-20",
         title: "欢迎",
-        text: ["这是另一个账号看到的内容，两个账号互不可见。"],
+        text: ["这里是只有你能看到的内容。"],
         photos: []
       }
     ]
