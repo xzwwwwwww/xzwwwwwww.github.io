@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20">
+  <link rel="stylesheet" href="css/style.css?v=21">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -158,14 +158,19 @@
           <div id="climb-levels" class="ms-levels climb-levels"></div>
           <div class="climb-info">
             <span id="climb-level-label"></span>
+            <span id="climb-color" class="climb-color"></span>
             <span id="climb-moves"></span>
             <span id="climb-par"></span>
+            <span id="climb-time"></span>
           </div>
+          <div class="climb-strength"><div id="climb-strength-fill"></div></div>
           <canvas id="climb-canvas" width="480" height="600"></canvas>
           <p id="climb-hint" class="climb-hint"></p>
           <p id="climb-status" class="inbox-status"></p>
           <div class="game-bar">
             <button id="climb-reset" class="inbox-submit"></button>
+            <button id="climb-mode" class="inbox-submit"></button>
+            <button id="climb-clear-lines" class="inbox-submit"></button>
             <button id="climb-next" class="inbox-submit hidden"></button>
           </div>
         </div>
@@ -192,18 +197,18 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=20"></script>
-  <script src="js/data.js?v=20"></script>
-  <script src="js/main.js?v=20"></script>
-  <script src="js/inbox.js?v=20"></script>
-  <script src="js/game.js?v=20"></script>
-  <script src="js/pvz.js?v=20"></script>
-  <script src="js/minesweeper.js?v=20"></script>
-  <script src="js/snake.js?v=20"></script>
-  <script src="js/space-data.js?v=20"></script>
-  <script src="js/space.js?v=20"></script>
-  <script src="js/poem-data.js?v=20"></script>
-  <script src="js/poem.js?v=20"></script>
-  <script src="js/climbing.js?v=20"></script>
+  <script src="js/config.js?v=21"></script>
+  <script src="js/data.js?v=21"></script>
+  <script src="js/main.js?v=21"></script>
+  <script src="js/inbox.js?v=21"></script>
+  <script src="js/game.js?v=21"></script>
+  <script src="js/pvz.js?v=21"></script>
+  <script src="js/minesweeper.js?v=21"></script>
+  <script src="js/snake.js?v=21"></script>
+  <script src="js/space-data.js?v=21"></script>
+  <script src="js/space.js?v=21"></script>
+  <script src="js/poem-data.js?v=21"></script>
+  <script src="js/poem.js?v=21"></script>
+  <script src="js/climbing.js?v=21"></script>
 </body>
 </html>
