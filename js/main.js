@@ -5,20 +5,13 @@ const I18N = {
   zh: {
     logo: "小站",
     navHome: "首页",
-    navNotes: "读书笔记",
-    navLife: "生活记录",
-    navAbout: "关于我",
+    navLife: "生活碎碎念",
     heroTitle: "你好，欢迎来到我的小站",
     heroSub: "在这里记录生活，存放读过的书与想过的路。",
     sceneCaption: "今天也要好好吃饭，认真生活 🍜",
     recentTitle: "最近更新",
-    notesTitle: "读书笔记",
-    lifeTitle: "生活记录",
-    aboutTitle: "关于我",
-    aboutIntro: "这里写一段自我介绍：你是谁，喜欢什么，为什么建这个小站。",
-    aboutContact: "联系方式：",
+    lifeTitle: "生活碎碎念",
     footer: "© 2026 我的小站 · 用心记录每一天",
-    all: "全部",
     navInbox: "留言信箱",
     inboxTitle: "留言信箱",
     navGame: "小游戏",
@@ -34,20 +27,13 @@ const I18N = {
   en: {
     logo: "My Corner",
     navHome: "Home",
-    navNotes: "Book Notes",
-    navLife: "Life",
-    navAbout: "About",
+    navLife: "Life Bits",
     heroTitle: "Hi, welcome to my corner",
     heroSub: "A place for my life, the books I've read, and the roads I've wandered.",
     sceneCaption: "Eat well, live well — one bowl at a time 🍜",
     recentTitle: "Recent Updates",
-    notesTitle: "Book Notes",
-    lifeTitle: "Life Moments",
-    aboutTitle: "About Me",
-    aboutIntro: "Write a short intro here: who you are, what you love, and why you built this site.",
-    aboutContact: "Contact: ",
+    lifeTitle: "Life Bits",
     footer: "© 2026 My Corner · Recording every day with care",
-    all: "All",
     navInbox: "Guestbook",
     inboxTitle: "Guestbook",
     navGame: "Mini Game",
@@ -64,10 +50,6 @@ const I18N = {
 
 let currentLang = localStorage.getItem("lang") || "zh";
 
-function t(key) {
-  return I18N[currentLang][key] || key;
-}
-
 function applyLang(lang) {
   currentLang = lang;
   localStorage.setItem("lang", lang);
@@ -76,8 +58,7 @@ function applyLang(lang) {
     el.textContent = I18N[lang][el.dataset.i18n] || el.textContent;
   });
   document.getElementById("lang-toggle").textContent = lang === "zh" ? "EN" : "中";
-  renderTags(); // “全部”标签需要跟随语言
-  document.dispatchEvent(new CustomEvent("langchange")); // 通知信箱模块重绘
+  document.dispatchEvent(new CustomEvent("langchange")); // 通知信箱等模块重绘
 }
 
 // ===== 单页导航切换 =====
@@ -133,47 +114,7 @@ recentBox.innerHTML = sortedNotes.slice(0, 3).map((note, i) => `
   </div>
 `).join("");
 
-// ===== 读书笔记：标签筛选 + 列表 =====
-const tagFilterBox = document.getElementById("tag-filter");
-const noteListBox = document.getElementById("note-list");
-
-const ALL_TAG = "__ALL__";
-const allTags = [ALL_TAG, ...new Set(sortedNotes.flatMap(n => n.tags))];
-let currentTag = ALL_TAG;
-
-function renderTags() {
-  tagFilterBox.innerHTML = allTags.map(tag => {
-    const label = tag === ALL_TAG ? t("all") : tag;
-    return `<span class="tag ${tag === currentTag ? "active" : ""}" data-tag="${escapeHtml(tag)}">${escapeHtml(label)}</span>`;
-  }).join("");
-}
-
-function renderNoteList() {
-  const list = currentTag === ALL_TAG
-    ? sortedNotes
-    : sortedNotes.filter(n => n.tags.includes(currentTag));
-  noteListBox.innerHTML = list.map(note => `
-    <div class="note-item" data-index="${sortedNotes.indexOf(note)}">
-      <div>
-        <h3>${escapeHtml(note.title)}</h3>
-        <div class="note-tags">${note.tags.map(t => `<span>#${escapeHtml(t)}</span>`).join("")}</div>
-      </div>
-      <span class="date">${note.date}</span>
-    </div>
-  `).join("");
-}
-
-renderTags();
-renderNoteList();
 applyLang(currentLang);
-
-tagFilterBox.addEventListener("click", e => {
-  const tagEl = e.target.closest(".tag");
-  if (!tagEl) return;
-  currentTag = tagEl.dataset.tag;
-  renderTags();
-  renderNoteList();
-});
 
 // ===== 阅读弹层 =====
 const reader = document.getElementById("reader");
