@@ -124,8 +124,7 @@
     btn.disabled = false;
     btn.textContent = ts("send");
     if (error) {
-      input.value = "";
-      input.placeholder = ts("sendFail");
+      input.placeholder = ts("sendFail");   // 保留已写内容，重试不丢
       return;
     }
     input.value = "";
