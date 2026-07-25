@@ -12,7 +12,9 @@
       overScore: "本局得分",
       restart: "再来一局",
       start: "开始",
-      paused: "已暂停 · 按 P 继续"
+      paused: "已暂停 · 按 P 继续",
+      modeClassic: "标准模式",
+      modeWrap: "穿墙模式"
     },
     en: {
       score: "Score",
@@ -22,7 +24,9 @@
       overScore: "Final score",
       restart: "Play again",
       start: "Start",
-      paused: "Paused · press P to resume"
+      paused: "Paused · press P to resume",
+      modeClassic: "Classic",
+      modeWrap: "Wrap walls"
     }
   };
   const ts = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -35,6 +39,27 @@
   let state = "ready";   // ready | playing | paused | over
   let snake = [], dir = { x: 1, y: 0 }, dirQueue = [];
   let food = null, score = 0;
+  // 穿墙模式：可以越过边界从另一侧出来，但咬到自己仍然失败
+  let wrapMode = false;
+  try { wrapMode = localStorage.getItem("snake-wrap") === "1"; } catch (e) {}
+
+  const modesEl = document.getElementById("snake-modes");
+  function renderModes() {
+    modesEl.innerHTML = [
+      ["modeClassic", false],
+      ["modeWrap", true]
+    ].map(([key, wrap]) =>
+      `<button class="ms-level ${wrapMode === wrap ? "active" : ""}" data-wrap="${wrap}">${ts(key)}</button>`
+    ).join("");
+  }
+  modesEl.addEventListener("click", e => {
+    const btn = e.target.closest("[data-wrap]");
+    if (!btn) return;
+    wrapMode = btn.dataset.wrap === "true";
+    try { localStorage.setItem("snake-wrap", wrapMode ? "1" : "0"); } catch (err) {}
+    renderModes();
+  });
+  document.addEventListener("langchange", renderModes);
 
   function placeFood() {
     while (true) {
@@ -74,8 +99,13 @@
         if (d.x !== -dir.x || d.y !== -dir.y) { dir = d; break; }
       }
       const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
-      // 撞墙或咬到自己
-      if (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID ||
+      // 穿墙模式：越过边界从另一侧出来
+      if (wrapMode) {
+        head.x = (head.x + GRID) % GRID;
+        head.y = (head.y + GRID) % GRID;
+      }
+      // 撞墙（标准模式）或咬到自己
+      if ((!wrapMode && (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID)) ||
           snake.some(s => s.x === head.x && s.y === head.y)) {
         state = "over";
       } else {
@@ -276,6 +306,7 @@
   });
 
   startBtn.textContent = ts("start");
+  renderModes();
   draw();
   setTimeout(tick, speed());
 })();

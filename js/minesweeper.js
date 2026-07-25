@@ -11,7 +11,7 @@
       win: "🎉 恭喜，排雷成功！",
       lose: "💥 踩到雷了，再试一次！",
       restart: "重新开始",
-      hint: "左键翻格 · 右键/长按插旗"
+      hint: "左键翻格 · 右键/长按插旗 · 双击数字快翻"
     },
     en: {
       levels: ["Easy", "Normal", "Hard", "Expert"],
@@ -20,7 +20,7 @@
       win: "🎉 You cleared the field!",
       lose: "💥 Boom! Try again!",
       restart: "Play again",
-      hint: "Left-click to reveal · Right-click / long-press to flag"
+      hint: "Left-click to reveal · Right-click / long-press to flag · Double-click a number to chord"
     }
   };
   const tm = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -159,6 +159,20 @@
     updateBar();
   }
 
+  // 双击已翻开的数字格：周围插旗数等于数字时，自动翻开其余相邻格
+  function chord(r, c) {
+    if (over) return;
+    const cell = board[idx(r, c)];
+    if (!cell.open || !cell.n) return;
+    const ns = neighbors(r, c);
+    const flags = ns.filter(([nr, nc]) => board[idx(nr, nc)].flag).length;
+    if (flags !== cell.n) return;
+    ns.forEach(([nr, nc]) => {
+      const nb = board[idx(nr, nc)];
+      if (!nb.open && !nb.flag) openCell(nr, nc);
+    });
+  }
+
   function gameOver(win) {
     over = true;
     clearInterval(timerId);
@@ -200,6 +214,13 @@
     if (!el) return;
     const i = Number(el.dataset.i);
     toggleFlag(Math.floor(i / L().cols), i % L().cols);
+  });
+
+  gridEl.addEventListener("dblclick", e => {
+    const el = e.target.closest(".ms-cell");
+    if (!el) return;
+    const i = Number(el.dataset.i);
+    chord(Math.floor(i / L().cols), i % L().cols);
   });
 
   // 手机长按插旗

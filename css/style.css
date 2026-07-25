@@ -534,3 +534,8 @@ h1, h2, .logo, .section-title {
   border: 2px solid var(--border); margin-top: 12px;
 }
 .space-empty { color: var(--muted); text-align: center; padding: 30px 0; }
+
+/* PvZ 关卡列表 / 贪吃蛇模式选择（复用扫雷按钮样式） */
+.pvz-levels, .snake-modes { justify-content: center; }
+.ms-level:disabled { opacity: 0.35; cursor: default; }
+.ms-level:disabled:hover { border-color: var(--border); color: var(--muted); }

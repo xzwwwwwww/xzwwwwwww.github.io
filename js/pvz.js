@@ -95,6 +95,7 @@
   const canvas = document.getElementById("pvz-canvas");
   const ctx = canvas.getContext("2d");
   const startBtn = document.getElementById("pvz-start");
+  const levelsEl = document.getElementById("pvz-levels");
 
   // localStorage 可能在沙箱环境不可用，包一层
   const store = {
@@ -154,7 +155,22 @@
     zombies = []; peas = []; suns = []; explosions = [];
     selected = null;
     resetGrid();
+    renderLevels();
   }
+
+  // 关卡列表：已解锁的数字按钮随时回去重玩，未解锁的置灰
+  function renderLevels() {
+    levelsEl.innerHTML = Array.from({ length: MAX_LEVEL }, (_, i) => {
+      const lv = i + 1;
+      const locked = lv > unlocked;
+      return `<button class="ms-level ${lv === level ? "active" : ""}" data-lv="${lv}"${locked ? " disabled" : ""}>${locked ? "🔒" : lv}</button>`;
+    }).join("");
+  }
+  levelsEl.addEventListener("click", e => {
+    const btn = e.target.closest("[data-lv]");
+    if (!btn || btn.disabled) return;
+    changeLevel(Number(btn.dataset.lv));
+  });
 
   // ===== 坐标辅助 =====
   const cellCX = c => LAWN_X + c * CELL_W + CELL_W / 2;
@@ -351,6 +367,7 @@
       if (level < MAX_LEVEL && unlocked < level + 1) {
         unlocked = level + 1;
         store.set("pvz-unlocked", String(unlocked));
+        renderLevels();
       }
     }
   }
@@ -612,24 +629,6 @@
     ctx.restore();
   }
 
-  // 关卡切换箭头（仅非进行中可点）
-  function drawLevelNav() {
-    const canPrev = level > 1;
-    const canNext = level < unlocked;
-    ctx.font = "22px 'ZCOOL KuaiLe', sans-serif";
-    ctx.textAlign = "center";
-    for (const [bx, arrow, can] of [[12, "‹", canPrev], [148, "›", canNext]]) {
-      ctx.fillStyle = "#FFF7EF";
-      ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.roundRect(bx, 52, 32, 32, 8); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = can ? "#4A3226" : "#C9BBA8";
-      ctx.fillText(arrow, bx + 16, 77);
-    }
-    ctx.font = "16px 'ZCOOL KuaiLe', 'PingFang SC', sans-serif";
-    ctx.fillStyle = "#4A3226";
-    ctx.fillText(`${tp("level")} ${level}/${MAX_LEVEL}`, 96, 74);
-  }
-
   function drawOverlay(title, lines) {
     ctx.fillStyle = "rgba(74, 50, 38, 0.5)";
     ctx.fillRect(0, 0, W, H);
@@ -660,9 +659,6 @@
     ctx.font = "20px 'ZCOOL KuaiLe', sans-serif";
     ctx.textAlign = "left";
     ctx.fillText(`${tp("sun")}: ${sun}`, 60, 42);
-
-    // 关卡导航
-    drawLevelNav();
 
     // 卡片
     cards.forEach((c, i) => drawCard(c, i));
@@ -760,11 +756,6 @@
     e.preventDefault();
     const { x, y } = canvasPos(e);
 
-    // 关卡切换箭头（准备/胜利/失败时可用）
-    if (state !== "playing" && y >= 52 && y <= 84) {
-      if (x >= 12 && x <= 44) { changeLevel(level - 1); return; }
-      if (x >= 148 && x <= 180) { changeLevel(level + 1); return; }
-    }
     if (state !== "playing") { proceed(); return; }
 
     // 点阳光
@@ -852,5 +843,6 @@
 
   resetGrid();
   cards = cardsFor(level).map(k => ({ key: k, cdLeft: 0 }));
+  renderLevels();
   requestAnimationFrame(loop);
 })();
