@@ -27,6 +27,7 @@ const I18N = {
     tabPvz: "植物大战僵尸",
     tabSweeper: "扫雷",
     tabSnake: "贪吃蛇",
+    tabPoem: "古诗词",
     navSpace: "你和我",
     spaceTitle: "你和我"
   },
@@ -55,6 +56,7 @@ const I18N = {
     tabPvz: "Plants vs. Zombies",
     tabSweeper: "Minesweeper",
     tabSnake: "Snake",
+    tabPoem: "Poetry",
     navSpace: "You & Me",
     spaceTitle: "You & Me"
   }

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=13">
+  <link rel="stylesheet" href="css/style.css?v=14">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -110,6 +110,7 @@
         <button class="game-tab" data-game="pvz" data-i18n="tabPvz">植物大战僵尸</button>
         <button class="game-tab" data-game="sweeper" data-i18n="tabSweeper">扫雷</button>
         <button class="game-tab" data-game="snake" data-i18n="tabSnake">贪吃蛇</button>
+        <button class="game-tab" data-game="poem" data-i18n="tabPoem">古诗词</button>
       </div>
       <div id="panel-miner" class="game-panel active">
         <div class="game-card">
@@ -152,6 +153,26 @@
           </div>
         </div>
       </div>
+      <div id="panel-poem" class="game-panel">
+        <div class="game-card poem-card">
+          <div class="poem-bar">
+            <span id="poem-progress"></span>
+            <select id="poem-level-select"></select>
+          </div>
+          <h3 id="poem-title"></h3>
+          <p id="poem-author" class="poem-author"></p>
+          <div id="poem-quiz">
+            <p id="poem-question"></p>
+            <input id="poem-answer" type="text" maxlength="30" autocomplete="off">
+            <button id="poem-submit" class="inbox-submit"></button>
+            <p id="poem-status" class="inbox-status"></p>
+          </div>
+          <div id="poem-full" class="hidden">
+            <div id="poem-lines"></div>
+            <button id="poem-next" class="inbox-submit"></button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 你和我 -->
@@ -184,15 +205,17 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=13"></script>
-  <script src="js/data.js?v=13"></script>
-  <script src="js/main.js?v=13"></script>
-  <script src="js/inbox.js?v=13"></script>
-  <script src="js/game.js?v=13"></script>
-  <script src="js/pvz.js?v=13"></script>
-  <script src="js/minesweeper.js?v=13"></script>
-  <script src="js/snake.js?v=13"></script>
-  <script src="js/space-data.js?v=13"></script>
-  <script src="js/space.js?v=13"></script>
+  <script src="js/config.js?v=14"></script>
+  <script src="js/data.js?v=14"></script>
+  <script src="js/main.js?v=14"></script>
+  <script src="js/inbox.js?v=14"></script>
+  <script src="js/game.js?v=14"></script>
+  <script src="js/pvz.js?v=14"></script>
+  <script src="js/minesweeper.js?v=14"></script>
+  <script src="js/snake.js?v=14"></script>
+  <script src="js/space-data.js?v=14"></script>
+  <script src="js/space.js?v=14"></script>
+  <script src="js/poem-data.js?v=14"></script>
+  <script src="js/poem.js?v=14"></script>
 </body>
 </html>

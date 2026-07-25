@@ -539,3 +539,44 @@ h1, h2, .logo, .section-title {
 .pvz-levels, .snake-modes { justify-content: center; }
 .ms-level:disabled { opacity: 0.35; cursor: default; }
 .ms-level:disabled:hover { border-color: var(--border); color: var(--muted); }
+
+/* ===== 古诗词 ===== */
+.poem-card { text-align: center; }
+.poem-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+}
+#poem-progress { font-size: 14px; color: var(--muted); }
+#poem-level-select {
+  font-family: inherit; font-size: 14px; color: var(--text);
+  background: var(--bg); border: 2px solid var(--border);
+  border-radius: 10px; padding: 6px 10px; max-width: 60%;
+  cursor: pointer;
+}
+#poem-level-select:focus { outline: none; border-color: var(--accent); }
+#poem-title { margin: 0 0 4px; font-size: 24px; color: var(--text); }
+.poem-author { margin: 0 0 18px; font-size: 14px; color: var(--muted); }
+
+#poem-question { margin: 0 0 16px; }
+.poem-known {
+  display: block; font-size: 22px; color: var(--text);
+  font-family: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+  letter-spacing: 2px; margin-bottom: 10px;
+}
+.poem-ask { display: block; font-size: 14px; color: var(--muted); }
+#poem-answer {
+  display: block; width: min(360px, 100%); margin: 0 auto 12px;
+  font-family: inherit; font-size: 16px; color: var(--text); text-align: center;
+  background: var(--bg); border: 2px solid var(--border);
+  border-radius: 10px; padding: 10px 12px;
+}
+#poem-answer:focus { outline: none; border-color: var(--accent); }
+#poem-quiz .inbox-submit { align-self: auto; }
+
+.poem-praise { color: var(--accent); font-size: 16px; margin: 0 0 14px; }
+.poem-line {
+  margin: 6px 0; font-size: 19px; color: var(--text);
+  font-family: 'ZCOOL KuaiLe', 'PingFang SC', sans-serif;
+  letter-spacing: 2px; line-height: 1.9;
+}
+#poem-next { align-self: auto; margin-top: 16px; }
