@@ -46,7 +46,7 @@ const I18N = {
   }
 };
 
-let currentLang = localStorage.getItem("lang") || "zh";
+let currentLang = localStorage.getItem("lang") || "en"; // 默认英文
 
 function applyLang(lang) {
   currentLang = lang;
@@ -104,11 +104,15 @@ applyLang(currentLang);
 
 // ===== 生活碎碎念时间线 =====
 const timelineBox = document.getElementById("life-timeline");
-timelineBox.innerHTML = [...MOMENTS]
-  .sort((a, b) => b.date.localeCompare(a.date))
-  .map(m => `
-    <div class="timeline-item">
-      <div class="date">${m.date}</div>
-      <p>${escapeHtml(m.text)}</p>
-    </div>
-  `).join("");
+function renderTimeline() {
+  timelineBox.innerHTML = [...MOMENTS]
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .map(m => `
+      <div class="timeline-item">
+        <div class="date">${m.date}</div>
+        <p>${escapeHtml(currentLang === "en" && m.text_en ? m.text_en : m.text)}</p>
+      </div>
+    `).join("");
+}
+renderTimeline();
+document.addEventListener("langchange", renderTimeline);

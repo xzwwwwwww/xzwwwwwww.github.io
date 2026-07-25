@@ -2,6 +2,8 @@
  * 站点数据文件 —— 你只需要改这里！
  *
  * 添加一条生活碎碎念：往 MOMENTS 数组里加一项。
+ * text_en 是英文版文案（可选），英文模式下显示；不写就中英都显示 text。
+ * date 可用日期（如 2026-07-25）或任意文字（如“未完待续”）。
  *
  * NOTES 是你以前写的读书笔记，目前网页上不再展示，
  * 先留在这里存档；想恢复展示的话告诉我即可。
@@ -49,14 +51,17 @@ const NOTES = [
 const MOMENTS = [
   {
     date: "未完待续",
-    text: "未完待续"
+    text: "未完待续",
+    text_en: "To be continued"
   },
   {
     date: "2026-07-25",
-    text: "kimi好贵用的好快，今天升级了kimi月会员，感觉自己像个土豪。"
+    text: "kimi好贵用的好快，今天升级了kimi月会员，感觉自己像个土豪。",
+    text_en: "Kimi is pricey and burns fast. Upgraded to a monthly Kimi membership today — feeling like a big shot."
   },
   {
     date: "2026-07-19",
-    text: "今天学会了用agent制作网站，感觉很有成就感！欢迎大家来我的小站看看。"
+    text: "今天学会了用agent制作网站，感觉很有成就感！欢迎大家来我的小站看看。",
+    text_en: "Learned to build a website with an agent today — so rewarding! Welcome to my little corner."
   }
 ];

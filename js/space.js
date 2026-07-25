@@ -133,18 +133,21 @@
 
   function renderContent(user) {
     const entries = [...user.entries].sort((a, b) => b.date.localeCompare(a.date));
+    // 英文模式下优先用 *_en 字段，没有则回退中文原文
+    const pick = (obj, key) =>
+      (currentLang === "en" && obj[key + "_en"]) ? obj[key + "_en"] : obj[key];
     contentBox.innerHTML = `
       <div class="space-head">
-        <h3 class="space-label">${esc(user.label)}</h3>
+        <h3 class="space-label">${esc(pick(user, "label"))}</h3>
         <button id="space-logout" class="inbox-submit">${ts("logout")}</button>
       </div>
       ${entries.length ? entries.map(e => `
         <article class="space-entry">
           <div class="space-entry-head">
-            <h4>${esc(e.title)}</h4>
+            <h4>${esc(pick(e, "title"))}</h4>
             <span class="date">${esc(e.date)}</span>
           </div>
-          ${(e.text || []).map(p => `<p>${esc(p)}</p>`).join("")}
+          ${(pick(e, "text") || []).map(p => `<p>${esc(p)}</p>`).join("")}
           ${(e.photos || []).map(src => `<img src="${esc(src)}" alt="" loading="lazy">`).join("")}
           <div class="space-comments">
             <div class="sc-list" data-key="${esc(entryKey(e))}">
