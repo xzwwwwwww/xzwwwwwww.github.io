@@ -77,3 +77,31 @@ git add -A && git commit -m "配置 Supabase 后端" && git push
 完成！打开网站「留言信箱」页，提交一条留言测试，然后页面底部「站长登录」审核它。
 
 > 安全说明：anon key 公开是安全的。数据库 RLS 策略保证匿名访客只能提交留言、只能看到已审核内容；修改、回复、删除必须站长登录。
+
+---
+
+# 附：「你和我」条目留言表（space_comments）
+
+「你和我」栏目里每条内容下方的留言存在 `space_comments` 表。同样在 **SQL Editor** → **New query** 粘贴运行：
+
+```sql
+-- 「你和我」条目留言表
+create table space_comments (
+  id uuid primary key default gen_random_uuid(),
+  username text not null,        -- 所属「你和我」账号（留言归属哪个空间）
+  entry_key text not null,       -- 内容条目标识（日期|标题）
+  author text not null,          -- 留言者显示名
+  content text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table space_comments enable row level security;
+
+-- 匿名可读可写（只有知道账号密码的人才会看到留言入口）
+create policy "anon read comments" on space_comments
+  for select to anon using (true);
+create policy "anon insert comments" on space_comments
+  for insert to anon with check (true);
+```
+
+运行完即可，不用改任何配置文件。想删除某条留言：左侧 **Table Editor** → `space_comments` → 选中行删除。

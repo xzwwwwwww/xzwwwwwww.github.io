@@ -580,3 +580,22 @@ h1, h2, .logo, .section-title {
   letter-spacing: 2px; line-height: 1.9;
 }
 #poem-next { align-self: auto; margin-top: 16px; }
+
+/* 「你和我」条目留言 */
+.space-comments {
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+.sc-item { margin-bottom: 10px; }
+.sc-author { font-size: 13px; color: var(--accent); margin-right: 8px; }
+.sc-time { font-size: 12px; color: var(--muted); }
+.sc-text { margin: 2px 0 0; font-size: 14px; color: var(--text); line-height: 1.7; }
+.sc-none { font-size: 13px; color: var(--muted); margin: 4px 0; }
+.sc-form { display: flex; gap: 8px; margin-top: 8px; }
+.sc-input {
+  flex: 1; font-family: inherit; font-size: 14px; color: var(--text);
+  background: var(--bg); border: 2px solid var(--border);
+  border-radius: 10px; padding: 8px 12px;
+}
+.sc-input:focus { outline: none; border-color: var(--accent); }
+.sc-form .inbox-submit { align-self: auto; padding: 8px 18px; }
