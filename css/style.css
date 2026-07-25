@@ -504,6 +504,23 @@ h1, h2, .logo, .section-title {
 .ms-cell[data-n="7"] { color: #4a3226; }
 .ms-cell[data-n="8"] { color: #8a837b; }
 
+/* ===== 攀岩 ===== */
+.climb-levels .ms-level:disabled { opacity: 0.45; cursor: default; }
+.climb-levels .ms-level:disabled:hover { border-color: var(--border); color: var(--muted); }
+.climb-info {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 6px;
+  margin-bottom: 10px; font-size: 14px; color: var(--text);
+}
+#climb-canvas {
+  display: block; width: 100%; max-width: 480px; margin: 0 auto;
+  border: 2px solid var(--border); border-radius: 14px;
+  touch-action: none; cursor: pointer;
+}
+.climb-hint { text-align: center; color: var(--muted); font-size: 13px; margin-top: 8px; }
+#climb-status { text-align: center; }
+#panel-climb .game-bar { gap: 10px; }
+
 /* ===== 你和我 ===== */
 .hidden { display: none !important; }
 

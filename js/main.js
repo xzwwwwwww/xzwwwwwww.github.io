@@ -20,6 +20,7 @@ const I18N = {
     tabSweeper: "扫雷",
     tabSnake: "贪吃蛇",
     tabPoem: "古诗词",
+    tabClimb: "攀岩",
     navSpace: "你和我",
     spaceTitle: "你和我"
   },
@@ -41,6 +42,7 @@ const I18N = {
     tabSweeper: "Minesweeper",
     tabSnake: "Snake",
     tabPoem: "Poetry",
+    tabClimb: "Climbing",
     navSpace: "You & Me",
     spaceTitle: "You & Me"
   }

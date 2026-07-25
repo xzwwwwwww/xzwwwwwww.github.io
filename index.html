@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=19">
+  <link rel="stylesheet" href="css/style.css?v=20">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -90,6 +90,7 @@
         <button class="game-tab" data-game="sweeper" data-i18n="tabSweeper">扫雷</button>
         <button class="game-tab" data-game="snake" data-i18n="tabSnake">贪吃蛇</button>
         <button class="game-tab" data-game="poem" data-i18n="tabPoem">古诗词</button>
+        <button class="game-tab" data-game="climb" data-i18n="tabClimb">攀岩</button>
       </div>
       <div id="panel-miner" class="game-panel active">
         <div class="game-card">
@@ -152,6 +153,23 @@
           </div>
         </div>
       </div>
+      <div id="panel-climb" class="game-panel">
+        <div class="game-card">
+          <div id="climb-levels" class="ms-levels climb-levels"></div>
+          <div class="climb-info">
+            <span id="climb-level-label"></span>
+            <span id="climb-moves"></span>
+            <span id="climb-par"></span>
+          </div>
+          <canvas id="climb-canvas" width="480" height="600"></canvas>
+          <p id="climb-hint" class="climb-hint"></p>
+          <p id="climb-status" class="inbox-status"></p>
+          <div class="game-bar">
+            <button id="climb-reset" class="inbox-submit"></button>
+            <button id="climb-next" class="inbox-submit hidden"></button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 你和我 -->
@@ -174,17 +192,18 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=19"></script>
-  <script src="js/data.js?v=19"></script>
-  <script src="js/main.js?v=19"></script>
-  <script src="js/inbox.js?v=19"></script>
-  <script src="js/game.js?v=19"></script>
-  <script src="js/pvz.js?v=19"></script>
-  <script src="js/minesweeper.js?v=19"></script>
-  <script src="js/snake.js?v=19"></script>
-  <script src="js/space-data.js?v=19"></script>
-  <script src="js/space.js?v=19"></script>
-  <script src="js/poem-data.js?v=19"></script>
-  <script src="js/poem.js?v=19"></script>
+  <script src="js/config.js?v=20"></script>
+  <script src="js/data.js?v=20"></script>
+  <script src="js/main.js?v=20"></script>
+  <script src="js/inbox.js?v=20"></script>
+  <script src="js/game.js?v=20"></script>
+  <script src="js/pvz.js?v=20"></script>
+  <script src="js/minesweeper.js?v=20"></script>
+  <script src="js/snake.js?v=20"></script>
+  <script src="js/space-data.js?v=20"></script>
+  <script src="js/space.js?v=20"></script>
+  <script src="js/poem-data.js?v=20"></script>
+  <script src="js/poem.js?v=20"></script>
+  <script src="js/climbing.js?v=20"></script>
 </body>
 </html>
