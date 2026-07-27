@@ -73,7 +73,19 @@ const SPACE_USERS = [
           "I love you."
         ],
         photos: []
-      }
+      },
+      {
+        date: "2026-07-27",
+        title: "谴责信",
+        title_en: "Letter of Censure",
+        text: [
+          "我讨厌你szd。"
+        ],
+        text_en: [
+          "I hate you, szd."
+        ],
+        photos: []
+      },
     ]
   },
   {
@@ -88,6 +100,18 @@ const SPACE_USERS = [
         title_en: "Welcome",
         text: ["美丽的carys，你好。"],
         text_en: ["This corner is only visible to you."],
+        photos: []
+      },
+      {
+        date: "2026-07-27",
+        title: "亲爱的蔡蔡女士",
+        title_en: "Dear Ms. Carys",
+        text: ["最近还好么？",
+          "我想你啦。"
+        ],
+        text_en: ["How have you been lately?",
+          "I miss you."
+        ],
         photos: []
       }
     ]
