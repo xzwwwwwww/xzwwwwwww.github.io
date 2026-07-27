@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=21">
+  <link rel="stylesheet" href="css/style.css?v=22">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -85,14 +85,39 @@
     <section id="game" class="page">
       <h2 class="section-title" data-i18n="gameTitle">小游戏</h2>
       <div class="game-tabs">
-        <button class="game-tab active" data-game="miner" data-i18n="tabMiner">黄金矿工</button>
+        <button class="game-tab active" data-game="sudoku" data-i18n="tabSudoku">数独</button>
+        <button class="game-tab" data-game="miner" data-i18n="tabMiner">黄金矿工</button>
         <button class="game-tab" data-game="pvz" data-i18n="tabPvz">植物大战僵尸</button>
         <button class="game-tab" data-game="sweeper" data-i18n="tabSweeper">扫雷</button>
         <button class="game-tab" data-game="snake" data-i18n="tabSnake">贪吃蛇</button>
         <button class="game-tab" data-game="poem" data-i18n="tabPoem">古诗词</button>
         <button class="game-tab" data-game="climb" data-i18n="tabClimb">攀岩</button>
       </div>
-      <div id="panel-miner" class="game-panel active">
+      <div id="panel-sudoku" class="game-panel active">
+        <div class="game-card sudoku-card">
+          <div id="sudoku-levels" class="ms-levels sudoku-levels"></div>
+          <div class="sudoku-info">
+            <span id="sudoku-level-label"></span>
+            <span id="sudoku-stars" class="sudoku-stars"></span>
+            <span id="sudoku-time"></span>
+            <span id="sudoku-mistakes"></span>
+          </div>
+          <div id="sudoku-board" class="sudoku-board"></div>
+          <div id="sudoku-pad" class="sudoku-pad"></div>
+          <div class="sudoku-tools">
+            <button id="sudoku-notes" class="ms-level sudoku-tool"></button>
+            <button id="sudoku-erase" class="ms-level sudoku-tool"></button>
+            <button id="sudoku-hint" class="ms-level sudoku-tool"></button>
+            <button id="sudoku-reset" class="ms-level sudoku-tool"></button>
+          </div>
+          <div id="sudoku-win" class="sudoku-win hidden">
+            <p id="sudoku-win-text"></p>
+            <p id="sudoku-win-best" class="sudoku-win-best"></p>
+            <button id="sudoku-next" class="inbox-submit"></button>
+          </div>
+        </div>
+      </div>
+      <div id="panel-miner" class="game-panel">
         <div class="game-card">
           <canvas id="game-canvas" width="760" height="500"></canvas>
           <div class="game-bar">
@@ -197,18 +222,20 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=21"></script>
-  <script src="js/data.js?v=21"></script>
-  <script src="js/main.js?v=21"></script>
-  <script src="js/inbox.js?v=21"></script>
-  <script src="js/game.js?v=21"></script>
-  <script src="js/pvz.js?v=21"></script>
-  <script src="js/minesweeper.js?v=21"></script>
-  <script src="js/snake.js?v=21"></script>
-  <script src="js/space-data.js?v=21"></script>
-  <script src="js/space.js?v=21"></script>
-  <script src="js/poem-data.js?v=21"></script>
-  <script src="js/poem.js?v=21"></script>
-  <script src="js/climbing.js?v=21"></script>
+  <script src="js/config.js?v=22"></script>
+  <script src="js/data.js?v=22"></script>
+  <script src="js/main.js?v=22"></script>
+  <script src="js/inbox.js?v=22"></script>
+  <script src="js/game.js?v=22"></script>
+  <script src="js/pvz.js?v=22"></script>
+  <script src="js/minesweeper.js?v=22"></script>
+  <script src="js/snake.js?v=22"></script>
+  <script src="js/space-data.js?v=22"></script>
+  <script src="js/space.js?v=22"></script>
+  <script src="js/poem-data.js?v=22"></script>
+  <script src="js/poem.js?v=22"></script>
+  <script src="js/climbing.js?v=22"></script>
+  <script src="js/sudoku-data.js?v=22"></script>
+  <script src="js/sudoku.js?v=22"></script>
 </body>
 </html>

@@ -86,7 +86,7 @@ const SPACE_USERS = [
         date: "2026-07-20",
         title: "欢迎",
         title_en: "Welcome",
-        text: ["这里是只有你能看到的内容。"],
+        text: ["美丽的carys，你好。"],
         text_en: ["This corner is only visible to you."],
         photos: []
       }

@@ -632,3 +632,89 @@ h1, h2, .logo, .section-title {
 }
 .sc-input:focus { outline: none; border-color: var(--accent); }
 .sc-form .inbox-submit { align-self: auto; padding: 8px 18px; }
+
+/* ===== 数独 ===== */
+.sudoku-card { position: relative; }
+.sudoku-levels { max-height: 96px; overflow-y: auto; }
+.sudoku-info {
+  display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center;
+  font-size: 14px; color: var(--text); margin-bottom: 12px;
+}
+.sudoku-stars { color: var(--accent); letter-spacing: 2px; }
+
+.sudoku-board {
+  display: grid; grid-template-columns: repeat(9, 1fr);
+  width: min(480px, 100%); aspect-ratio: 1; margin: 0 auto;
+  background: var(--panel);
+  border: 3px solid var(--ink); border-radius: 8px; overflow: hidden;
+  user-select: none; -webkit-user-select: none;
+}
+.sudoku-cell {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(15px, 4.5vw, 24px);
+  color: var(--accent); cursor: pointer;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.sudoku-cell:nth-child(9n) { border-right: none; }
+.sudoku-cell:nth-child(n+73) { border-bottom: none; }
+/* 3×3 宫加粗线 */
+.sudoku-cell:nth-child(9n+3),
+.sudoku-cell:nth-child(9n+6) { border-right: 2px solid var(--ink); }
+.sudoku-cell:nth-child(n+19):nth-child(-n+27),
+.sudoku-cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid var(--ink); }
+
+.sudoku-cell.given { color: var(--text); font-weight: 700; cursor: default; }
+.sudoku-cell.hinted { color: #3a9a5b; font-weight: 700; cursor: default; }
+.sudoku-cell.peer { background: var(--accent-soft); }
+.sudoku-cell.same { background: #F7DFAE; }
+.sudoku-cell.selected,
+.sudoku-cell.selected.peer,
+.sudoku-cell.selected.same { background: var(--accent); color: #fff; }
+.sudoku-cell.error { color: var(--accent-red); }
+.sudoku-cell.selected.error { color: #fff; }
+
+/* 笔记小字：格内 3×3 候选数 */
+.sudoku-notes {
+  position: absolute; inset: 1px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  color: var(--muted); pointer-events: none;
+}
+.sudoku-notes span {
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(7px, 1.8vw, 11px); line-height: 1;
+}
+
+/* 数字键盘与工具按钮 */
+.sudoku-pad {
+  display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px;
+  width: min(480px, 100%); margin: 12px auto 0;
+}
+.sudoku-num {
+  padding: 8px 0; font-size: 18px; font-family: inherit; cursor: pointer;
+  background: var(--bg); border: 2px solid var(--border);
+  border-radius: 10px; color: var(--text);
+  transition: all 0.15s ease;
+}
+.sudoku-num:hover { border-color: var(--accent); color: var(--accent); }
+.sudoku-tools {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  margin-top: 12px;
+}
+.sudoku-tool.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.sudoku-tool:disabled { opacity: 0.35; cursor: default; }
+.sudoku-tool:disabled:hover { border-color: var(--border); color: var(--muted); }
+
+/* 过关弹层 */
+.sudoku-win {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding: 20px; text-align: center;
+  background: rgba(255, 247, 239, 0.96); border-radius: 16px;
+}
+#sudoku-win-text { font-size: 18px; color: var(--text); }
+.sudoku-win-best { font-size: 13px; color: var(--muted); }
+#sudoku-next { align-self: auto; }
