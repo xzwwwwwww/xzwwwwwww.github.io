@@ -139,6 +139,8 @@
 
   function renderBoard() {
     const selVal = selected >= 0 ? values[selected] : 0;
+    // 只有全部填满（未过关）时才标红错误格，填写过程中不提示
+    const full = values.every(v => v > 0);
     for (let i = 0; i < 81; i++) {
       const c = cells[i];
       let cls = "sudoku-cell";
@@ -150,7 +152,7 @@
         if (r === sr || col === sc || sameBox(i, selected)) cls += " peer";
         if (selVal && values[i] === selVal) cls += " same";
       }
-      if (values[i] && !givens[i] && String(values[i]) !== solution()[i]) cls += " error";
+      if (full && values[i] && !givens[i] && String(values[i]) !== solution()[i]) cls += " error";
       c.className = cls;
 
       if (values[i]) {
