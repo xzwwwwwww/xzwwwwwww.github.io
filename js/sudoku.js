@@ -10,12 +10,11 @@
       level: "第 {n} 关",
       difficulty: "难度",
       time: "用时 {t}",
-      mistakes: "错误 {n}",
       notes: "笔记",
       erase: "擦除",
       hint: "提示（{n}）",
       reset: "重置",
-      solved: "🎉 过关！用时 {t}，错误 {m} 次",
+      solved: "🎉 过关！用时 {t}",
       best: "本关最佳：{t}",
       next: "下一关",
       allClear: "🏆 恭喜，50 关全部通关！"
@@ -24,12 +23,11 @@
       level: "Level {n}",
       difficulty: "Difficulty",
       time: "Time {t}",
-      mistakes: "Mistakes {n}",
       notes: "Notes",
       erase: "Erase",
       hint: "Hint ({n})",
       reset: "Reset",
-      solved: "🎉 Solved! Time {t}, {m} mistakes",
+      solved: "🎉 Solved! Time {t}",
       best: "Best for this level: {t}",
       next: "Next level",
       allClear: "🏆 All 50 levels cleared!"
@@ -57,7 +55,6 @@
   const levelLabelEl = document.getElementById("sudoku-level-label");
   const starsEl = document.getElementById("sudoku-stars");
   const timeEl = document.getElementById("sudoku-time");
-  const mistakesEl = document.getElementById("sudoku-mistakes");
   const boardEl = document.getElementById("sudoku-board");
   const padEl = document.getElementById("sudoku-pad");
   const notesBtn = document.getElementById("sudoku-notes");
@@ -76,7 +73,6 @@
   let notes = [];     // 81 格笔记数组
   let selected = -1;
   let notesMode = false;
-  let mistakes = 0;
   let hintsLeft = 3;
   let seconds = 0;
   let timerId = null;
@@ -129,7 +125,6 @@
   function renderInfo() {
     levelLabelEl.textContent = tp("level").replace("{n}", level);
     starsEl.textContent = tp("difficulty") + " " + "★".repeat(Math.ceil(level / 10));
-    mistakesEl.textContent = tp("mistakes").replace("{n}", mistakes);
     timeEl.textContent = tp("time").replace("{t}", fmt(seconds));
   }
 
@@ -195,7 +190,6 @@
     notes = values.map(() => []);
     selected = -1;
     notesMode = false;
-    mistakes = 0;
     hintsLeft = 3;
     seconds = 0;
     solved = false;
@@ -214,10 +208,6 @@
       if (values[selected] === n) return;
       values[selected] = n;
       notes[selected] = [];
-      if (String(n) !== solution()[selected]) {
-        mistakes++;
-        renderInfo();
-      }
       checkWin();
     }
     renderBoard();
@@ -263,7 +253,7 @@
       best[level] = seconds;
       store.set("sudokuBest", JSON.stringify(best));
     }
-    winTextEl.textContent = tp("solved").replace("{t}", fmt(seconds)).replace("{m}", mistakes);
+    winTextEl.textContent = tp("solved").replace("{t}", fmt(seconds));
     winBestEl.textContent = tp("best").replace("{t}", fmt(best[level]));
     if (level >= TOTAL) {
       nextBtn.textContent = tp("allClear");
@@ -310,7 +300,7 @@
   document.addEventListener("langchange", () => {
     renderAll();
     if (solved) {
-      winTextEl.textContent = tp("solved").replace("{t}", fmt(seconds)).replace("{m}", mistakes);
+      winTextEl.textContent = tp("solved").replace("{t}", fmt(seconds));
       winBestEl.textContent = tp("best").replace("{t}", fmt(best[level]));
       nextBtn.textContent = level >= TOTAL ? tp("allClear") : tp("next");
     }
