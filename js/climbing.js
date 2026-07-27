@@ -53,7 +53,7 @@ const CLIMB_LEVELS = [
       target: "目标：{c}", gold: "金色终点",
       red: "红色", blue: "蓝色", green: "绿色", purple: "紫色",
       modeNormal: "普通模式", modeTimed: "计时挑战", clearLines: "清除辅助线",
-      time: "{t} 秒"
+      time: "{t} 秒", start: "开始游戏"
     },
     en: {
       level: "Level {n}", moves: "Moves {n}", par: "Par {n}",
@@ -68,7 +68,7 @@ const CLIMB_LEVELS = [
       target: "Target: {c}", gold: "Gold finish",
       red: "Red", blue: "Blue", green: "Green", purple: "Purple",
       modeNormal: "Normal", modeTimed: "Time attack", clearLines: "Clear lines",
-      time: "{t}s"
+      time: "{t}s", start: "Start Game"
     }
   };
   const tp = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -96,6 +96,8 @@ const CLIMB_LEVELS = [
   const modeBtn = document.getElementById("climb-mode");
   const clearLinesBtn = document.getElementById("climb-clear-lines");
   const nextBtn = document.getElementById("climb-next");
+  const startEl = document.getElementById("climb-start");
+  const startBtn = document.getElementById("climb-start-btn");
   const canvas = document.getElementById("climb-canvas");
   const ctx = canvas.getContext("2d");
 
@@ -170,6 +172,7 @@ const CLIMB_LEVELS = [
   let lines = [], drawing = null;
   let hover = { idx: -1, since: 0 };
   let lastTap = 0, startTime = 0, clearTime = 0;
+  let started = false;   // 点击「开始游戏」后才计时、消耗指力、可操作
 
   const cfg = () => CLIMB_LEVELS[level - 1];
   const nColors = () => cfg().colors.length;
@@ -337,6 +340,7 @@ const CLIMB_LEVELS = [
     resetBtn.textContent = tp("reset");
     modeBtn.textContent = mode === "timed" ? tp("modeTimed") : tp("modeNormal");
     clearLinesBtn.textContent = tp("clearLines");
+    startBtn.textContent = tp("start");
     const h = cfg().hint;
     hintEl.textContent = h ? (h[currentLang] || h.zh) : "";
     if (cleared) onClearedText();
@@ -510,7 +514,7 @@ const CLIMB_LEVELS = [
       setStatus(tp("failed"), true);
     }
     // 指力：双脚踩稳恢复，都无踩稳消耗
-    if (!cleared && !failed && !falling) {
+    if (started && !cleared && !failed && !falling) {
       const f2 = holds[limbs[2]].t !== 1, f3 = holds[limbs[3]].t !== 1;
       if (f2 && f3) strength = Math.min(100, strength + cfg().regen * dt);
       else if (!f2 && !f3) {
@@ -520,7 +524,7 @@ const CLIMB_LEVELS = [
       strengthFill.style.width = strength + "%";
       strengthFill.style.background = strength < 25 ? "#D95550" : strength < 55 ? "#D99A2B" : "#3A9A5B";
     }
-    if (mode === "timed" && !cleared && !failed) {
+    if (started && mode === "timed" && !cleared && !failed) {
       timeEl.textContent = tp("time").replace("{t}", ((now - startTime) / 1000).toFixed(1));
     } else timeEl.textContent = "";
     const panel = document.getElementById("panel-climb");
@@ -571,6 +575,11 @@ const CLIMB_LEVELS = [
   canvas.addEventListener("pointerleave", () => { drawing = null; hover = { idx: -1, since: 0 }; });
 
   resetBtn.addEventListener("click", () => loadLevel(level));
+  startBtn.addEventListener("click", () => {
+    started = true;
+    startEl.classList.add("hidden");
+    startTime = performance.now();   // 计时从点击开始算起
+  });
   nextBtn.addEventListener("click", () => { if (level < TOTAL) loadLevel(level + 1); });
   modeBtn.addEventListener("click", () => {
     mode = mode === "timed" ? "normal" : "timed";

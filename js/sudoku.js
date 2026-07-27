@@ -17,7 +17,8 @@
       solved: "🎉 过关！用时 {t}",
       best: "本关最佳：{t}",
       next: "下一关",
-      allClear: "🏆 恭喜，50 关全部通关！"
+      allClear: "🏆 恭喜，50 关全部通关！",
+      start: "开始游戏"
     },
     en: {
       level: "Level {n}",
@@ -30,7 +31,8 @@
       solved: "🎉 Solved! Time {t}",
       best: "Best for this level: {t}",
       next: "Next level",
-      allClear: "🏆 All 50 levels cleared!"
+      allClear: "🏆 All 50 levels cleared!",
+      start: "Start Game"
     }
   };
   const tp = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -65,6 +67,8 @@
   const winTextEl = document.getElementById("sudoku-win-text");
   const winBestEl = document.getElementById("sudoku-win-best");
   const nextBtn = document.getElementById("sudoku-next");
+  const startEl = document.getElementById("sudoku-start");
+  const startBtn = document.getElementById("sudoku-start-btn");
 
   let level = Math.min(progress.u, TOTAL);
   let values = [];    // 81 格当前数字，0 为空
@@ -77,6 +81,7 @@
   let seconds = 0;
   let timerId = null;
   let solved = false;
+  let started = false;   // 点击「开始游戏」后才计时、可操作
 
   // 建棋盘（81 个 div）与数字键盘，只建一次
   const cells = [];
@@ -135,6 +140,7 @@
     hintBtn.textContent = tp("hint").replace("{n}", hintsLeft);
     hintBtn.disabled = hintsLeft <= 0 || solved;
     resetBtn.textContent = tp("reset");
+    startBtn.textContent = tp("start");
   }
 
   function renderBoard() {
@@ -196,7 +202,7 @@
     seconds = 0;
     solved = false;
     winEl.classList.add("hidden");
-    startTimer();
+    if (started) startTimer();
     renderAll();
   }
 
@@ -276,6 +282,12 @@
   eraseBtn.addEventListener("click", erase);
   hintBtn.addEventListener("click", hint);
   resetBtn.addEventListener("click", () => loadLevel(level));
+  startBtn.addEventListener("click", () => {
+    started = true;
+    startEl.classList.add("hidden");
+    seconds = 0;
+    startTimer();
+  });
   nextBtn.addEventListener("click", () => {
     if (level < TOTAL) loadLevel(level + 1);
   });
