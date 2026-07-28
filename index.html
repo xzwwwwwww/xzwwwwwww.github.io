@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=28">
+  <link rel="stylesheet" href="css/style.css?v=29">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -214,7 +214,8 @@
       <div class="game-tabs kids-tabs">
         <button class="game-tab kids-tab active" data-kids="doodle">🎨</button>
         <button class="game-tab kids-tab" data-kids="mole">🐻</button>
-        <button class="game-tab kids-tab" data-kids="math">🔢</button>
+        <button class="game-tab kids-tab" data-kids="math2">🔢</button>
+        <button class="game-tab kids-tab" data-kids="math3">🔢</button>
       </div>
 
       <!-- 涂鸦画板 -->
@@ -251,24 +252,46 @@
         </div>
       </div>
 
-      <!-- 口算小问答 -->
-      <div id="kids-panel-math" class="game-panel kids-panel">
+      <!-- 口算小问答 · 二年级下册 -->
+      <div id="kids-panel-math2" class="game-panel kids-panel">
         <div class="game-card kids-card kids-math-card">
-          <div id="math-play">
+          <div id="m2-play">
             <div class="math-bar">
-              <span id="math-progress"></span>
-              <span id="math-timer"></span>
+              <span id="m2-progress"></span>
+              <span id="m2-timer"></span>
             </div>
-            <p id="math-question" class="math-question"></p>
-            <div id="math-options" class="math-options"></div>
-            <div id="math-check" class="math-check hidden">✓</div>
+            <p id="m2-question" class="math-question"></p>
+            <div id="m2-options" class="math-options"></div>
+            <div id="m2-check" class="math-check hidden">✓</div>
           </div>
-          <div id="math-result" class="hidden">
-            <p id="math-result-text" class="math-result-text"></p>
-            <button id="math-again" class="inbox-submit"></button>
+          <div id="m2-result" class="hidden">
+            <p id="m2-result-text" class="math-result-text"></p>
+            <button id="m2-again" class="inbox-submit"></button>
           </div>
-          <div id="math-start" class="game-start">
-            <button id="math-start-btn" class="inbox-submit"></button>
+          <div id="m2-start" class="game-start">
+            <button id="m2-start-btn" class="inbox-submit"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 口算小问答 · 三年级下册 -->
+      <div id="kids-panel-math3" class="game-panel kids-panel">
+        <div class="game-card kids-card kids-math-card">
+          <div id="m3-play">
+            <div class="math-bar">
+              <span id="m3-progress"></span>
+              <span id="m3-timer"></span>
+            </div>
+            <p id="m3-question" class="math-question"></p>
+            <div id="m3-options" class="math-options"></div>
+            <div id="m3-check" class="math-check hidden">✓</div>
+          </div>
+          <div id="m3-result" class="hidden">
+            <p id="m3-result-text" class="math-result-text"></p>
+            <button id="m3-again" class="inbox-submit"></button>
+          </div>
+          <div id="m3-start" class="game-start">
+            <button id="m3-start-btn" class="inbox-submit"></button>
           </div>
         </div>
       </div>
@@ -294,21 +317,21 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=28"></script>
-  <script src="js/data.js?v=28"></script>
-  <script src="js/main.js?v=28"></script>
-  <script src="js/inbox.js?v=28"></script>
-  <script src="js/game.js?v=28"></script>
-  <script src="js/pvz.js?v=28"></script>
-  <script src="js/minesweeper.js?v=28"></script>
-  <script src="js/snake.js?v=28"></script>
-  <script src="js/space-data.js?v=28"></script>
-  <script src="js/space.js?v=28"></script>
-  <script src="js/poem-data.js?v=28"></script>
-  <script src="js/poem.js?v=28"></script>
-  <script src="js/climbing.js?v=28"></script>
-  <script src="js/kids.js?v=28"></script>
-  <script src="js/sudoku-data.js?v=28"></script>
-  <script src="js/sudoku.js?v=28"></script>
+  <script src="js/config.js?v=29"></script>
+  <script src="js/data.js?v=29"></script>
+  <script src="js/main.js?v=29"></script>
+  <script src="js/inbox.js?v=29"></script>
+  <script src="js/game.js?v=29"></script>
+  <script src="js/pvz.js?v=29"></script>
+  <script src="js/minesweeper.js?v=29"></script>
+  <script src="js/snake.js?v=29"></script>
+  <script src="js/space-data.js?v=29"></script>
+  <script src="js/space.js?v=29"></script>
+  <script src="js/poem-data.js?v=29"></script>
+  <script src="js/poem.js?v=29"></script>
+  <script src="js/climbing.js?v=29"></script>
+  <script src="js/kids.js?v=29"></script>
+  <script src="js/sudoku-data.js?v=29"></script>
+  <script src="js/sudoku.js?v=29"></script>
 </body>
 </html>

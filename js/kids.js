@@ -1,4 +1,4 @@
-/* 小朋友专区：涂鸦画板 / 打地鼠 / 口算小问答
+/* 小朋友专区：涂鸦画板 / 打地鼠 / 口算小问答（二年级下册、三年级下册两个难度）
  * 纯前端实现；打地鼠最高纪录存 localStorage（kidsMoleBest）
  * 依赖 main.js 的全局 currentLang 与 langchange 事件
  */
@@ -8,7 +8,8 @@
     zh: {
       tabDoodle: "🎨 涂鸦画板",
       tabMole: "🐻 打地鼠",
-      tabMath: "🔢 口算小问答",
+      tabMath2: "🔢 口算·二年级下",
+      tabMath3: "🔢 口算·三年级下",
       brush: "笔刷",
       eraser: "🧽 橡皮",
       pencil: "🖍️ 画笔",
@@ -30,7 +31,8 @@
     en: {
       tabDoodle: "🎨 Doodle Board",
       tabMole: "🐻 Whack-a-Bear",
-      tabMath: "🔢 Quick Math",
+      tabMath2: "🔢 Math · Grade 2B",
+      tabMath3: "🔢 Math · Grade 3B",
       brush: "Brush",
       eraser: "🧽 Eraser",
       pencil: "🖍️ Pencil",
@@ -281,135 +283,186 @@
     renderMole();
   }
 
-  // ===== 3. 口算小问答 =====
-  const mathPlay = document.getElementById("math-play");
-  const mathResult = document.getElementById("math-result");
-  const mathStartOverlay = document.getElementById("math-start");
-  const mathStartBtn = document.getElementById("math-start-btn");
-  const mathProgressEl = document.getElementById("math-progress");
-  const mathTimerEl = document.getElementById("math-timer");
-  const mathQuestionEl = document.getElementById("math-question");
-  const mathOptionsEl = document.getElementById("math-options");
-  const mathCheckEl = document.getElementById("math-check");
-  const mathResultTextEl = document.getElementById("math-result-text");
-  const mathAgainBtn = document.getElementById("math-again");
-
+  // ===== 3/4. 口算小问答（二年级下册 / 三年级下册，同一套逻辑两个实例）=====
   const MATH_TOTAL = 10;
-  let mathIdx = 0;
-  let mathOk = 0;
-  let mathAnswer = 0;
-  let mathPlaying = false;
-  let mathStartTime = 0;
-  let mathTick = null;
-  let mathLocked = false;
-
   const rand = n => Math.floor(Math.random() * (n + 1));
 
-  function makeQuestion() {
-    // 前 5 题 10 以内，后 5 题 20 以内
-    const max = mathIdx < 5 ? 10 : 20;
-    let a, b, op;
-    if (Math.random() < 0.5) {
-      op = "+";
-      a = rand(max - 1);
-      b = rand(max - a);
-    } else {
-      op = "−";
-      a = rand(max);
-      b = rand(a);
+  // 整数干扰项：答案附近 ±15% 内的不同整数
+  function intOpts(ans) {
+    const spread = Math.max(3, Math.round(Math.abs(ans) * 0.15));
+    const s = new Set([ans]);
+    while (s.size < 3) {
+      const d = ans + Math.floor(Math.random() * (2 * spread + 1)) - spread;
+      if (d >= 0 && d !== ans) s.add(d);
     }
-    mathAnswer = op === "+" ? a + b : a - b;
-    mathQuestionEl.textContent = `${a} ${op} ${b} = ?`;
-
-    // 3 个选项：正确答案 + 两个不重复干扰项
-    const opts = new Set([mathAnswer]);
-    while (opts.size < 3) {
-      const d = mathAnswer + (Math.floor(Math.random() * 7) - 3);
-      if (d >= 0) opts.add(d);
+    return [...s].sort(() => Math.random() - 0.5);
+  }
+  // 一位小数干扰项（内部按十分位整数算，避免浮点误差）
+  function decOpts(ans) {
+    const a10 = Math.round(ans * 10);
+    const s = new Set([a10]);
+    while (s.size < 3) {
+      const d = a10 + Math.floor(Math.random() * 25) - 12;
+      if (d >= 0 && d !== a10) s.add(d);
     }
-    const arr = [...opts].sort(() => Math.random() - 0.5);
-    mathOptionsEl.innerHTML = "";
-    arr.forEach(v => {
-      const b2 = document.createElement("button");
-      b2.className = "math-option";
-      b2.textContent = v;
-      b2.addEventListener("click", () => pickOption(b2, v));
-      mathOptionsEl.appendChild(b2);
-    });
+    return [...s].sort(() => Math.random() - 0.5).map(v => v / 10);
   }
 
-  function pickOption(btn, v) {
-    if (!mathPlaying || mathLocked) return;
-    if (v === mathAnswer) {
-      mathLocked = true;
-      mathOk++;
-      mathCheckEl.classList.remove("hidden");
-      mathCheckEl.classList.add("pop");
-      setTimeout(() => {
-        mathCheckEl.classList.add("hidden");
-        mathCheckEl.classList.remove("pop");
-        mathIdx++;
-        if (mathIdx >= MATH_TOTAL) endMath();
-        else { renderMath(); makeQuestion(); mathLocked = false; }
-      }, 600);
-    } else {
-      btn.classList.add("shake");
-      setTimeout(() => btn.classList.remove("shake"), 400);
+  // 二年级下册：100 以内加减 + 表内乘除
+  function genG2() {
+    const t = Math.floor(Math.random() * 4);
+    if (t === 0) {
+      const a = 11 + rand(88), b = 1 + rand(Math.max(0, 99 - a));
+      return { text: `${a} + ${b} = ?`, answer: a + b, opts: intOpts(a + b) };
     }
+    if (t === 1) {
+      const a = 11 + rand(88), b = 1 + rand(a - 1);
+      return { text: `${a} − ${b} = ?`, answer: a - b, opts: intOpts(a - b) };
+    }
+    if (t === 2) {
+      const a = 2 + rand(7), b = 2 + rand(7);
+      return { text: `${a} × ${b} = ?`, answer: a * b, opts: intOpts(a * b) };
+    }
+    const b = 2 + rand(7), c = 2 + rand(7), a = b * c;
+    return { text: `${a} ÷ ${b} = ?`, answer: c, opts: intOpts(c) };
   }
 
-  function renderMath() {
-    mathProgressEl.textContent = tf("mathProgress", { n: Math.min(mathIdx + 1, MATH_TOTAL) });
+  // 三年级下册：两位数乘法 + 除数一位数 + 一位小数加减
+  function genG3() {
+    const t = Math.floor(Math.random() * 5);
+    if (t === 0) {
+      const a = 12 + rand(87), b = 2 + rand(7);
+      return { text: `${a} × ${b} = ?`, answer: a * b, opts: intOpts(a * b) };
+    }
+    if (t === 1) {
+      const a = 11 + rand(14), b = 11 + rand(8);
+      return { text: `${a} × ${b} = ?`, answer: a * b, opts: intOpts(a * b) };
+    }
+    if (t === 2) {
+      const b = 2 + rand(7), c = 12 + rand(87), a = b * c;
+      return { text: `${a} ÷ ${b} = ?`, answer: c, opts: intOpts(c) };
+    }
+    const a10 = 5 + rand(94), b10 = 5 + rand(94);
+    if (t === 3) {
+      const s = (a10 + b10) / 10;
+      return { text: `${(a10 / 10).toFixed(1)} + ${(b10 / 10).toFixed(1)} = ?`,
+               answer: s, opts: decOpts(s), dec: true };
+    }
+    const hi = Math.max(a10, b10), lo = Math.min(a10, b10), d = (hi - lo) / 10;
+    return { text: `${(hi / 10).toFixed(1)} − ${(lo / 10).toFixed(1)} = ?`,
+             answer: d, opts: decOpts(d), dec: true };
   }
 
-  function startMath() {
-    mathIdx = 0;
-    mathOk = 0;
-    mathPlaying = true;
-    mathLocked = false;
-    mathStartTime = Date.now();
-    mathStartOverlay.classList.add("hidden");
-    mathResult.classList.add("hidden");
-    mathPlay.classList.remove("hidden");
-    clearInterval(mathTick);
-    mathTick = setInterval(() => {
-      mathTimerEl.textContent = tf("mathTime", { n: Math.floor((Date.now() - mathStartTime) / 1000) });
-    }, 500);
-    mathTimerEl.textContent = tf("mathTime", { n: 0 });
-    renderMath();
-    makeQuestion();
+  // 口算实例工厂：prefix = 元素 id 前缀（m2 / m3），gen = 出题函数
+  function setupMath(prefix, gen) {
+    const play = document.getElementById(prefix + "-play");
+    const result = document.getElementById(prefix + "-result");
+    const startOverlay = document.getElementById(prefix + "-start");
+    const startBtn = document.getElementById(prefix + "-start-btn");
+    const progressEl = document.getElementById(prefix + "-progress");
+    const timerEl = document.getElementById(prefix + "-timer");
+    const questionEl = document.getElementById(prefix + "-question");
+    const optionsEl = document.getElementById(prefix + "-options");
+    const checkEl = document.getElementById(prefix + "-check");
+    const resultTextEl = document.getElementById(prefix + "-result-text");
+    const againBtn = document.getElementById(prefix + "-again");
+
+    let idx = 0, ok = 0, answer = 0, dec = false;
+    let playing = false, locked = false, startTime = 0, tick = null;
+
+    function makeQuestion() {
+      const q = gen();
+      answer = q.answer;
+      dec = !!q.dec;
+      questionEl.textContent = q.text;
+      optionsEl.innerHTML = "";
+      q.opts.forEach(v => {
+        const b2 = document.createElement("button");
+        b2.className = "math-option";
+        b2.textContent = dec ? v.toFixed(1) : v;
+        b2.addEventListener("click", () => pickOption(b2, v));
+        optionsEl.appendChild(b2);
+      });
+    }
+
+    function pickOption(btn, v) {
+      if (!playing || locked) return;
+      const right = dec ? Math.round(v * 10) === Math.round(answer * 10) : v === answer;
+      if (right) {
+        locked = true;
+        ok++;
+        checkEl.classList.remove("hidden");
+        checkEl.classList.add("pop");
+        setTimeout(() => {
+          checkEl.classList.add("hidden");
+          checkEl.classList.remove("pop");
+          idx++;
+          if (idx >= MATH_TOTAL) endMath();
+          else { renderProgress(); makeQuestion(); locked = false; }
+        }, 600);
+      } else {
+        btn.classList.add("shake");
+        setTimeout(() => btn.classList.remove("shake"), 400);
+      }
+    }
+
+    function renderProgress() {
+      progressEl.textContent = tf("mathProgress", { n: Math.min(idx + 1, MATH_TOTAL) });
+    }
+
+    function startMath() {
+      idx = 0; ok = 0;
+      playing = true; locked = false;
+      startTime = Date.now();
+      startOverlay.classList.add("hidden");
+      result.classList.add("hidden");
+      play.classList.remove("hidden");
+      clearInterval(tick);
+      tick = setInterval(() => {
+        timerEl.textContent = tf("mathTime", { n: Math.floor((Date.now() - startTime) / 1000) });
+      }, 500);
+      timerEl.textContent = tf("mathTime", { n: 0 });
+      renderProgress();
+      makeQuestion();
+    }
+
+    function endMath() {
+      playing = false;
+      clearInterval(tick);
+      const secs = Math.floor((Date.now() - startTime) / 1000);
+      play.classList.add("hidden");
+      result.classList.remove("hidden");
+      resultTextEl.textContent = tf("mathResult", {
+        ok: ok,
+        rate: Math.round((ok / MATH_TOTAL) * 100),
+        t: secs
+      });
+    }
+
+    startBtn.addEventListener("click", startMath);
+    againBtn.addEventListener("click", startMath);
+
+    function renderLang() {
+      startBtn.textContent = tp("mathStart");
+      againBtn.textContent = tp("mathAgain");
+      if (playing) renderProgress();
+    }
+    return { renderLang };
   }
 
-  function endMath() {
-    mathPlaying = false;
-    clearInterval(mathTick);
-    const secs = Math.floor((Date.now() - mathStartTime) / 1000);
-    mathPlay.classList.add("hidden");
-    mathResult.classList.remove("hidden");
-    mathResultTextEl.textContent = tf("mathResult", {
-      ok: mathOk,
-      rate: Math.round((mathOk / MATH_TOTAL) * 100),
-      t: secs
-    });
-  }
-
-  mathStartBtn.addEventListener("click", startMath);
-  mathAgainBtn.addEventListener("click", startMath);
-
-  function renderMathLang() {
-    mathStartBtn.textContent = tp("mathStart");
-    mathAgainBtn.textContent = tp("mathAgain");
-    if (mathPlaying) renderMath();
-  }
+  const math2 = setupMath("m2", genG2);
+  const math3 = setupMath("m3", genG3);
 
   // ===== 语言切换重绘 =====
   function renderLang() {
     tabs[0].textContent = tp("tabDoodle");
     tabs[1].textContent = tp("tabMole");
-    tabs[2].textContent = tp("tabMath");
+    tabs[2].textContent = tp("tabMath2");
+    tabs[3].textContent = tp("tabMath3");
     renderDoodle();
     renderMoleLang();
-    renderMathLang();
+    math2.renderLang();
+    math3.renderLang();
   }
   document.addEventListener("langchange", renderLang);
 
@@ -417,6 +470,5 @@
   renderDoodle();
   renderMole();
   moleStartBtn.textContent = tp("moleStart");
-  renderMathLang();
   renderLang();
 })();
