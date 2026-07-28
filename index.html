@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=27">
+  <link rel="stylesheet" href="css/style.css?v=28">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -20,6 +20,7 @@
           <a href="#life" class="nav-link" data-i18n="navLife">生活碎碎念</a>
           <a href="#inbox" class="nav-link" data-i18n="navInbox">留言信箱</a>
           <a href="#game" class="nav-link" data-i18n="navGame">小游戏</a>
+          <a href="#kids" class="nav-link" data-i18n="navKids">小朋友</a>
           <a href="#space" class="nav-link" data-i18n="navSpace">你和我</a>
         </nav>
         <button id="lang-toggle" class="lang-toggle" aria-label="Switch language">EN</button>
@@ -207,6 +208,72 @@
       </div>
     </section>
 
+    <!-- 小朋友（儿童向专区） -->
+    <section id="kids" class="page">
+      <h2 class="section-title" data-i18n="kidsTitle">小朋友专区</h2>
+      <div class="game-tabs kids-tabs">
+        <button class="game-tab kids-tab active" data-kids="doodle">🎨</button>
+        <button class="game-tab kids-tab" data-kids="mole">🐻</button>
+        <button class="game-tab kids-tab" data-kids="math">🔢</button>
+      </div>
+
+      <!-- 涂鸦画板 -->
+      <div id="kids-panel-doodle" class="game-panel kids-panel active">
+        <div class="game-card kids-card">
+          <div class="doodle-toolbar">
+            <div id="doodle-palette" class="doodle-palette"></div>
+            <div class="doodle-tools">
+              <div id="doodle-sizes" class="doodle-sizes"></div>
+              <button id="doodle-eraser" class="kids-btn">🧽</button>
+              <button id="doodle-clear" class="kids-btn">🗑️</button>
+              <button id="doodle-save" class="kids-btn">💾</button>
+            </div>
+          </div>
+          <div class="doodle-canvas-wrap">
+            <canvas id="doodle-canvas" width="720" height="460"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- 打地鼠 -->
+      <div id="kids-panel-mole" class="game-panel kids-panel">
+        <div class="game-card kids-card">
+          <div class="mole-bar">
+            <span id="mole-score"></span>
+            <span id="mole-time"></span>
+            <span id="mole-best"></span>
+          </div>
+          <div id="mole-grid" class="mole-grid"></div>
+          <p id="mole-status" class="inbox-status"></p>
+          <div class="game-bar">
+            <button id="mole-start" class="inbox-submit"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 口算小问答 -->
+      <div id="kids-panel-math" class="game-panel kids-panel">
+        <div class="game-card kids-card kids-math-card">
+          <div id="math-play">
+            <div class="math-bar">
+              <span id="math-progress"></span>
+              <span id="math-timer"></span>
+            </div>
+            <p id="math-question" class="math-question"></p>
+            <div id="math-options" class="math-options"></div>
+            <div id="math-check" class="math-check hidden">✓</div>
+          </div>
+          <div id="math-result" class="hidden">
+            <p id="math-result-text" class="math-result-text"></p>
+            <button id="math-again" class="inbox-submit"></button>
+          </div>
+          <div id="math-start" class="game-start">
+            <button id="math-start-btn" class="inbox-submit"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 你和我 -->
     <section id="space" class="page">
       <h2 class="section-title" data-i18n="spaceTitle">你和我</h2>
@@ -227,20 +294,21 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=27"></script>
-  <script src="js/data.js?v=27"></script>
-  <script src="js/main.js?v=27"></script>
-  <script src="js/inbox.js?v=27"></script>
-  <script src="js/game.js?v=27"></script>
-  <script src="js/pvz.js?v=27"></script>
-  <script src="js/minesweeper.js?v=27"></script>
-  <script src="js/snake.js?v=27"></script>
-  <script src="js/space-data.js?v=27"></script>
-  <script src="js/space.js?v=27"></script>
-  <script src="js/poem-data.js?v=27"></script>
-  <script src="js/poem.js?v=27"></script>
-  <script src="js/climbing.js?v=27"></script>
-  <script src="js/sudoku-data.js?v=27"></script>
-  <script src="js/sudoku.js?v=27"></script>
+  <script src="js/config.js?v=28"></script>
+  <script src="js/data.js?v=28"></script>
+  <script src="js/main.js?v=28"></script>
+  <script src="js/inbox.js?v=28"></script>
+  <script src="js/game.js?v=28"></script>
+  <script src="js/pvz.js?v=28"></script>
+  <script src="js/minesweeper.js?v=28"></script>
+  <script src="js/snake.js?v=28"></script>
+  <script src="js/space-data.js?v=28"></script>
+  <script src="js/space.js?v=28"></script>
+  <script src="js/poem-data.js?v=28"></script>
+  <script src="js/poem.js?v=28"></script>
+  <script src="js/climbing.js?v=28"></script>
+  <script src="js/kids.js?v=28"></script>
+  <script src="js/sudoku-data.js?v=28"></script>
+  <script src="js/sudoku.js?v=28"></script>
 </body>
 </html>

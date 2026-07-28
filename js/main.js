@@ -23,7 +23,9 @@ const I18N = {
     tabPoem: "古诗词",
     tabClimb: "攀岩",
     navSpace: "你和我",
-    spaceTitle: "你和我"
+    spaceTitle: "你和我",
+    navKids: "小朋友",
+    kidsTitle: "小朋友专区"
   },
   en: {
     logo: "My Corner",
@@ -46,7 +48,9 @@ const I18N = {
     tabPoem: "Poetry",
     tabClimb: "Climbing",
     navSpace: "You & Me",
-    spaceTitle: "You & Me"
+    spaceTitle: "You & Me",
+    navKids: "Kids",
+    kidsTitle: "Kids' Corner"
   }
 };
 
