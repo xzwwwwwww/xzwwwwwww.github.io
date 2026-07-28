@@ -83,8 +83,14 @@
   const clearBtn = document.getElementById("doodle-clear");
   const saveBtn = document.getElementById("doodle-save");
 
-  const COLORS = ["#4A3226", "#D95550", "#F2784B", "#F5A623",
-    "#D99A2B", "#7FB069", "#4FA3D1", "#8E6FBF", "#E57BA8", "#FFFFFF"];
+  // 30 色调色板：中性 / 红橙 / 黄绿 / 蓝紫 / 粉 五排
+  const COLORS = [
+    "#4A3226", "#2B2B2B", "#6B6B6B", "#BFBFBF", "#FFFFFF", "#8B5E3C",
+    "#D95550", "#E86A6A", "#F2784B", "#F59A62", "#F5A623", "#FFD166",
+    "#D99A2B", "#C6D64F", "#7FB069", "#4CAF7D", "#2E8B57", "#9CCC65",
+    "#4FA3D1", "#3A6FD8", "#7AC7E3", "#8E6FBF", "#7A4FD8", "#B39DDB",
+    "#E57BA8", "#F4A7C3", "#FFCCE0", "#D94F8E", "#FF8FA3", "#FFE3EC"
+  ];
   const SIZES = [6, 12, 22];
   let color = COLORS[1];
   let size = SIZES[1];
