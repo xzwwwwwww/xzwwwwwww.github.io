@@ -1,6 +1,7 @@
 /* ============================================
  * 我的小站 · 极简编辑风（浅色杂志感）
  * 米白纸底 + 墨黑文字 + 赭橙点缀，细分隔线代替卡片与阴影
+ * 细节层：滑动导航下划线 / 小节编号 / 角标 / 纸面点阵 / 漂浮字符
  * ============================================ */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,6 +13,8 @@
   --muted: #6F6B64;       /* 灰阶辅助文字 */
   --faint: #A39E94;       /* 更浅的灰（图注/页脚） */
   --accent: #C1502E;      /* 赭橙：链接 / active / 按钮 / 小标记 */
+  --accent-tint: rgba(193, 80, 46, 0.10); /* 赭橙淡晕 */
+  --olive: #7E8464;       /* 辅助点缀：灰橄榄（编号/漂浮字符） */
   --line: #E5E2DB;        /* 1px 细分隔线 */
   --wash: #F3F1EA;        /* 极浅的纸色块（翻开格/高亮行） */
   --ok: #4C7A54;          /* 功能色：成功反馈 */
@@ -22,6 +25,9 @@
 body {
   font-family: var(--sans);
   background: var(--bg);
+  /* 极淡纸面点阵，近看有细节、远看成纸纹 */
+  background-image: radial-gradient(circle, rgba(26, 26, 26, 0.05) 1px, transparent 1.4px);
+  background-size: 26px 26px;
   color: var(--text);
   line-height: 1.8;
 }
@@ -42,21 +48,49 @@ h1, h2, h3, h4, .logo, .section-title {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+/* 滚动后：背景更实 + 一丝阴影 */
+.site-header.scrolled {
+  background: rgba(250, 250, 247, 0.98);
+  box-shadow: 0 1px 14px rgba(26, 26, 26, 0.07);
 }
 .header-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+
+/* logo + 旋转小星标 */
+.brand { display: flex; align-items: center; gap: 9px; }
 .logo { font-size: 20px; color: var(--text); letter-spacing: 0.12em; }
 .logo:hover { text-decoration: none; color: var(--accent); }
+.logo-mark {
+  display: inline-block;
+  color: var(--accent); font-size: 13px; line-height: 1;
+  animation: mark-spin 14s linear infinite;
+}
+@keyframes mark-spin { to { transform: rotate(360deg); } }
+
 .header-right { display: flex; align-items: center; }
-.nav { display: flex; align-items: center; }
+.nav { display: flex; align-items: center; position: relative; }
 .nav-link {
   margin-left: 22px; padding: 6px 0;
   color: var(--text); font-size: 12px;
   letter-spacing: 0.14em; text-transform: uppercase;
   border-bottom: 1px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.18s ease;
 }
-.nav-link:hover { text-decoration: none; color: var(--accent); }
+.nav-link:hover { text-decoration: none; color: var(--accent); transform: translateY(-2px); }
 .nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+/* 滑动下划线指示器（nav-fx.js 驱动；JS 未加载时回退为上方的 active 下划线） */
+.nav-ink {
+  position: absolute; left: 0; bottom: 0;
+  width: 0; height: 2px;
+  background: var(--accent);
+  opacity: 0; pointer-events: none;
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+              width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.2s ease;
+}
+.nav.js-ink .nav-link,
+.nav.js-ink .nav-link.active { border-bottom-color: transparent; }
 
 /* 语言切换按钮 */
 .lang-toggle {
@@ -73,7 +107,15 @@ h1, h2, h3, h4, .logo, .section-title {
 .page.active { display: block; }
 
 /* ===== 首页 hero（编辑部风格） ===== */
-.hero { padding: 40px 0 8px; }
+.hero { position: relative; padding: 40px 0 8px; }
+.hero-kicker {
+  font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 22px;
+}
+.hero-star {
+  display: inline-block; margin-left: 6px;
+  animation: mark-spin 10s linear infinite;
+}
 .hero h1 {
   font-size: clamp(34px, 6.5vw, 56px);
   font-weight: 600; line-height: 1.3;
@@ -91,12 +133,59 @@ h1, h2, h3, h4, .logo, .section-title {
   letter-spacing: 0.12em;
 }
 
-/* ===== 区块标题 ===== */
-.section-title {
-  font-size: 24px; letter-spacing: 0.06em;
-  margin: 0 0 32px; padding-bottom: 14px;
+/* 跑马灯细带 */
+.marquee {
+  margin-top: 40px; padding: 10px 0;
+  border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+  overflow: hidden;
 }
+.marquee-track {
+  display: flex; width: max-content;
+  animation: marquee-run 30s linear infinite;
+}
+.marquee-track span {
+  font-size: 11px; letter-spacing: 0.3em; white-space: nowrap;
+  color: var(--faint);
+}
+@keyframes marquee-run { to { transform: translateX(-50%); } }
+
+/* 漂浮小字符（首页 / 碎碎念页零星点缀） */
+.float-mark {
+  position: absolute; pointer-events: none; user-select: none;
+  animation: floaty 7s ease-in-out infinite;
+}
+.fm-a { top: 34px; right: 14%; color: rgba(193, 80, 46, 0.4); font-size: 20px; }
+.fm-b { top: 150px; right: 5%; color: var(--olive); opacity: 0.55; font-size: 14px; animation-delay: 1.8s; animation-duration: 9s; }
+.fm-c { top: 10px; right: 8%; color: var(--olive); opacity: 0.5; font-size: 16px; animation-duration: 8s; }
+.fm-d { top: 120px; right: 2%; color: rgba(193, 80, 46, 0.3); font-size: 13px; animation-delay: 2.4s; }
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(10deg); }
+}
+
+/* ===== 区块标题：编号 + 标题 + 延伸细线 ===== */
+.section-title {
+  display: flex; align-items: baseline; gap: 14px;
+  font-size: 24px; letter-spacing: 0.06em;
+  margin: 0 0 32px;
+}
+.section-title::before {
+  font-family: var(--sans); font-weight: 500;
+  font-size: 11px; letter-spacing: 0.22em;
+  color: var(--accent);
+}
+.section-title::after {
+  content: ""; flex: 1; align-self: center; margin-left: 6px;
+  border-top: 1px solid var(--line);
+}
+#life  .section-title::before { content: "02 —"; }
+#inbox .section-title::before { content: "03 —"; }
+#game  .section-title::before { content: "04 —"; }
+#kids  .section-title::before { content: "05 —"; }
+#space .section-title::before { content: "06 —"; }
+
+#life { position: relative; }
 
 /* ===== 生活时间线 ===== */
 .timeline { position: relative; padding-left: 26px; border-left: 1px solid var(--line); }
@@ -105,6 +194,8 @@ h1, h2, h3, h4, .logo, .section-title {
   content: ""; position: absolute; left: -30px; top: 9px;
   width: 7px; height: 7px;
   background: var(--accent);
+  /* 墨点外一圈细环，盖住时间线穿出的小边 */
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--line);
 }
 .timeline-item .date {
   font-size: 11px; color: var(--faint);
@@ -118,6 +209,19 @@ h1, h2, h3, h4, .logo, .section-title {
   padding: 28px 0; text-align: center;
   color: var(--faint); font-size: 12px;
   letter-spacing: 0.1em;
+}
+/* 三颗依次呼吸的小圆点 */
+.footer-dots { margin-top: 12px; display: flex; gap: 8px; justify-content: center; }
+.footer-dots span {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent); opacity: 0.25;
+  animation: dot-pulse 2.4s ease-in-out infinite;
+}
+.footer-dots span:nth-child(2) { animation-delay: 0.4s; }
+.footer-dots span:nth-child(3) { animation-delay: 0.8s; }
+@keyframes dot-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.35); }
 }
 
 /* ===== 表单（信箱 / 你和我 通用） ===== */
@@ -169,6 +273,11 @@ h1, h2, h3, h4, .logo, .section-title {
   margin-bottom: 6px;
 }
 .msg-head b { color: var(--accent); font-weight: 600; }
+/* 昵称前的小星标 */
+.msg-head b::before {
+  content: "✳"; margin-right: 7px;
+  font-size: 9px; color: var(--olive);
+}
 .msg-head span { font-size: 11px; color: var(--faint); letter-spacing: 0.08em; }
 .msg-body { font-size: 15px; white-space: pre-wrap; }
 .msg-reply {
@@ -230,6 +339,15 @@ h1, h2, h3, h4, .logo, .section-title {
 @media (max-width: 600px) {
   .nav-link { margin-left: 12px; font-size: 11px; letter-spacing: 0.08em; }
   .lang-toggle { margin-left: 12px; }
+  .fm-a { right: 6%; }
+}
+
+/* 尊重系统「减少动态效果」设置 */
+@media (prefers-reduced-motion: reduce) {
+  .logo-mark, .hero-star, .float-mark, .footer-dots span,
+  .marquee-track { animation: none !important; }
+  .nav-link, .nav-ink, .site-header { transition: none !important; }
+  .nav-link:hover { transform: none; }
 }
 
 /* ===== 小游戏 ===== */
@@ -239,6 +357,20 @@ h1, h2, h3, h4, .logo, .section-title {
   position: relative;
   background: var(--panel); border: 1px solid var(--line);
   border-radius: 2px; padding: 24px;
+}
+/* 卡片角标：左上 + 右下 L 形细线角 */
+.game-card::before, .game-card::after,
+.space-entry::before, .space-entry::after {
+  content: ""; position: absolute;
+  width: 14px; height: 14px; pointer-events: none;
+}
+.game-card::before, .space-entry::before {
+  top: -1px; left: -1px;
+  border-top: 2px solid var(--accent); border-left: 2px solid var(--accent);
+}
+.game-card::after, .space-entry::after {
+  bottom: -1px; right: -1px;
+  border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent);
 }
 /* 开始游戏遮罩（数独/攀岩/口算） */
 .game-start {
@@ -385,6 +517,7 @@ h1, h2, h3, h4, .logo, .section-title {
 .space-head .inbox-submit { align-self: auto; }
 
 .space-entry {
+  position: relative;
   background: var(--panel); border: 1px solid var(--line);
   border-radius: 2px; padding: 24px 26px; margin-bottom: 20px;
 }

@@ -7,13 +7,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=31">
+  <link rel="stylesheet" href="css/style.css?v=32">
 </head>
 <body>
   <!-- 顶部导航 -->
   <header class="site-header">
     <div class="container header-inner">
-      <a class="logo" href="#home" data-i18n="logo">小站</a>
+      <div class="brand">
+        <a class="logo" href="#home" data-i18n="logo">小站</a>
+        <span class="logo-mark" aria-hidden="true">✳</span>
+      </div>
       <div class="header-right">
         <nav class="nav">
           <a href="#home" class="nav-link active" data-i18n="navHome">首页</a>
@@ -33,15 +36,26 @@
     <!-- 首页 -->
     <section id="home" class="page active">
       <div class="hero">
+        <p class="hero-kicker">№ 01 · MY CORNER · 小站手记 <span class="hero-star" aria-hidden="true">✳</span></p>
         <h1 data-i18n="heroTitle">你好，欢迎来到我的小站</h1>
         <p class="hero-sub" data-i18n="heroSub">在这里记录生活，存放读过的书与想过的路。</p>
         <p class="scene-caption" data-i18n="sceneCaption">今天也要好好吃饭，认真生活 🍜</p>
+        <span class="float-mark fm-a" aria-hidden="true">✦</span>
+        <span class="float-mark fm-b" aria-hidden="true">❋</span>
+        <div class="marquee" aria-hidden="true">
+          <div class="marquee-track">
+            <span>记录 RECORD ✳ 生活 LIFE ✳ 分享 SHARE ✳ 游戏 PLAY ✳ 阅读 READ ✳ 成长 GROW ✳ </span>
+            <span>记录 RECORD ✳ 生活 LIFE ✳ 分享 SHARE ✳ 游戏 PLAY ✳ 阅读 READ ✳ 成长 GROW ✳ </span>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- 生活碎碎念 -->
     <section id="life" class="page">
       <h2 class="section-title" data-i18n="lifeTitle">生活碎碎念</h2>
+      <span class="float-mark fm-c" aria-hidden="true">✳</span>
+      <span class="float-mark fm-d" aria-hidden="true">✦</span>
       <div id="life-timeline" class="timeline"></div>
     </section>
 
@@ -293,24 +307,26 @@
 
   <footer class="site-footer">
     <p data-i18n="footer">© 2026 我的小站 · 用心记录每一天</p>
+    <div class="footer-dots" aria-hidden="true"><span></span><span></span><span></span></div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=31"></script>
-  <script src="js/data.js?v=31"></script>
-  <script src="js/main.js?v=31"></script>
-  <script src="js/inbox.js?v=31"></script>
-  <script src="js/game.js?v=31"></script>
-  <script src="js/pvz.js?v=31"></script>
-  <script src="js/minesweeper.js?v=31"></script>
-  <script src="js/snake.js?v=31"></script>
-  <script src="js/space-data.js?v=31"></script>
-  <script src="js/space.js?v=31"></script>
-  <script src="js/poem-data.js?v=31"></script>
-  <script src="js/poem.js?v=31"></script>
-  <script src="js/climbing.js?v=31"></script>
-  <script src="js/kids.js?v=31"></script>
-  <script src="js/sudoku-data.js?v=31"></script>
-  <script src="js/sudoku.js?v=31"></script>
+  <script src="js/config.js?v=32"></script>
+  <script src="js/data.js?v=32"></script>
+  <script src="js/main.js?v=32"></script>
+  <script src="js/nav-fx.js?v=32"></script>
+  <script src="js/inbox.js?v=32"></script>
+  <script src="js/game.js?v=32"></script>
+  <script src="js/pvz.js?v=32"></script>
+  <script src="js/minesweeper.js?v=32"></script>
+  <script src="js/snake.js?v=32"></script>
+  <script src="js/space-data.js?v=32"></script>
+  <script src="js/space.js?v=32"></script>
+  <script src="js/poem-data.js?v=32"></script>
+  <script src="js/poem.js?v=32"></script>
+  <script src="js/climbing.js?v=32"></script>
+  <script src="js/kids.js?v=32"></script>
+  <script src="js/sudoku-data.js?v=32"></script>
+  <script src="js/sudoku.js?v=32"></script>
 </body>
 </html>
