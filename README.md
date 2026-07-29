@@ -92,4 +92,4 @@ my-site/
 
 ## 想改样式？
 
-整站采用「自嘲熊」插画风：粉橘底 + 芥末黄 + 奶白卡片，首页是纯 CSS 绘制的白熊吃拉面动画。配色集中在 `css/style.css` 顶部的 `:root` 变量里，标题字体为站酷快乐体（Google Fonts，index.html 里引入）。
+整站采用「极简编辑风」（浅色杂志感）：米白纸底 + 墨黑文字 + 赭橙点缀，细分隔线代替卡片与阴影，标题用衬线字体（Noto Serif SC，Google Fonts，index.html 里引入），正文为系统无衬线。配色与字体集中在 `css/style.css` 顶部的 `:root` 变量里。
