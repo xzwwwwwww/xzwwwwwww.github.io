@@ -372,7 +372,7 @@ h1, h2, h3, h4, .logo, .section-title {
   bottom: -1px; right: -1px;
   border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent);
 }
-/* 开始游戏遮罩（数独/攀岩/口算） */
+/* 开始游戏遮罩（数独/口算） */
 .game-start {
   position: absolute; inset: 0; z-index: 6;
   display: flex; align-items: center; justify-content: center;
@@ -468,39 +468,6 @@ h1, h2, h3, h4, .logo, .section-title {
 .ms-cell[data-n="6"] { color: #2ba8a0; }
 .ms-cell[data-n="7"] { color: #4a3226; }
 .ms-cell[data-n="8"] { color: #8a837b; }
-
-/* ===== 攀岩 ===== */
-.climb-levels .ms-level:disabled { opacity: 0.45; cursor: default; }
-.climb-levels .ms-level:disabled:hover { border-color: var(--line); color: var(--muted); }
-.climb-info {
-  display: flex; justify-content: space-between; align-items: center;
-  flex-wrap: wrap; gap: 6px;
-  margin-bottom: 10px; font-size: 14px; color: var(--text);
-}
-#climb-canvas {
-  display: block; width: 100%; max-width: 480px; margin: 0 auto;
-  border: 1px solid var(--line); border-radius: 2px;
-  touch-action: none; cursor: pointer;
-}
-.climb-hint { text-align: center; color: var(--faint); font-size: 12px; margin-top: 10px; letter-spacing: 0.06em; }
-#climb-status { text-align: center; }
-#panel-climb .game-bar { gap: 10px; flex-wrap: wrap; }
-.climb-color { font-weight: 700; }
-.climb-color::before {
-  content: ""; display: inline-block; width: 10px; height: 10px;
-  border-radius: 50%; background: var(--chip, var(--accent));
-  border: 1px solid var(--text); margin-right: 4px; vertical-align: -1px;
-}
-.climb-strength {
-  height: 8px; margin-bottom: 12px;
-  background: var(--wash); border: 1px solid var(--line);
-  overflow: hidden;
-}
-#climb-strength-fill {
-  height: 100%; width: 100%;
-  background: #3A9A5B;
-  transition: width 0.2s linear, background 0.3s ease;
-}
 
 /* ===== 你和我 ===== */
 .hidden { display: none !important; }
@@ -601,12 +568,12 @@ h1, h2, h3, h4, .logo, .section-title {
 
 /* ===== 数独 ===== */
 .sudoku-card { position: relative; }
-.sudoku-levels, .climb-levels {
+.sudoku-levels {
   display: grid; grid-template-columns: repeat(10, auto);
   justify-content: center;
 }
 @media (max-width: 640px) {
-  .sudoku-levels, .climb-levels { grid-template-columns: repeat(5, auto); }
+  .sudoku-levels { grid-template-columns: repeat(5, auto); }
 }
 .sudoku-info {
   display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center;

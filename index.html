@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=33">
+  <link rel="stylesheet" href="css/style.css?v=34">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -85,7 +85,6 @@
         <button class="game-tab" data-game="sweeper" data-i18n="tabSweeper">扫雷</button>
         <button class="game-tab" data-game="snake" data-i18n="tabSnake">贪吃蛇</button>
         <button class="game-tab" data-game="poem" data-i18n="tabPoem">古诗词</button>
-        <button class="game-tab" data-game="climb" data-i18n="tabClimb">攀岩</button>
         <button class="game-tab" data-game="gomoku" data-i18n="tabGomoku">五子棋</button>
       </div>
       <div id="panel-sudoku" class="game-panel active">
@@ -172,31 +171,6 @@
           <div id="poem-full" class="hidden">
             <div id="poem-lines"></div>
             <button id="poem-next" class="inbox-submit"></button>
-          </div>
-        </div>
-      </div>
-      <div id="panel-climb" class="game-panel">
-        <div class="game-card">
-          <div id="climb-levels" class="ms-levels climb-levels"></div>
-          <div class="climb-info">
-            <span id="climb-level-label"></span>
-            <span id="climb-color" class="climb-color"></span>
-            <span id="climb-moves"></span>
-            <span id="climb-par"></span>
-            <span id="climb-time"></span>
-          </div>
-          <div class="climb-strength"><div id="climb-strength-fill"></div></div>
-          <canvas id="climb-canvas" width="480" height="600"></canvas>
-          <p id="climb-hint" class="climb-hint"></p>
-          <p id="climb-status" class="inbox-status"></p>
-          <div class="game-bar">
-            <button id="climb-reset" class="inbox-submit"></button>
-            <button id="climb-mode" class="inbox-submit"></button>
-            <button id="climb-clear-lines" class="inbox-submit"></button>
-            <button id="climb-next" class="inbox-submit hidden"></button>
-          </div>
-          <div id="climb-start" class="game-start">
-            <button id="climb-start-btn" class="inbox-submit"></button>
           </div>
         </div>
       </div>
@@ -341,23 +315,22 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=33"></script>
-  <script src="js/data.js?v=33"></script>
-  <script src="js/main.js?v=33"></script>
-  <script src="js/nav-fx.js?v=33"></script>
-  <script src="js/inbox.js?v=33"></script>
-  <script src="js/game.js?v=33"></script>
-  <script src="js/pvz.js?v=33"></script>
-  <script src="js/minesweeper.js?v=33"></script>
-  <script src="js/snake.js?v=33"></script>
-  <script src="js/space-data.js?v=33"></script>
-  <script src="js/space.js?v=33"></script>
-  <script src="js/poem-data.js?v=33"></script>
-  <script src="js/poem.js?v=33"></script>
-  <script src="js/climbing.js?v=33"></script>
-  <script src="js/kids.js?v=33"></script>
-  <script src="js/sudoku-data.js?v=33"></script>
-  <script src="js/sudoku.js?v=33"></script>
-  <script src="js/gomoku.js?v=33"></script>
+  <script src="js/config.js?v=34"></script>
+  <script src="js/data.js?v=34"></script>
+  <script src="js/main.js?v=34"></script>
+  <script src="js/nav-fx.js?v=34"></script>
+  <script src="js/inbox.js?v=34"></script>
+  <script src="js/game.js?v=34"></script>
+  <script src="js/pvz.js?v=34"></script>
+  <script src="js/minesweeper.js?v=34"></script>
+  <script src="js/snake.js?v=34"></script>
+  <script src="js/space-data.js?v=34"></script>
+  <script src="js/space.js?v=34"></script>
+  <script src="js/poem-data.js?v=34"></script>
+  <script src="js/poem.js?v=34"></script>
+  <script src="js/kids.js?v=34"></script>
+  <script src="js/sudoku-data.js?v=34"></script>
+  <script src="js/sudoku.js?v=34"></script>
+  <script src="js/gomoku.js?v=34"></script>
 </body>
 </html>
