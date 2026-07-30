@@ -414,25 +414,32 @@ h1, h2, h3, h4, .logo, .section-title {
 .game-panel { display: none; }
 .game-panel.active { display: block; }
 
-/* 游戏方框入口：网格 + 悬停膨胀 */
+/* 游戏方框入口：一行两个大图方框 + 悬停膨胀 */
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
   margin-bottom: 24px;
 }
 .game-box {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 8px; padding: 26px 10px;
-  background: var(--panel);
+  display: flex; align-items: flex-end; justify-content: flex-start;
+  min-height: 200px; padding: 14px;
+  background-color: var(--panel);
+  background-size: cover; background-position: center;
   border: 1px solid var(--line); border-radius: 2px;
   font-family: inherit; cursor: pointer;
   transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 .game-box:hover {
-  transform: scale(1.05);
+  transform: scale(1.04);
   border-color: var(--accent);
-  box-shadow: 0 6px 18px rgba(193, 80, 46, 0.12);
+  box-shadow: 0 8px 22px rgba(193, 80, 46, 0.14);
+}
+.box-chip {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  padding: 5px 11px;
+  background: var(--panel);
+  border: 1px solid var(--line); border-radius: 2px;
 }
 .box-index {
   font-size: 11px; letter-spacing: 0.18em;
@@ -444,6 +451,18 @@ h1, h2, h3, h4, .logo, .section-title {
   transition: color 0.18s ease;
 }
 .game-box:hover .box-name { color: var(--accent); }
+.box-sudoku  { background-image: url("../assets/boxes/sudoku.svg"); }
+.box-miner   { background-image: url("../assets/boxes/miner.svg"); }
+.box-pvz     { background-image: url("../assets/boxes/pvz.svg"); }
+.box-sweeper { background-image: url("../assets/boxes/sweeper.svg"); }
+.box-snake   { background-image: url("../assets/boxes/snake.svg"); }
+.box-poem    { background-image: url("../assets/boxes/poem.svg"); }
+.box-gomoku  { background-image: url("../assets/boxes/gomoku.svg"); }
+@media (max-width: 600px) {
+  .game-box { min-height: 140px; padding: 10px; }
+  .box-pvz { background-position: 25% center; }
+  .box-snake { background-position: 40% center; }
+}
 .game-back {
   margin-bottom: 18px; padding: 5px 16px;
   font-size: 12px; letter-spacing: 0.06em;

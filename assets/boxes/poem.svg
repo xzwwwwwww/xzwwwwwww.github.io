@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#F3F1EA"/>
+  <rect x="180" y="25" width="120" height="130" fill="#FFFDF8" stroke="#E5E2DB" stroke-width="1.5"/>
+  <rect x="172" y="20" width="136" height="8" rx="4" fill="#8A5A2B"/>
+  <rect x="172" y="152" width="136" height="8" rx="4" fill="#8A5A2B"/>
+  <text x="240" y="115" font-family="'Noto Serif SC', 'Songti SC', SimSun, Georgia, serif" font-size="58" fill="#1A1A1A" text-anchor="middle">诗
+    <animate attributeName="opacity" values="0.25;1;0.25" dur="3s" repeatCount="indefinite"/>
+  </text>
+  <rect x="268" y="126" width="18" height="18" rx="2" fill="#C1502E"/>
+  <text x="277" y="139" font-family="'Noto Serif SC', SimSun, serif" font-size="11" fill="#FFFFFF" text-anchor="middle">印</text>
+  <g>
+    <line x1="268" y1="30" x2="292" y2="60" stroke="#8A5A2B" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 292,60 L 300,74 L 288,68 Z" fill="#1A1A1A"/>
+    <circle cx="296" cy="78" r="3" fill="#1A1A1A">
+      <animate attributeName="cy" values="78;112" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.2;0.75;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#F3F1EA"/>
+  <rect x="159" y="14" width="162" height="162" fill="#FFFDF8"/>
+  <g stroke="#C9C4B8" stroke-width="1">
+    <line x1="177" y1="14" x2="177" y2="176"/><line x1="195" y1="14" x2="195" y2="176"/>
+    <line x1="231" y1="14" x2="231" y2="176"/><line x1="249" y1="14" x2="249" y2="176"/>
+    <line x1="285" y1="14" x2="285" y2="176"/><line x1="303" y1="14" x2="303" y2="176"/>
+    <line x1="159" y1="32" x2="321" y2="32"/><line x1="159" y1="50" x2="321" y2="50"/>
+    <line x1="159" y1="86" x2="321" y2="86"/><line x1="159" y1="104" x2="321" y2="104"/>
+    <line x1="159" y1="140" x2="321" y2="140"/><line x1="159" y1="158" x2="321" y2="158"/>
+  </g>
+  <g stroke="#1A1A1A" stroke-width="2">
+    <line x1="159" y1="14" x2="321" y2="14"/><line x1="159" y1="176" x2="321" y2="176"/>
+    <line x1="159" y1="14" x2="159" y2="176"/><line x1="321" y1="14" x2="321" y2="176"/>
+    <line x1="213" y1="14" x2="213" y2="176"/><line x1="267" y1="14" x2="267" y2="176"/>
+    <line x1="159" y1="68" x2="321" y2="68"/><line x1="159" y1="122" x2="321" y2="122"/>
+  </g>
+  <g font-family="Georgia, 'Noto Serif SC', serif" font-size="13" fill="#1A1A1A" text-anchor="middle">
+    <text x="168" y="28">5</text><text x="240" y="28">7</text>
+    <text x="168" y="46">6</text><text x="222" y="46">1</text><text x="240" y="46">9</text><text x="258" y="46">5</text>
+    <text x="186" y="64">9</text><text x="204" y="64">8</text><text x="294" y="64">6</text>
+    <text x="168" y="82">8</text><text x="240" y="82">6</text><text x="312" y="82">3</text>
+    <text x="168" y="100">4</text><text x="222" y="100">8</text><text x="258" y="100">3</text><text x="312" y="100">1</text>
+    <text x="168" y="118">7</text><text x="240" y="118">2</text><text x="312" y="118">6</text>
+    <text x="186" y="136">6</text><text x="276" y="136">2</text><text x="294" y="136">8</text>
+    <text x="222" y="154">4</text><text x="240" y="154">1</text><text x="258" y="154">9</text><text x="312" y="154">5</text>
+    <text x="240" y="172">8</text><text x="294" y="172">7</text><text x="312" y="172">9</text>
+  </g>
+  <text x="204" y="28" font-family="Georgia, serif" font-size="13" fill="#C1502E" text-anchor="middle">3
+    <animate attributeName="opacity" values="0.15;1;0.15" dur="2.4s" repeatCount="indefinite"/>
+  </text>
+</svg>
