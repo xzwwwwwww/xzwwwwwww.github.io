@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=37">
+  <link rel="stylesheet" href="css/style.css?v=38">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -80,25 +80,25 @@
       <h2 class="section-title" data-i18n="gameTitle">小游戏</h2>
       <div class="game-grid" id="game-grid">
         <button class="game-box box-sudoku" data-game="sudoku">
-          <span class="box-chip"><span class="box-index">01</span><span class="box-name" data-i18n="tabSudoku">数独</span></span>
+          <span class="box-chip"><span class="box-name" data-i18n="tabSudoku">数独</span></span>
         </button>
         <button class="game-box box-miner" data-game="miner">
-          <span class="box-chip"><span class="box-index">02</span><span class="box-name" data-i18n="tabMiner">黄金矿工</span></span>
+          <span class="box-chip"><span class="box-name" data-i18n="tabMiner">黄金矿工</span></span>
         </button>
         <button class="game-box box-pvz" data-game="pvz">
-          <span class="box-chip"><span class="box-index">03</span><span class="box-name" data-i18n="tabPvz">植物大战僵尸</span></span>
+          <span class="box-chip"><span class="box-name" data-i18n="tabPvz">植物大战僵尸</span></span>
         </button>
         <button class="game-box box-sweeper" data-game="sweeper">
-          <span class="box-chip"><span class="box-index">04</span><span class="box-name" data-i18n="tabSweeper">扫雷</span></span>
+          <span class="box-chip"><span class="box-name" data-i18n="tabSweeper">扫雷</span></span>
         </button>
         <button class="game-box box-snake" data-game="snake">
-          <span class="box-chip"><span class="box-index">05</span><span class="box-name" data-i18n="tabSnake">贪吃蛇</span></span>
+          <span class="box-chip"><span class="box-name" data-i18n="tabSnake">贪吃蛇</span></span>
         </button>
         <button class="game-box box-poem" data-game="poem">
-          <span class="box-chip"><span class="box-index">06</span><span class="box-name" data-i18n="tabPoem">古诗词</span></span>
+          <span class="box-chip"><span class="box-name" data-i18n="tabPoem">古诗词</span></span>
         </button>
         <button class="game-box box-gomoku" data-game="gomoku">
-          <span class="box-chip"><span class="box-index">07</span><span class="box-name" data-i18n="tabGomoku">五子棋</span></span>
+          <span class="box-chip"><span class="box-name" data-i18n="tabGomoku">五子棋</span></span>
         </button>
       </div>
       <button id="game-back" class="game-back hidden" data-i18n="backToGames">← 返回游戏列表</button>
@@ -225,15 +225,58 @@
     <!-- 小朋友（儿童向专区） -->
     <section id="kids" class="page">
       <h2 class="section-title" data-i18n="kidsTitle">小朋友专区</h2>
-      <div class="game-tabs kids-tabs">
-        <button class="game-tab kids-tab active" data-kids="doodle">🎨</button>
-        <button class="game-tab kids-tab" data-kids="mole">🐻</button>
-        <button class="game-tab kids-tab" data-kids="math2">🔢</button>
-        <button class="game-tab kids-tab" data-kids="math3">🔢</button>
+      <div class="game-grid" id="kids-grid">
+        <button class="game-box kids-box-explore" data-cat="explore">
+          <span class="box-chip"><span class="box-name" data-i18n="kidsCatExplore">知识探索</span></span>
+        </button>
+        <button class="game-box kids-box-craft" data-cat="craft">
+          <span class="box-chip"><span class="box-name" data-i18n="kidsCatCraft">创意手工</span></span>
+        </button>
+        <button class="game-box kids-box-games" data-cat="games">
+          <span class="box-chip"><span class="box-name" data-i18n="kidsCatGames">互动游戏</span></span>
+        </button>
+        <button class="game-box kids-box-grow" data-cat="grow">
+          <span class="box-chip"><span class="box-name" data-i18n="kidsCatGrow">成长陪伴</span></span>
+        </button>
+        <button class="game-box kids-box-stage" data-cat="stage">
+          <span class="box-chip"><span class="box-name" data-i18n="kidsCatStage">展示舞台</span></span>
+        </button>
+      </div>
+      <button id="kids-back" class="game-back hidden" data-i18n="kidsBack">← 返回</button>
+
+      <div id="kids-cat-explore" class="kids-cat-panel">
+        <p class="kids-coming" data-i18n="kidsComingSoon">这里还在筹备中，敬请期待～</p>
+      </div>
+      <div id="kids-cat-craft" class="kids-cat-panel">
+        <p class="kids-coming" data-i18n="kidsComingSoon">这里还在筹备中，敬请期待～</p>
+      </div>
+      <div id="kids-cat-grow" class="kids-cat-panel">
+        <p class="kids-coming" data-i18n="kidsComingSoon">这里还在筹备中，敬请期待～</p>
+      </div>
+      <div id="kids-cat-stage" class="kids-cat-panel">
+        <p class="kids-coming" data-i18n="kidsComingSoon">这里还在筹备中，敬请期待～</p>
       </div>
 
+      <!-- 互动游戏 -->
+      <div id="kids-cat-games" class="kids-cat-panel">
+        <div class="game-grid" id="kids-games-grid">
+          <button class="game-box kids-box-doodle" data-kidsgame="doodle">
+            <span class="box-chip"><span class="box-name" data-i18n="kidsGameDoodle">涂鸦画板</span></span>
+          </button>
+          <button class="game-box kids-box-mole" data-kidsgame="mole">
+            <span class="box-chip"><span class="box-name" data-i18n="kidsGameMole">打地鼠</span></span>
+          </button>
+          <button class="game-box kids-box-math2" data-kidsgame="math2">
+            <span class="box-chip"><span class="box-name" data-i18n="kidsGameMath2">口算 · 二年级下</span></span>
+          </button>
+          <button class="game-box kids-box-math3" data-kidsgame="math3">
+            <span class="box-chip"><span class="box-name" data-i18n="kidsGameMath3">口算 · 三年级下</span></span>
+          </button>
+        </div>
+        <button id="kids-games-back" class="game-back hidden" data-i18n="kidsBackGames">← 返回游戏列表</button>
+
       <!-- 涂鸦画板 -->
-      <div id="kids-panel-doodle" class="game-panel kids-panel active">
+      <div id="kids-panel-doodle" class="game-panel kids-panel">
         <div class="game-card kids-card">
           <div class="doodle-toolbar">
             <div id="doodle-palette" class="doodle-palette"></div>
@@ -309,6 +352,7 @@
           </div>
         </div>
       </div>
+      </div>
     </section>
 
     <!-- 你和我 -->
@@ -332,22 +376,22 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=37"></script>
-  <script src="js/data.js?v=37"></script>
-  <script src="js/main.js?v=37"></script>
-  <script src="js/nav-fx.js?v=37"></script>
-  <script src="js/inbox.js?v=37"></script>
-  <script src="js/game.js?v=37"></script>
-  <script src="js/pvz.js?v=37"></script>
-  <script src="js/minesweeper.js?v=37"></script>
-  <script src="js/snake.js?v=37"></script>
-  <script src="js/space-data.js?v=37"></script>
-  <script src="js/space.js?v=37"></script>
-  <script src="js/poem-data.js?v=37"></script>
-  <script src="js/poem.js?v=37"></script>
-  <script src="js/kids.js?v=37"></script>
-  <script src="js/sudoku-data.js?v=37"></script>
-  <script src="js/sudoku.js?v=37"></script>
-  <script src="js/gomoku.js?v=37"></script>
+  <script src="js/config.js?v=38"></script>
+  <script src="js/data.js?v=38"></script>
+  <script src="js/main.js?v=38"></script>
+  <script src="js/nav-fx.js?v=38"></script>
+  <script src="js/inbox.js?v=38"></script>
+  <script src="js/game.js?v=38"></script>
+  <script src="js/pvz.js?v=38"></script>
+  <script src="js/minesweeper.js?v=38"></script>
+  <script src="js/snake.js?v=38"></script>
+  <script src="js/space-data.js?v=38"></script>
+  <script src="js/space.js?v=38"></script>
+  <script src="js/poem-data.js?v=38"></script>
+  <script src="js/poem.js?v=38"></script>
+  <script src="js/kids.js?v=38"></script>
+  <script src="js/sudoku-data.js?v=38"></script>
+  <script src="js/sudoku.js?v=38"></script>
+  <script src="js/gomoku.js?v=38"></script>
 </body>
 </html>

@@ -64,14 +64,46 @@
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   };
 
-  // ===== 标签切换 =====
-  const tabs = document.querySelectorAll(".kids-tab");
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      tabs.forEach(t => t.classList.toggle("active", t === tab));
-      document.querySelectorAll(".kids-panel").forEach(p =>
-        p.classList.toggle("active", p.id === "kids-panel-" + tab.dataset.kids));
+  // ===== 分类方框 → 互动游戏方框 → 游戏面板 =====
+  const kidsGrid = document.getElementById("kids-grid");
+  const kidsBack = document.getElementById("kids-back");
+  const kidsGamesGrid = document.getElementById("kids-games-grid");
+  const kidsGamesBack = document.getElementById("kids-games-back");
+  const catPanels = document.querySelectorAll("#kids .kids-cat-panel");
+  const kidsPanels = document.querySelectorAll("#kids .kids-panel");
+
+  kidsGrid.querySelectorAll(".game-box").forEach(box => {
+    box.addEventListener("click", () => {
+      kidsGrid.classList.add("hidden");
+      kidsBack.classList.remove("hidden");
+      catPanels.forEach(p =>
+        p.classList.toggle("active", p.id === "kids-cat-" + box.dataset.cat));
     });
+  });
+
+  kidsBack.addEventListener("click", () => {
+    kidsGrid.classList.remove("hidden");
+    kidsBack.classList.add("hidden");
+    catPanels.forEach(p => p.classList.remove("active"));
+    // 若停留在某个游戏里，一并收起
+    kidsGamesGrid.classList.remove("hidden");
+    kidsGamesBack.classList.add("hidden");
+    kidsPanels.forEach(p => p.classList.remove("active"));
+  });
+
+  kidsGamesGrid.querySelectorAll(".game-box").forEach(box => {
+    box.addEventListener("click", () => {
+      kidsGamesGrid.classList.add("hidden");
+      kidsGamesBack.classList.remove("hidden");
+      kidsPanels.forEach(p =>
+        p.classList.toggle("active", p.id === "kids-panel-" + box.dataset.kidsgame));
+    });
+  });
+
+  kidsGamesBack.addEventListener("click", () => {
+    kidsGamesGrid.classList.remove("hidden");
+    kidsGamesBack.classList.add("hidden");
+    kidsPanels.forEach(p => p.classList.remove("active"));
   });
 
   // ===== 1. 涂鸦画板 =====

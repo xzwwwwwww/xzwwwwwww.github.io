@@ -164,26 +164,16 @@ h1, h2, h3, h4, .logo, .section-title {
   50%      { transform: translateY(-10px) rotate(10deg); }
 }
 
-/* ===== 区块标题：编号 + 标题 + 延伸细线 ===== */
+/* ===== 区块标题：标题 + 延伸细线 ===== */
 .section-title {
   display: flex; align-items: baseline; gap: 14px;
   font-size: 24px; letter-spacing: 0.06em;
   margin: 0 0 32px;
 }
-.section-title::before {
-  font-family: var(--sans); font-weight: 500;
-  font-size: 11px; letter-spacing: 0.22em;
-  color: var(--accent);
-}
 .section-title::after {
   content: ""; flex: 1; align-self: center; margin-left: 6px;
   border-top: 1px solid var(--line);
 }
-#life  .section-title::before { content: "02 —"; }
-#inbox .section-title::before { content: "03 —"; }
-#game  .section-title::before { content: "04 —"; }
-#kids  .section-title::before { content: "05 —"; }
-#space .section-title::before { content: "06 —"; }
 
 #life { position: relative; }
 
@@ -395,22 +385,7 @@ h1, h2, h3, h4, .logo, .section-title {
   max-width: 100%; height: auto;
 }
 
-/* 游戏标签页：编辑部分节导航 */
-.game-tabs {
-  display: flex; flex-wrap: wrap; gap: 4px 24px;
-  margin-bottom: 24px; padding-bottom: 0;
-  border-bottom: 1px solid var(--line);
-}
-.game-tab {
-  padding: 8px 0; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
-  font-family: inherit; cursor: pointer;
-  background: none; border: none;
-  border-bottom: 1px solid transparent; margin-bottom: -1px;
-  color: var(--muted);
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-.game-tab:hover { color: var(--accent); }
-.game-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+/* 游戏面板显隐（方框入口由 main.js / kids.js 控制） */
 .game-panel { display: none; }
 .game-panel.active { display: block; }
 
@@ -440,10 +415,6 @@ h1, h2, h3, h4, .logo, .section-title {
   padding: 5px 11px;
   background: var(--panel);
   border: 1px solid var(--line); border-radius: 2px;
-}
-.box-index {
-  font-size: 11px; letter-spacing: 0.18em;
-  color: var(--accent);
 }
 .box-name {
   font-size: 14px; letter-spacing: 0.06em;
@@ -718,10 +689,24 @@ h1, h2, h3, h4, .logo, .section-title {
 #sudoku-next { align-self: auto; }
 
 /* ============================================
- * 小朋友专区：涂鸦画板 / 打地鼠 / 口算小问答
+ * 小朋友专区：五分类方框（互动游戏内含 4 款小游戏）
  * ============================================ */
 
-.kids-tabs .kids-tab { font-size: 18px; padding: 8px 4px; letter-spacing: 0; }
+.kids-cat-panel { display: none; }
+.kids-cat-panel.active { display: block; }
+.kids-coming {
+  text-align: center; color: var(--muted);
+  padding: 56px 0; font-size: 14px; letter-spacing: 0.06em;
+}
+.kids-box-explore { background-image: url("../assets/kids/explore.svg"); }
+.kids-box-craft   { background-image: url("../assets/kids/craft.svg"); }
+.kids-box-games   { background-image: url("../assets/kids/games.svg"); }
+.kids-box-grow    { background-image: url("../assets/kids/grow.svg"); }
+.kids-box-stage   { background-image: url("../assets/kids/stage.svg"); }
+.kids-box-doodle  { background-image: url("../assets/kids/doodle.svg"); }
+.kids-box-mole    { background-image: url("../assets/kids/mole.svg"); }
+.kids-box-math2   { background-image: url("../assets/kids/math2.svg"); }
+.kids-box-math3   { background-image: url("../assets/kids/math3.svg"); }
 
 .kids-card { position: relative; padding: 24px; }
 
@@ -741,7 +726,11 @@ h1, h2, h3, h4, .logo, .section-title {
   align-items: center; justify-content: space-between;
   margin-bottom: 14px;
 }
-.doodle-palette { display: flex; flex-wrap: wrap; gap: 8px; }
+.doodle-palette { display: grid; grid-template-columns: repeat(10, 30px); gap: 8px; }
+@media (max-width: 640px) {
+  .doodle-palette { grid-template-columns: repeat(10, 22px); gap: 6px; }
+  .doodle-color { width: 22px; height: 22px; }
+}
 .doodle-color {
   width: 30px; height: 30px; border-radius: 50%;
   border: 2px solid var(--line); cursor: pointer;

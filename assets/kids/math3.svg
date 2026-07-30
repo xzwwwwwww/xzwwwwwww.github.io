@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#F3F1EA"/>
+  <rect x="120" y="35" width="240" height="120" rx="6" fill="#3E5A6B" stroke="#4A3226" stroke-width="3"/>
+  <rect x="120" y="35" width="240" height="120" rx="6" fill="none" stroke="#FBE3CE" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.5"/>
+  <g font-family="Georgia, serif" font-size="40" fill="#FFFDF8" text-anchor="middle">
+    <text x="204" y="112">12 × 3 =</text>
+    <text x="312" y="112" fill="#FFD166">?
+      <animate attributeName="opacity" values="0.15;1;0.15" dur="1.6s" repeatCount="indefinite"/>
+    </text>
+  </g>
+  <rect x="196" y="155" width="80" height="7" rx="3.5" fill="#8A5A2B"/>
+  <g transform="translate(388 128) rotate(30)">
+    <rect x="-7" y="-34" width="14" height="42" rx="3" fill="#7AC7E3" stroke="#4A3226" stroke-width="2"/>
+    <path d="M -7,8 L 7,8 L 0,22 Z" fill="#FBE3CE" stroke="#4A3226" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M -2.5,15 L 2.5,15 L 0,22 Z" fill="#4A3226"/>
+  </g>
+  <circle cx="96" cy="60" r="4" fill="#C6D64F">
+    <animate attributeName="opacity" values="1;0.2;1" dur="2.2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

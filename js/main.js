@@ -26,7 +26,19 @@ const I18N = {
     navSpace: "你和我",
     spaceTitle: "你和我",
     navKids: "小朋友",
-    kidsTitle: "小朋友专区"
+    kidsTitle: "小朋友专区",
+    kidsCatExplore: "知识探索",
+    kidsCatCraft: "创意手工",
+    kidsCatGames: "互动游戏",
+    kidsCatGrow: "成长陪伴",
+    kidsCatStage: "展示舞台",
+    kidsComingSoon: "这里还在筹备中，敬请期待～",
+    kidsBack: "← 返回分类",
+    kidsBackGames: "← 返回游戏列表",
+    kidsGameDoodle: "涂鸦画板",
+    kidsGameMole: "打地鼠",
+    kidsGameMath2: "口算 · 二年级下",
+    kidsGameMath3: "口算 · 三年级下"
   },
   en: {
     logo: "My Corner",
@@ -52,7 +64,19 @@ const I18N = {
     navSpace: "You & Me",
     spaceTitle: "You & Me",
     navKids: "Kids",
-    kidsTitle: "Kids' Corner"
+    kidsTitle: "Kids' Corner",
+    kidsCatExplore: "Explore",
+    kidsCatCraft: "Crafts",
+    kidsCatGames: "Games",
+    kidsCatGrow: "Growing Up",
+    kidsCatStage: "On Stage",
+    kidsComingSoon: "Still in the works — stay tuned~",
+    kidsBack: "← Categories",
+    kidsBackGames: "← Game list",
+    kidsGameDoodle: "Doodle Pad",
+    kidsGameMole: "Whack-a-Mole",
+    kidsGameMath2: "Mental Math · Grade 2B",
+    kidsGameMath3: "Mental Math · Grade 3B"
   }
 };
 

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#A9BD82"/>
+  <rect width="480" height="60" fill="#FAFAF7"/>
+  <g transform="translate(180 118)">
+    <ellipse cx="0" cy="26" rx="52" ry="14" fill="#6B4A2F"/>
+    <ellipse cx="0" cy="22" rx="52" ry="14" fill="#8A5A2B" stroke="#4A3226" stroke-width="2.5"/>
+    <ellipse cx="0" cy="21" rx="40" ry="9" fill="#3A2415"/>
+  </g>
+  <g transform="translate(180 96)">
+    <animateTransform attributeName="transform" type="translate" values="180 106;180 92;180 106" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+    <circle cx="-11" cy="-12" r="6" fill="#FFFFFF" stroke="#4A3226" stroke-width="2.5"/>
+    <circle cx="11" cy="-12" r="6" fill="#FFFFFF" stroke="#4A3226" stroke-width="2.5"/>
+    <circle cx="-11" cy="-12" r="2.6" fill="#FBE3CE"/>
+    <circle cx="11" cy="-12" r="2.6" fill="#FBE3CE"/>
+    <circle cx="0" cy="0" r="17" fill="#FFFFFF" stroke="#4A3226" stroke-width="2.5"/>
+    <path d="M -7.5,-2 Q -5,4 -2.5,-2" fill="none" stroke="#4A3226" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 2.5,-2 Q 5,4 7.5,-2" fill="none" stroke="#4A3226" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="-9.5" cy="5" rx="3.4" ry="1.9" fill="#F2A65A" transform="rotate(-12 -9.5 5)"/>
+    <ellipse cx="9.5" cy="5" rx="3.4" ry="1.9" fill="#F2A65A" transform="rotate(12 9.5 5)"/>
+    <path d="M -3,8 Q 0,11 3,8" fill="none" stroke="#4A3226" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(310 88)">
+    <animateTransform attributeName="transform" type="rotate" values="0 310 88;-14 310 88;0 310 88" dur="1.8s" repeatCount="indefinite"/>
+    <rect x="-6" y="-40" width="12" height="46" rx="5" fill="#8A5A2B" stroke="#4A3226" stroke-width="2" transform="rotate(24)"/>
+    <rect x="6" y="-52" width="34" height="20" rx="6" fill="#F2784B" stroke="#4A3226" stroke-width="2.5" transform="rotate(24)"/>
+  </g>
+  <g transform="translate(330 132)">
+    <ellipse cx="0" cy="18" rx="34" ry="10" fill="#6B4A2F"/>
+    <ellipse cx="0" cy="15" rx="34" ry="10" fill="#8A5A2B" stroke="#4A3226" stroke-width="2.5"/>
+    <ellipse cx="0" cy="14" rx="25" ry="6.5" fill="#3A2415"/>
+  </g>
+</svg>
