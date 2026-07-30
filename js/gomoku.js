@@ -42,7 +42,12 @@
       youWin: "🎉 你赢了！",
       youLose: "对方获胜。",
       again: "再来一局",
-      thinking: "电脑思考中…"
+      thinking: "电脑思考中…",
+      rematch: "再来一局",
+      endMatch: "结束对局",
+      waitConfirm: "等待对方确认…",
+      oppWaiting: "对方等待中",
+      oppLeft: "对方已离开"
     },
     en: {
       modeLocal: "Local 2P",
@@ -78,7 +83,12 @@
       youWin: "🎉 You win!",
       youLose: "Your opponent wins.",
       again: "Play Again",
-      thinking: "AI is thinking…"
+      thinking: "AI is thinking…",
+      rematch: "Rematch",
+      endMatch: "End Match",
+      waitConfirm: "Waiting for opponent…",
+      oppWaiting: "Opponent is waiting",
+      oppLeft: "Opponent has left"
     }
   };
   const tp = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -121,6 +131,8 @@
   const resultEl = document.getElementById("gomoku-result");
   const resultTextEl = document.getElementById("gomoku-result-text");
   const againBtn = document.getElementById("gomoku-again");
+  const rematchBtn = document.getElementById("gomoku-rematch");
+  const endMatchBtn = document.getElementById("gomoku-endmatch");
   const ctx = canvas.getContext("2d");
 
   // ===== 状态 =====
@@ -135,9 +147,12 @@
   // 联机状态
   let roomCode = null;
   let myColor = null;            // "black" | "white"
-  let roomStatus = null;         // waiting | playing | finished
+  // waiting | playing | finished | rematch_black/rematch_white（一方求和局中）| left_black/left_white（一方已离开）
+  let roomStatus = null;
   let placing = false;           // 正在提交落子
   let pollTimer = null;
+  let rematchAsked = false;      // 我已按「再来一局」，等待对方确认
+  let oppLeft = false;           // 对方已结束对局
 
   function newBoard() {
     return Array.from({ length: SIZE }, () => new Array(SIZE).fill(EMPTY));
@@ -364,19 +379,42 @@
     winner = null;
     hoverPos = null;
     aiThinking = false;
+    rematchAsked = false;
+    oppLeft = false;
     resultEl.classList.add("hidden");
     draw();
     renderInfo();
   }
 
   function showResult() {
+    if (mode === "online" && oppLeft) { showOppLeft(); return; }
     let key;
     if (winner === "draw") key = "draw";
     else if (mode === "online") key = winner === myColor ? "youWin" : "youLose";
     else key = winner === "black" ? "winBlack" : "winWhite";
     resultTextEl.textContent = tp(key);
-    // 联机模式不显示「再来一局」（重开一局需要双方同步，从简不做）
-    againBtn.classList.toggle("hidden", mode === "online");
+    // 联机模式：显示「再来一局 / 结束对局」两个按钮（需双方确认，用 status 字段同步信号）
+    const online = mode === "online";
+    againBtn.classList.toggle("hidden", online);
+    rematchBtn.classList.toggle("hidden", !online);
+    endMatchBtn.classList.toggle("hidden", !online);
+    if (online) {
+      rematchBtn.disabled = rematchAsked;
+      endMatchBtn.disabled = rematchAsked;
+      rematchBtn.textContent = tp("rematch");
+      endMatchBtn.textContent = tp("endMatch");
+    }
+    resultEl.classList.remove("hidden");
+  }
+
+  // 对方已离开：弹层只留「离开房间」
+  function showOppLeft() {
+    resultTextEl.textContent = tp("oppLeft");
+    againBtn.classList.add("hidden");
+    rematchBtn.classList.add("hidden");
+    endMatchBtn.classList.remove("hidden");
+    endMatchBtn.disabled = false;
+    endMatchBtn.textContent = tp("leave");
     resultEl.classList.remove("hidden");
   }
 
@@ -434,6 +472,8 @@
     myColor = null;
     roomStatus = null;
     placing = false;
+    rematchAsked = false;
+    oppLeft = false;
     if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
     codeInput.value = "";
     setStatus("", "");
@@ -455,12 +495,36 @@
   // 以远端行为准同步本地棋局
   function applyRemote(row) {
     roomStatus = row.status;
+    // ===== 局后信号 =====
+    // 对方按了「结束对局」：本方看到「对方已离开」，之后不再同步棋局
+    if (row.status === "left_black" || row.status === "left_white") {
+      if (row.status !== "left_" + myColor && !oppLeft) {
+        oppLeft = true;
+        showOppLeft();
+        setStatus("oppLeft", "");
+      }
+      renderRoomInfo();
+      renderInfo();
+      draw();
+      return;
+    }
+    // 对方按了「再来一局」：本方看到「对方等待中」，弹层保留按钮供决定
+    if (row.status === "rematch_black" || row.status === "rematch_white") {
+      if (row.status !== "rematch_" + myColor) {
+        setStatus("oppWaiting", "");
+        if (winner && !oppLeft) showResult();
+      }
+    }
     const remote = Array.isArray(row.moves) ? row.moves : [];
     if (remote.length !== moves.length) {
       board = newBoard();
       remote.forEach((m, idx) => { board[m[1]][m[0]] = idx % 2 === 0 ? BLACK : WHITE; });
       moves = remote.map(m => [m[0], m[1]]);
       winner = null;
+      // 新一局开始（对方确认 rematch 后 moves 被清空）：清掉局后信号与提示
+      rematchAsked = false;
+      oppLeft = false;
+      setStatus("", "");
       resultEl.classList.add("hidden");
     }
     if (row.winner && !winner) {
@@ -520,6 +584,59 @@
     } finally {
       placing = false;
     }
+  }
+
+  // ===== 局后：再来一局（需双方确认） =====
+  async function askRematch() {
+    if (!roomCode || !gsb || !winner || rematchAsked) return;
+    rematchBtn.disabled = true;
+    endMatchBtn.disabled = true;
+    const oppColor = myColor === "black" ? "white" : "black";
+    if (roomStatus === "rematch_" + oppColor) {
+      // 对方已在等：由本方写整行重置开新局（并发说明：两人同时按时后写覆盖先写，
+      // 看到对方 rematch 标记的一方负责重置，最终必然收敛）
+      const { error } = await gsb.from("gomoku_rooms").update({
+        moves: [], turn: "black", winner: null, status: "playing",
+        updated_at: new Date().toISOString()
+      }).eq("code", roomCode);
+      if (error) {
+        setStatus("onlineFail", "error");
+        rematchBtn.disabled = false;
+        endMatchBtn.disabled = false;
+        return;
+      }
+      winner = null;
+      resetGame();
+      setStatus("", "");
+    } else {
+      // 本方先按：写 rematch_<我方>，等对方确认
+      const { error } = await gsb.from("gomoku_rooms").update({
+        status: "rematch_" + myColor, updated_at: new Date().toISOString()
+      }).eq("code", roomCode);
+      if (error) {
+        setStatus("onlineFail", "error");
+        rematchBtn.disabled = false;
+        endMatchBtn.disabled = false;
+        return;
+      }
+      rematchAsked = true;
+      roomStatus = "rematch_" + myColor;
+      setStatus("waitConfirm", "");
+    }
+  }
+
+  // ===== 局后：结束对局 =====
+  async function endMatch() {
+    if (!roomCode) return;
+    // 对方已先离开就不用再写；否则标记 left_<我方> 通知对方
+    if (!oppLeft && gsb) {
+      await gsb.from("gomoku_rooms").update({
+        status: "left_" + myColor, updated_at: new Date().toISOString()
+      }).eq("code", roomCode);
+    }
+    leaveRoom();
+    resetGame();
+    renderTexts();
   }
 
   // ===== 文案与信息渲染 =====
@@ -632,6 +749,8 @@
   undoBtn.addEventListener("click", undo);
   restartBtn.addEventListener("click", resetGame);
   againBtn.addEventListener("click", resetGame);
+  rematchBtn.addEventListener("click", askRematch);
+  endMatchBtn.addEventListener("click", endMatch);
   createBtn.addEventListener("click", createRoom);
   joinBtn.addEventListener("click", joinRoom);
   leaveBtn.addEventListener("click", () => {
