@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=35">
+  <link rel="stylesheet" href="css/style.css?v=36">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -78,16 +78,38 @@
     <!-- 小游戏 -->
     <section id="game" class="page">
       <h2 class="section-title" data-i18n="gameTitle">小游戏</h2>
-      <div class="game-tabs">
-        <button class="game-tab active" data-game="sudoku" data-i18n="tabSudoku">数独</button>
-        <button class="game-tab" data-game="miner" data-i18n="tabMiner">黄金矿工</button>
-        <button class="game-tab" data-game="pvz" data-i18n="tabPvz">植物大战僵尸</button>
-        <button class="game-tab" data-game="sweeper" data-i18n="tabSweeper">扫雷</button>
-        <button class="game-tab" data-game="snake" data-i18n="tabSnake">贪吃蛇</button>
-        <button class="game-tab" data-game="poem" data-i18n="tabPoem">古诗词</button>
-        <button class="game-tab" data-game="gomoku" data-i18n="tabGomoku">五子棋</button>
+      <div class="game-grid" id="game-grid">
+        <button class="game-box" data-game="sudoku">
+          <span class="box-index">01</span>
+          <span class="box-name" data-i18n="tabSudoku">数独</span>
+        </button>
+        <button class="game-box" data-game="miner">
+          <span class="box-index">02</span>
+          <span class="box-name" data-i18n="tabMiner">黄金矿工</span>
+        </button>
+        <button class="game-box" data-game="pvz">
+          <span class="box-index">03</span>
+          <span class="box-name" data-i18n="tabPvz">植物大战僵尸</span>
+        </button>
+        <button class="game-box" data-game="sweeper">
+          <span class="box-index">04</span>
+          <span class="box-name" data-i18n="tabSweeper">扫雷</span>
+        </button>
+        <button class="game-box" data-game="snake">
+          <span class="box-index">05</span>
+          <span class="box-name" data-i18n="tabSnake">贪吃蛇</span>
+        </button>
+        <button class="game-box" data-game="poem">
+          <span class="box-index">06</span>
+          <span class="box-name" data-i18n="tabPoem">古诗词</span>
+        </button>
+        <button class="game-box" data-game="gomoku">
+          <span class="box-index">07</span>
+          <span class="box-name" data-i18n="tabGomoku">五子棋</span>
+        </button>
       </div>
-      <div id="panel-sudoku" class="game-panel active">
+      <button id="game-back" class="game-back hidden" data-i18n="backToGames">← 返回游戏列表</button>
+      <div id="panel-sudoku" class="game-panel">
         <div class="game-card sudoku-card">
           <div id="sudoku-levels" class="ms-levels sudoku-levels"></div>
           <div class="sudoku-info">
@@ -317,22 +339,22 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=35"></script>
-  <script src="js/data.js?v=35"></script>
-  <script src="js/main.js?v=35"></script>
-  <script src="js/nav-fx.js?v=35"></script>
-  <script src="js/inbox.js?v=35"></script>
-  <script src="js/game.js?v=35"></script>
-  <script src="js/pvz.js?v=35"></script>
-  <script src="js/minesweeper.js?v=35"></script>
-  <script src="js/snake.js?v=35"></script>
-  <script src="js/space-data.js?v=35"></script>
-  <script src="js/space.js?v=35"></script>
-  <script src="js/poem-data.js?v=35"></script>
-  <script src="js/poem.js?v=35"></script>
-  <script src="js/kids.js?v=35"></script>
-  <script src="js/sudoku-data.js?v=35"></script>
-  <script src="js/sudoku.js?v=35"></script>
-  <script src="js/gomoku.js?v=35"></script>
+  <script src="js/config.js?v=36"></script>
+  <script src="js/data.js?v=36"></script>
+  <script src="js/main.js?v=36"></script>
+  <script src="js/nav-fx.js?v=36"></script>
+  <script src="js/inbox.js?v=36"></script>
+  <script src="js/game.js?v=36"></script>
+  <script src="js/pvz.js?v=36"></script>
+  <script src="js/minesweeper.js?v=36"></script>
+  <script src="js/snake.js?v=36"></script>
+  <script src="js/space-data.js?v=36"></script>
+  <script src="js/space.js?v=36"></script>
+  <script src="js/poem-data.js?v=36"></script>
+  <script src="js/poem.js?v=36"></script>
+  <script src="js/kids.js?v=36"></script>
+  <script src="js/sudoku-data.js?v=36"></script>
+  <script src="js/sudoku.js?v=36"></script>
+  <script src="js/gomoku.js?v=36"></script>
 </body>
 </html>

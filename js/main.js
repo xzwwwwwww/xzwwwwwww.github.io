@@ -22,6 +22,7 @@ const I18N = {
     tabSnake: "贪吃蛇",
     tabPoem: "古诗词",
     tabGomoku: "五子棋",
+    backToGames: "← 返回游戏列表",
     navSpace: "你和我",
     spaceTitle: "你和我",
     navKids: "小朋友",
@@ -47,6 +48,7 @@ const I18N = {
     tabSnake: "Snake",
     tabPoem: "Poetry",
     tabGomoku: "Gomoku",
+    backToGames: "← All games",
     navSpace: "You & Me",
     spaceTitle: "You & Me",
     navKids: "Kids",
@@ -87,15 +89,27 @@ navLinks.forEach(link => {
 });
 switchPage(location.hash);
 
-// ===== 小游戏标签切换 =====
-document.querySelectorAll(".game-tab").forEach(tab => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".game-tab").forEach(t =>
-      t.classList.toggle("active", t === tab));
-    document.querySelectorAll(".game-panel").forEach(p =>
-      p.classList.toggle("active", p.id === "panel-" + tab.dataset.game));
+// ===== 小游戏方框入口：网格 ↔ 游戏面板 =====
+const gameGrid = document.getElementById("game-grid");
+const gameBackBtn = document.getElementById("game-back");
+
+function showGameGrid() {
+  gameGrid.classList.remove("hidden");
+  gameBackBtn.classList.add("hidden");
+  document.querySelectorAll("#game .game-panel").forEach(p =>
+    p.classList.remove("active"));
+}
+
+gameGrid.querySelectorAll(".game-box").forEach(box => {
+  box.addEventListener("click", () => {
+    gameGrid.classList.add("hidden");
+    gameBackBtn.classList.remove("hidden");
+    document.querySelectorAll("#game .game-panel").forEach(p =>
+      p.classList.toggle("active", p.id === "panel-" + box.dataset.game));
   });
 });
+
+gameBackBtn.addEventListener("click", showGameGrid);
 
 document.getElementById("lang-toggle").addEventListener("click", () => {
   applyLang(currentLang === "zh" ? "en" : "zh");
