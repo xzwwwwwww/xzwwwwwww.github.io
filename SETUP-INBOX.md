@@ -105,3 +105,35 @@ create policy "anon insert comments" on space_comments
 ```
 
 运行完即可，不用改任何配置文件。想删除某条留言：左侧 **Table Editor** → `space_comments` → 选中行删除。
+
+---
+
+# 附：五子棋联机对战房间表（gomoku_rooms）
+
+「小游戏 → 五子棋 → 在线联机」用这张表同步棋局。同样在 **SQL Editor** → **New query** 粘贴运行：
+
+```sql
+-- 五子棋联机房间表
+create table gomoku_rooms (
+  code text primary key,                      -- 6 位房间码，即加入凭证
+  moves jsonb not null default '[]',          -- 落子序列 [[x,y],...]，奇数下标为白方
+  turn text not null default 'black',         -- 当前行棋方：black / white
+  winner text,                                -- 胜方：black / white / draw（平局），未分胜负为 null
+  status text not null default 'waiting',     -- waiting（等人）/ playing（对局中）/ finished（已结束）
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table gomoku_rooms enable row level security;
+
+-- 房间码即凭证：知道 6 位房间码的人才能看到/修改这盘棋，所以匿名读、建、改全放开。
+-- 房间码有近 9 亿种组合，猜到别人房间的概率极低；但别用它下必须保密的棋局。
+create policy "anon read rooms" on gomoku_rooms
+  for select to anon using (true);
+create policy "anon create rooms" on gomoku_rooms
+  for insert to anon with check (true);
+create policy "anon update rooms" on gomoku_rooms
+  for update to anon using (true) with check (true);
+```
+
+运行完即可，不用改任何配置文件（联机复用第 4 步已填好的密钥）。想清理废弃房间：左侧 **Table Editor** → `gomoku_rooms` → 选中行删除。

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=32">
+  <link rel="stylesheet" href="css/style.css?v=33">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -86,6 +86,7 @@
         <button class="game-tab" data-game="snake" data-i18n="tabSnake">贪吃蛇</button>
         <button class="game-tab" data-game="poem" data-i18n="tabPoem">古诗词</button>
         <button class="game-tab" data-game="climb" data-i18n="tabClimb">攀岩</button>
+        <button class="game-tab" data-game="gomoku" data-i18n="tabGomoku">五子棋</button>
       </div>
       <div id="panel-sudoku" class="game-panel active">
         <div class="game-card sudoku-card">
@@ -196,6 +197,35 @@
           </div>
           <div id="climb-start" class="game-start">
             <button id="climb-start-btn" class="inbox-submit"></button>
+          </div>
+        </div>
+      </div>
+      <div id="panel-gomoku" class="game-panel">
+        <div class="game-card gomoku-card">
+          <div id="gomoku-modes" class="ms-levels gomoku-modes"></div>
+          <div class="gomoku-info">
+            <span id="gomoku-mode-label"></span>
+            <span id="gomoku-turn"></span>
+            <span id="gomoku-count"></span>
+          </div>
+          <canvas id="gomoku-canvas" width="520" height="520"></canvas>
+          <p id="gomoku-status" class="inbox-status"></p>
+          <div id="gomoku-online" class="gomoku-online hidden">
+            <p id="gomoku-room-info" class="gomoku-room-info"></p>
+            <div class="gomoku-room-form">
+              <input id="gomoku-code" type="text" maxlength="6" autocomplete="off">
+              <button id="gomoku-join" class="ms-level"></button>
+              <button id="gomoku-create" class="ms-level"></button>
+              <button id="gomoku-leave" class="ms-level hidden"></button>
+            </div>
+          </div>
+          <div class="game-bar" id="gomoku-bar">
+            <button id="gomoku-undo" class="inbox-submit"></button>
+            <button id="gomoku-restart" class="inbox-submit"></button>
+          </div>
+          <div id="gomoku-result" class="gomoku-result hidden">
+            <p id="gomoku-result-text"></p>
+            <button id="gomoku-again" class="inbox-submit"></button>
           </div>
         </div>
       </div>
@@ -311,22 +341,23 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=32"></script>
-  <script src="js/data.js?v=32"></script>
-  <script src="js/main.js?v=32"></script>
-  <script src="js/nav-fx.js?v=32"></script>
-  <script src="js/inbox.js?v=32"></script>
-  <script src="js/game.js?v=32"></script>
-  <script src="js/pvz.js?v=32"></script>
-  <script src="js/minesweeper.js?v=32"></script>
-  <script src="js/snake.js?v=32"></script>
-  <script src="js/space-data.js?v=32"></script>
-  <script src="js/space.js?v=32"></script>
-  <script src="js/poem-data.js?v=32"></script>
-  <script src="js/poem.js?v=32"></script>
-  <script src="js/climbing.js?v=32"></script>
-  <script src="js/kids.js?v=32"></script>
-  <script src="js/sudoku-data.js?v=32"></script>
-  <script src="js/sudoku.js?v=32"></script>
+  <script src="js/config.js?v=33"></script>
+  <script src="js/data.js?v=33"></script>
+  <script src="js/main.js?v=33"></script>
+  <script src="js/nav-fx.js?v=33"></script>
+  <script src="js/inbox.js?v=33"></script>
+  <script src="js/game.js?v=33"></script>
+  <script src="js/pvz.js?v=33"></script>
+  <script src="js/minesweeper.js?v=33"></script>
+  <script src="js/snake.js?v=33"></script>
+  <script src="js/space-data.js?v=33"></script>
+  <script src="js/space.js?v=33"></script>
+  <script src="js/poem-data.js?v=33"></script>
+  <script src="js/poem.js?v=33"></script>
+  <script src="js/climbing.js?v=33"></script>
+  <script src="js/kids.js?v=33"></script>
+  <script src="js/sudoku-data.js?v=33"></script>
+  <script src="js/sudoku.js?v=33"></script>
+  <script src="js/gomoku.js?v=33"></script>
 </body>
 </html>
