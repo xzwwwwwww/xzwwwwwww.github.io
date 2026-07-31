@@ -153,6 +153,11 @@ applyLang(currentLang);
 // ===== 生活碎碎念时间线 =====
 const timelineBox = document.getElementById("life-timeline");
 function renderTimeline() {
+  // life.js 加载后接管渲染（在线数据 + 静态 MOMENTS 合并）
+  if (typeof window.renderLifeTimeline === "function") {
+    window.renderLifeTimeline();
+    return;
+  }
   timelineBox.innerHTML = [...MOMENTS]
     .sort((a, b) => b.date.localeCompare(a.date))
     .map(m => `

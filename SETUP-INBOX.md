@@ -137,3 +137,34 @@ create policy "anon update rooms" on gomoku_rooms
 ```
 
 运行完即可，不用改任何配置文件（联机复用第 4 步已填好的密钥）。想清理废弃房间：左侧 **Table Editor** → `gomoku_rooms` → 选中行删除。
+
+# 附：生活碎碎念在线发布（life_moments）
+
+「生活碎碎念」支持登录后在线发布图文（图片前端压缩后以 base64 存入表内）。同样在 **SQL Editor** → **New query** 粘贴运行：
+
+```sql
+-- 生活碎碎念在线日记表
+create table life_moments (
+  id uuid primary key default gen_random_uuid(),
+  date text not null,                         -- 显示用日期，自由文本（如 2026-07-30）
+  text text not null,                         -- 正文（中文）
+  text_en text,                               -- 英文版正文（可选）
+  images jsonb not null default '[]',         -- 图片数组，元素为压缩后的 base64 dataURL
+  secret text,                                -- 发布密钥，与 js/config.js 的 LIFE_SECRET 一致
+  created_at timestamptz not null default now()
+);
+
+alter table life_moments enable row level security;
+
+-- 所有人可读（碎碎念本来就是公开的）
+create policy "anon read moments" on life_moments
+  for select to anon using (true);
+
+-- 带密钥才能写入：网页发布时会自动带上 js/config.js 里的 LIFE_SECRET。
+-- 注意：密钥和账号一样属于“防君子不防小人”——懂技术的人看源码仍能找到它，
+-- 和整站的轻量登录模型一致；如需真正安全，以后再上 Supabase Auth。
+create policy "anon insert with secret" on life_moments
+  for insert to anon with check (secret = 'lm_x7k9q2w8f3');
+```
+
+运行完即可，不用改配置文件。登录用「你和我」的同一批账号（`js/space-data.js`）。想删某条：左侧 **Table Editor** → `life_moments` → 选中行删除。
