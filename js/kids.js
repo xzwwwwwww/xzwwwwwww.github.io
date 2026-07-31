@@ -81,14 +81,21 @@
     });
   });
 
+  // 回到分类网格时，把所有下级状态一并复位
+  function resetKidsSubs() {
+    kidsGamesGrid.classList.remove("hidden");
+    kidsGamesBack.classList.add("hidden");
+    kidsPanels.forEach(p => p.classList.remove("active"));
+    document.querySelectorAll("#kids .kids-col-back").forEach(b => b.classList.add("hidden"));
+    document.querySelectorAll("#kids .kids-col-grid").forEach(g => g.classList.remove("hidden"));
+    document.querySelectorAll("#kids .kids-col-page").forEach(p => p.classList.remove("active"));
+  }
+
   kidsBack.addEventListener("click", () => {
     kidsGrid.classList.remove("hidden");
     kidsBack.classList.add("hidden");
     catPanels.forEach(p => p.classList.remove("active"));
-    // 若停留在某个游戏里，一并收起
-    kidsGamesGrid.classList.remove("hidden");
-    kidsGamesBack.classList.add("hidden");
-    kidsPanels.forEach(p => p.classList.remove("active"));
+    resetKidsSubs();
   });
 
   kidsGamesGrid.querySelectorAll(".game-box").forEach(box => {
@@ -104,6 +111,113 @@
     kidsGamesGrid.classList.remove("hidden");
     kidsGamesBack.classList.add("hidden");
     kidsPanels.forEach(p => p.classList.remove("active"));
+    document.querySelectorAll("#kids-cat-games .kids-col-page").forEach(p =>
+      p.classList.remove("active"));
+  });
+
+  // ===== 栏目方框与示例内容（数据在 kids-content.js，缺数据的分类自动跳过） =====
+  const KC = typeof KIDS_CONTENT !== "undefined" ? KIDS_CONTENT : null;
+
+  function openColPage(grid, cat, col) {
+    const panel = grid.closest(".kids-cat-panel");
+    grid.classList.add("hidden");
+    const back = panel.querySelector(".kids-col-back") ||
+      (grid === kidsGamesGrid ? kidsGamesBack : null);
+    if (back) back.classList.remove("hidden");
+    panel.querySelectorAll(".kids-col-page").forEach(p =>
+      p.classList.toggle("active", p.id === "col-" + cat + "-" + col));
+  }
+
+  function renderKidsCols() {
+    if (!KC) return;
+    const lang = currentLang === "en" ? "en" : "zh";
+    // 记住当前打开的栏目页，重渲染后恢复
+    const openIds = [];
+    document.querySelectorAll("#kids .kids-col-page.active").forEach(p => openIds.push(p.id));
+
+    // 栏目方框：普通分类进各自 grid；互动游戏的栏目方框追加进 games-grid
+    document.querySelectorAll(".kids-col-grid, #kids-games-grid").forEach(grid => {
+      const cat = grid.dataset.cat || "games";
+      const cols = KC[cat] || {};
+      grid.querySelectorAll(".kids-col-box").forEach(b => b.remove());
+      Object.keys(cols).forEach(col => {
+        const entry = cols[col][lang] || cols[col].zh;
+        const b = document.createElement("button");
+        b.className = "game-box kids-col-box kids-box-" + col;
+        const chip = document.createElement("span");
+        chip.className = "box-chip";
+        const name = document.createElement("span");
+        name.className = "box-name";
+        name.textContent = entry.name;
+        chip.appendChild(name);
+        b.appendChild(chip);
+        b.addEventListener("click", () => openColPage(grid, cat, col));
+        grid.appendChild(b);
+      });
+    });
+
+    // 栏目文章页
+    document.querySelectorAll(".kids-col-pages").forEach(box => {
+      const cat = box.dataset.cat;
+      const cols = KC[cat] || {};
+      box.innerHTML = "";
+      Object.keys(cols).forEach(col => {
+        const entry = cols[col][lang] || cols[col].zh;
+        const art = document.createElement("article");
+        art.className = "kids-col-page";
+        art.id = "col-" + cat + "-" + col;
+        entry.arts.forEach(a => {
+          const div = document.createElement("div");
+          div.className = "col-art";
+          const h = document.createElement("h3");
+          h.className = "col-art-title";
+          h.textContent = a.t;
+          div.appendChild(h);
+          if (a.fig) {
+            const f = document.createElement("div");
+            f.className = "col-art-fig";
+            f.innerHTML = a.fig; // 数据文件内的可信 SVG
+            div.appendChild(f);
+          }
+          const ps = document.createElement("div");
+          ps.className = "col-art-ps";
+          a.ps.forEach(t => {
+            const p = document.createElement("p");
+            p.textContent = t;
+            ps.appendChild(p);
+          });
+          div.appendChild(ps);
+          if (a.html) {
+            const raw = document.createElement("div");
+            raw.className = "col-art-raw";
+            raw.innerHTML = a.html; // 数据文件内的可信 HTML（如答案 details）
+            div.appendChild(raw);
+          }
+          art.appendChild(div);
+        });
+        const more = document.createElement("p");
+        more.className = "col-art-more";
+        more.textContent = KC.ui.more[lang] || KC.ui.more.zh;
+        art.appendChild(more);
+        box.appendChild(art);
+      });
+    });
+
+    openIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("active");
+    });
+  }
+
+  // 栏目页返回按钮（各分类静态写在 HTML 里）
+  document.querySelectorAll(".kids-col-back").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const panel = btn.closest(".kids-cat-panel");
+      btn.classList.add("hidden");
+      const grid = panel.querySelector(".kids-col-grid");
+      if (grid) grid.classList.remove("hidden");
+      panel.querySelectorAll(".kids-col-page").forEach(p => p.classList.remove("active"));
+    });
   });
 
   // ===== 1. 涂鸦画板 =====
@@ -493,14 +607,11 @@
 
   // ===== 语言切换重绘 =====
   function renderLang() {
-    tabs[0].textContent = tp("tabDoodle");
-    tabs[1].textContent = tp("tabMole");
-    tabs[2].textContent = tp("tabMath2");
-    tabs[3].textContent = tp("tabMath3");
     renderDoodle();
     renderMoleLang();
     math2.renderLang();
     math3.renderLang();
+    renderKidsCols();
   }
   document.addEventListener("langchange", renderLang);
 

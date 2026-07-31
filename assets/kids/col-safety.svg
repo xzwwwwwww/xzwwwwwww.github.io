@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#F3F1EA"/>
+  <g transform="translate(240 92)">
+    <g>
+      <animateTransform attributeName="transform" type="scale" values="1;1.04;1" dur="2.2s" repeatCount="indefinite"/>
+      <path d="M 0,-48 Q 30,-38 44,-38 Q 44,22 0,52 Q -44,22 -44,-38 Q -30,-38 0,-48 Z" fill="#7FB069" stroke="#4A3226" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M 0,-38 Q 24,-30 34,-30 Q 34,16 0,40 Q -34,16 -34,-30 Q -24,-30 0,-38 Z" fill="#9CCC65"/>
+      <path d="M -16,-2 L -4,12 L 18,-14" fill="none" stroke="#FFFDF8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M -16,-2 L -4,12 L 18,-14" fill="none" stroke="#4A3226" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+  <path d="M 150,60 l 2.5,6 6,2.5 -6,2.5 -2.5,6 -2.5,-6 -6,-2.5 6,-2.5 Z" fill="#F0C24E">
+    <animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite"/>
+  </path>
+  <path d="M 336,120 l 2,4.8 4.8,2 -4.8,2 -2,4.8 -2,-4.8 -4.8,-2 4.8,-2 Z" fill="#C1502E">
+    <animate attributeName="opacity" values="0.2;1;0.2" dur="2s" repeatCount="indefinite"/>
+  </path>
+</svg>

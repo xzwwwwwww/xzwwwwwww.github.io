@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#FAFAF7"/>
+  <g transform="translate(240 108)">
+    <ellipse cx="0" cy="20" rx="90" ry="26" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>
+    <ellipse cx="0" cy="16" rx="72" ry="18" fill="#F3F1EA" stroke="#C9C4B8" stroke-width="1.5"/>
+    <g transform="translate(-38 2)">
+      <path d="M 0,-16 Q 14,-10 12,6 Q 6,16 -4,12 Q -14,6 -10,-6 Q -6,-14 0,-16 Z" fill="#D95550" stroke="#4A3226" stroke-width="2"/>
+      <path d="M 0,-16 Q 2,-22 6,-24" fill="none" stroke="#4A3226" stroke-width="2"/>
+      <path d="M 2,-20 Q 10,-24 12,-18 Q 6,-16 2,-20 Z" fill="#7FB069" stroke="#4A3226" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(0 8)" fill="#8E6FBF" stroke="#4A3226" stroke-width="2">
+      <circle cx="-6" cy="-4" r="7"/><circle cx="6" cy="-4" r="7"/><circle cx="0" cy="5" r="7"/>
+    </g>
+    <g transform="translate(40 0)">
+      <path d="M -14,6 Q -4,-18 16,-14 Q 18,0 8,8 Q -4,12 -14,6 Z" fill="#FFD166" stroke="#4A3226" stroke-width="2"/>
+      <path d="M -14,6 Q -4,-12 14,-10" fill="none" stroke="#F5A623" stroke-width="2"/>
+    </g>
+    <circle cx="18" cy="-12" r="8" fill="#4FA3D1" stroke="#4A3226" stroke-width="2"/>
+  </g>
+  <path d="M 360,50 l 2.5,6 6,2.5 -6,2.5 -2.5,6 -2.5,-6 -6,-2.5 6,-2.5 Z" fill="#C1502E">
+    <animate attributeName="opacity" values="1;0.2;1" dur="1.8s" repeatCount="indefinite"/>
+  </path>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#F3F1EA"/>
+  <g transform="translate(240 96)">
+    <path d="M -10,-52 L -10,-14 L -34,40 Q -38,50 -26,50 L 26,50 Q 38,50 34,40 L 10,-14 L 10,-52 Z" fill="rgba(122,199,227,0.35)" stroke="#4A3226" stroke-width="2.5" stroke-linejoin="round"/>
+    <line x1="-14" y1="-52" x2="14" y2="-52" stroke="#4A3226" stroke-width="4" stroke-linecap="round"/>
+    <path d="M -26,22 L 26,22 L 34,40 Q 38,50 26,50 L -26,50 Q -38,50 -34,40 Z" fill="#7AC7E3" stroke="#4A3226" stroke-width="2"/>
+    <circle cx="-8" cy="36" r="4" fill="rgba(255,255,255,0.6)"/>
+    <circle cx="10" cy="42" r="3" fill="rgba(255,255,255,0.6)"/>
+    <circle cx="4" cy="30" r="2.4" fill="rgba(255,255,255,0.6)"/>
+  </g>
+  <g fill="#7AC7E3" stroke="#4A3226" stroke-width="2">
+    <circle cx="216" cy="52" r="5">
+      <animate attributeName="cy" values="60;30" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="252" cy="58" r="4">
+      <animate attributeName="cy" values="64;34" dur="2.4s" begin="0.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="0.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <path d="M 150,60 l 2.5,6 6,2.5 -6,2.5 -2.5,6 -2.5,-6 -6,-2.5 6,-2.5 Z" fill="#C1502E">
+    <animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite"/>
+  </path>
+  <path d="M 330,120 l 2,4.8 4.8,2 -4.8,2 -2,4.8 -2,-4.8 -4.8,-2 4.8,-2 Z" fill="#F0C24E">
+    <animate attributeName="opacity" values="0.2;1;0.2" dur="2s" repeatCount="indefinite"/>
+  </path>
+</svg>

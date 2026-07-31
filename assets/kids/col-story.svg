@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#F3F1EA"/>
+  <g transform="translate(240 118)">
+    <path d="M 0,-22 C -24,-32 -52,-32 -72,-22 L -72,32 C -52,22 -24,22 0,32 C 24,22 52,22 72,32 L 72,-22 C 52,-32 24,-32 0,-22 Z" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>
+    <line x1="0" y1="-22" x2="0" y2="32" stroke="#4A3226" stroke-width="2"/>
+    <g stroke="#C9C4B8" stroke-width="2" stroke-linecap="round">
+      <line x1="-60" y1="-10" x2="-12" y2="-10"/><line x1="-60" y1="0" x2="-12" y2="0"/>
+      <line x1="-60" y1="10" x2="-12" y2="10"/><line x1="-60" y1="20" x2="-26" y2="20"/>
+      <line x1="12" y1="-10" x2="60" y2="-10"/><line x1="12" y1="0" x2="60" y2="0"/>
+    </g>
+  </g>
+  <g transform="translate(310 62)">
+    <rect x="-34" y="-22" width="68" height="34" rx="12" fill="#FFD166" stroke="#4A3226" stroke-width="2.5"/>
+    <path d="M -12,12 L -18,26 L -2,14 Z" fill="#FFD166" stroke="#4A3226" stroke-width="2" stroke-linejoin="round"/>
+    <g fill="#4A3226">
+      <circle cx="-14" cy="-5" r="3"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" repeatCount="indefinite"/></circle>
+      <circle cx="0" cy="-5" r="3"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" begin="0.3s" repeatCount="indefinite"/></circle>
+      <circle cx="14" cy="-5" r="3"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" begin="0.6s" repeatCount="indefinite"/></circle>
+    </g>
+  </g>
+  <g transform="translate(160 58)">
+    <rect x="-26" y="-17" width="52" height="26" rx="10" fill="#F4A7C3" stroke="#4A3226" stroke-width="2.5"/>
+    <path d="M 10,9 L 16,21 L 2,11 Z" fill="#F4A7C3" stroke="#4A3226" stroke-width="2" stroke-linejoin="round"/>
+    <text x="0" y="1" font-family="Georgia, serif" font-size="13" fill="#4A3226" text-anchor="middle">!</text>
+  </g>
+</svg>

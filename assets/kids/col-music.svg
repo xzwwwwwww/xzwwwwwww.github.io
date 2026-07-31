@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#F3F1EA"/>
+  <g transform="translate(150 90)">
+    <rect x="0" y="0" width="180" height="56" rx="6" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>
+    <g stroke="#4A3226" stroke-width="1.5">
+      <line x1="30" y1="0" x2="30" y2="56"/><line x1="60" y1="0" x2="60" y2="56"/>
+      <line x1="90" y1="0" x2="90" y2="56"/><line x1="120" y1="0" x2="120" y2="56"/>
+      <line x1="150" y1="0" x2="150" y2="56"/>
+    </g>
+    <g fill="#2B2B2B">
+      <rect x="18" y="0" width="20" height="34" rx="2"/>
+      <rect x="48" y="0" width="20" height="34" rx="2"/>
+      <rect x="108" y="0" width="20" height="34" rx="2"/>
+      <rect x="138" y="0" width="20" height="34" rx="2">
+        <animate attributeName="height" values="34;40;34" dur="1.2s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+  <g transform="translate(340 56)" fill="#4A3226">
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 -8;0 0" dur="1.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+      <ellipse cx="0" cy="12" rx="7" ry="5.5" transform="rotate(-20 0 12)"/>
+      <rect x="5" y="-14" width="3" height="26" rx="1.5"/>
+      <path d="M 8,-14 Q 20,-12 16,-2 Q 12,-8 8,-8 Z"/>
+    </g>
+  </g>
+  <g transform="translate(376 84)" fill="#C1502E">
+    <ellipse cx="0" cy="8" rx="5" ry="4" transform="rotate(-20 0 8)"/>
+    <rect x="3.5" y="-10" width="2.5" height="19" rx="1.2"/>
+    <animate attributeName="opacity" values="1;0.3;1" dur="1.2s" repeatCount="indefinite"/>
+  </g>
+</svg>

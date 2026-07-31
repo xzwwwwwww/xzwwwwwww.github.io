@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#FAFAF7"/>
+  <g transform="translate(240 100)">
+    <ellipse cx="0" cy="22" rx="26" ry="20" fill="#F2A65A" stroke="#4A3226" stroke-width="2.5"/>
+    <ellipse cx="-26" cy="-6" rx="10" ry="14" fill="#F2A65A" stroke="#4A3226" stroke-width="2.5" transform="rotate(-18 -26 -6)"/>
+    <ellipse cx="-9" cy="-16" rx="10" ry="14" fill="#F2A65A" stroke="#4A3226" stroke-width="2.5"/>
+    <ellipse cx="9" cy="-16" rx="10" ry="14" fill="#F2A65A" stroke="#4A3226" stroke-width="2.5"/>
+    <ellipse cx="26" cy="-6" rx="10" ry="14" fill="#F2A65A" stroke="#4A3226" stroke-width="2.5" transform="rotate(18 26 -6)"/>
+    <animateTransform attributeName="transform" type="scale" values="1;1.06;1" dur="2s" repeatCount="indefinite" additive="sum"/>
+  </g>
+  <g fill="#C9C4B8" opacity="0.85">
+    <g transform="translate(120 140) scale(0.5)">
+      <ellipse cx="0" cy="22" rx="26" ry="20"/>
+      <ellipse cx="-26" cy="-6" rx="10" ry="14" transform="rotate(-18 -26 -6)"/>
+      <ellipse cx="-9" cy="-16" rx="10" ry="14"/>
+      <ellipse cx="9" cy="-16" rx="10" ry="14"/>
+      <ellipse cx="26" cy="-6" rx="10" ry="14" transform="rotate(18 26 -6)"/>
+    </g>
+    <g transform="translate(350 52) scale(0.4)">
+      <ellipse cx="0" cy="22" rx="26" ry="20"/>
+      <ellipse cx="-26" cy="-6" rx="10" ry="14" transform="rotate(-18 -26 -6)"/>
+      <ellipse cx="-9" cy="-16" rx="10" ry="14"/>
+      <ellipse cx="9" cy="-16" rx="10" ry="14"/>
+      <ellipse cx="26" cy="-6" rx="10" ry="14" transform="rotate(18 26 -6)"/>
+    </g>
+  </g>
+</svg>

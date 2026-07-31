@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#F3F1EA"/>
+  <g transform="translate(200 95)">
+    <path d="M -45,-45 L -5,-45 Q -15,-25 -5,-15 Q 5,-25 -5,-45 L 45,-45 L 45,45 L -45,45 Z" fill="#F2784B" stroke="#4A3226" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M -45,-45 L -15,-45 L -15,-15 L -45,-15 Z" fill="#F59A62" opacity="0.45"/>
+  </g>
+  <g transform="translate(268 95)">
+    <animateTransform attributeName="transform" type="translate" values="278 95;268 95;278 95" dur="2.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+    <path d="M -23,-45 L 23,-45 L 23,15 Q 43,5 43,20 Q 43,35 23,25 L 23,45 L -23,45 Z" fill="#7AC7E3" stroke="#4A3226" stroke-width="2.5" stroke-linejoin="round" transform="translate(-4 0)"/>
+  </g>
+  <path d="M 140,50 l 2.5,6 6,2.5 -6,2.5 -2.5,6 -2.5,-6 -6,-2.5 6,-2.5 Z" fill="#C1502E">
+    <animate attributeName="opacity" values="0.2;1;0.2" dur="2s" repeatCount="indefinite"/>
+  </path>
+</svg>

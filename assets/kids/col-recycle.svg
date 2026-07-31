@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 190">
+  <rect width="480" height="190" fill="#F3F1EA"/>
+  <g transform="translate(210 95)">
+    <g fill="none" stroke="#4CAF7D" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 0,-44 L 34,14 L 12,14" />
+      <path d="M 42,24 L -8,52 L 2,32" transform="rotate(0)"/>
+      <path d="M -42,24 L -26,-16 L -10,-2"/>
+    </g>
+    <g fill="#4CAF7D">
+      <path d="M 20,8 L 38,18 L 16,26 Z"/>
+      <path d="M -2,32 L -14,50 L -20,28 Z"/>
+      <path d="M -22,-12 L -36,4 L -14,6 Z"/>
+    </g>
+    <animateTransform attributeName="transform" type="rotate" values="0 210 95;8 210 95;0 210 95" dur="3s" repeatCount="indefinite" additive="sum"/>
+  </g>
+  <g transform="translate(330 108)">
+    <path d="M -12,-34 L 12,-34 L 16,-20 L 16,34 Q 16,42 8,42 L -8,42 Q -16,42 -16,34 L -16,-20 Z" fill="rgba(143,216,232,0.4)" stroke="#4A3226" stroke-width="2.5" stroke-linejoin="round"/>
+    <rect x="-10" y="-44" width="20" height="12" rx="3" fill="#4FA3D1" stroke="#4A3226" stroke-width="2"/>
+    <path d="M -16,6 L 16,6 M -16,18 L 16,18" stroke="#4A3226" stroke-width="1.5" opacity="0.4"/>
+  </g>
+</svg>

@@ -707,6 +707,53 @@ h1, h2, h3, h4, .logo, .section-title {
 .kids-box-mole    { background-image: url("../assets/kids/mole.svg"); }
 .kids-box-math2   { background-image: url("../assets/kids/math2.svg"); }
 .kids-box-math3   { background-image: url("../assets/kids/math3.svg"); }
+.kids-box-science { background-image: url("../assets/kids/col-science.svg"); }
+.kids-box-animals { background-image: url("../assets/kids/col-animals.svg"); }
+.kids-box-history { background-image: url("../assets/kids/col-history.svg"); }
+.kids-box-travel  { background-image: url("../assets/kids/col-travel.svg"); }
+.kids-box-diy     { background-image: url("../assets/kids/col-diy.svg"); }
+.kids-box-kitchen { background-image: url("../assets/kids/col-kitchen.svg"); }
+.kids-box-recycle { background-image: url("../assets/kids/col-recycle.svg"); }
+.kids-box-drawing { background-image: url("../assets/kids/col-drawing.svg"); }
+.kids-box-puzzle  { background-image: url("../assets/kids/col-puzzle.svg"); }
+.kids-box-story   { background-image: url("../assets/kids/col-story.svg"); }
+.kids-box-lab     { background-image: url("../assets/kids/col-lab.svg"); }
+.kids-box-music   { background-image: url("../assets/kids/col-music.svg"); }
+.kids-box-emotion { background-image: url("../assets/kids/col-emotion.svg"); }
+.kids-box-safety  { background-image: url("../assets/kids/col-safety.svg"); }
+.kids-box-habit   { background-image: url("../assets/kids/col-habit.svg"); }
+.kids-box-bedtime { background-image: url("../assets/kids/col-bedtime.svg"); }
+.kids-box-quiz    { background-image: url("../assets/kids/col-quiz.svg"); }
+
+/* 栏目文章页 */
+.kids-col-page { display: none; max-width: 640px; margin: 0 auto; }
+.kids-col-page.active { display: block; }
+.col-art { margin-bottom: 30px; }
+.col-art-title {
+  font-size: 20px; letter-spacing: 0.04em;
+  margin: 0 0 14px; color: var(--text);
+}
+.col-art-fig { margin: 0 auto 16px; max-width: 420px; }
+.col-art-fig svg { display: block; width: 100%; height: auto; }
+.col-art-ps p {
+  font-size: 15px; line-height: 1.9;
+  margin: 0 0 12px; color: var(--text);
+}
+.col-art-more {
+  text-align: center; color: var(--faint);
+  font-size: 12px; letter-spacing: 0.1em;
+  margin: 26px 0 8px;
+}
+.col-art-raw details {
+  border: 1px solid var(--line); border-radius: 2px;
+  padding: 10px 16px; margin: 12px 0;
+  background: var(--panel);
+}
+.col-art-raw summary {
+  cursor: pointer; color: var(--accent);
+  font-size: 14px; letter-spacing: 0.04em;
+}
+.col-art-raw details p { margin: 10px 0 2px; font-size: 15px; line-height: 1.8; }
 
 .kids-card { position: relative; padding: 24px; }
 
