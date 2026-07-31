@@ -133,6 +133,24 @@ h1, h2, h3, h4, .logo, .section-title {
   letter-spacing: 0.12em;
 }
 
+/* 首页「今天」信息条：日期/时钟/农历/宜忌 */
+.day-strip {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
+  gap: 6px 22px;
+  margin-top: 26px; padding: 10px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-size: 12px; letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.day-clock { font-variant-numeric: tabular-nums; color: var(--text); }
+.day-yiji { display: flex; gap: 14px; }
+.day-yi { color: var(--accent); }
+.day-ji { color: var(--faint); }
+@media (max-width: 600px) {
+  .day-strip { gap: 4px 14px; font-size: 11px; }
+}
+
 /* 跑马灯细带 */
 .marquee {
   margin-top: 40px; padding: 10px 0;
