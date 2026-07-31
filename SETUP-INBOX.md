@@ -140,7 +140,7 @@ create policy "anon update rooms" on gomoku_rooms
 
 # 附：生活碎碎念在线发布（life_moments）
 
-「生活碎碎念」支持登录后在线发布图文（图片前端压缩后以 base64 存入表内）。同样在 **SQL Editor** → **New query** 粘贴运行：
+「生活碎碎念」支持站长登录后在线发布图文（图片前端压缩后以 base64 存入表内），登录用留言信箱的站长账号（Supabase Auth 邮箱 + 密码）。同样在 **SQL Editor** → **New query** 粘贴运行：
 
 ```sql
 -- 生活碎碎念在线日记表
@@ -150,7 +150,6 @@ create table life_moments (
   text text not null,                         -- 正文（中文）
   text_en text,                               -- 英文版正文（可选）
   images jsonb not null default '[]',         -- 图片数组，元素为压缩后的 base64 dataURL
-  secret text,                                -- 发布密钥，与 js/config.js 的 LIFE_SECRET 一致
   created_at timestamptz not null default now()
 );
 
@@ -160,11 +159,18 @@ alter table life_moments enable row level security;
 create policy "anon read moments" on life_moments
   for select to anon using (true);
 
--- 带密钥才能写入：网页发布时会自动带上 js/config.js 里的 LIFE_SECRET。
--- 注意：密钥和账号一样属于“防君子不防小人”——懂技术的人看源码仍能找到它，
--- 和整站的轻量登录模型一致；如需真正安全，以后再上 Supabase Auth。
-create policy "anon insert with secret" on life_moments
-  for insert to anon with check (secret = 'lm_x7k9q2w8f3');
+-- 只有站长（Supabase Auth 登录用户）可写，和留言信箱的站长管理同一套账号
+create policy "owner insert moments" on life_moments
+  for insert to authenticated with check (true);
 ```
 
-运行完即可，不用改配置文件。登录用「你和我」的同一批账号（`js/space-data.js`）。想删某条：左侧 **Table Editor** → `life_moments` → 选中行删除。
+如果之前跑过带 `secret` 列和 `anon insert with secret` 策略的旧版 SQL，改跑这一段升级即可：
+
+```sql
+drop policy "anon insert with secret" on life_moments;
+create policy "owner insert moments" on life_moments
+  for insert to authenticated with check (true);
+alter table life_moments drop column secret;
+```
+
+运行完即可，不用改配置文件。想删某条：左侧 **Table Editor** → `life_moments` → 选中行删除。

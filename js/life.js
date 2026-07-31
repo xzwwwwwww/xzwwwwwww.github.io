@@ -1,18 +1,18 @@
-/* 生活碎碎念：登录后在线发布（文字 + 图片），存 Supabase life_moments 表
+/* 生活碎碎念：站长登录后在线发布（文字 + 图片），存 Supabase life_moments 表
  * 渲染：在线数据与 data.js 的静态 MOMENTS 合并，按日期倒序；
  * main.js 的 renderTimeline 会委托到这里的 window.renderLifeTimeline。
- * 依赖：config.js（SUPABASE_*、LIFE_SECRET）、space-data.js（SPACE_USERS）、
- *       main.js（currentLang、langchange 事件）
+ * 登录与「留言信箱」站长共用 Supabase Auth 账号（邮箱 + 密码）。
+ * 依赖：config.js（SUPABASE_*）、main.js（currentLang、langchange 事件）
  */
 
 (function () {
   const I18N = {
     zh: {
       write: "✎ 写碎碎念",
-      userPh: "用户名",
-      passPh: "密码",
+      userPh: "站长邮箱",
+      passPh: "站长密码",
       login: "登录",
-      wrong: "用户名或密码不对，再试一次",
+      wrong: "登录失败，请检查邮箱和密码",
       datePh: "日期（如 2026-07-30）",
       textPh: "今天想记点什么…",
       textEnPh: "英文版（可选，不写则英文模式显示中文）",
@@ -26,10 +26,10 @@
     },
     en: {
       write: "✎ Write",
-      userPh: "Username",
-      passPh: "Password",
+      userPh: "Owner email",
+      passPh: "Owner password",
       login: "Log in",
-      wrong: "Wrong username or password, try again",
+      wrong: "Login failed. Check your email and password.",
       datePh: "Date (e.g. 2026-07-30)",
       textPh: "What's on your mind today…",
       textEnPh: "English version (optional; Chinese shows in EN mode if empty)",
@@ -46,8 +46,7 @@
 
   const configured =
     typeof SUPABASE_URL === "string" && !SUPABASE_URL.startsWith("YOUR_") &&
-    typeof SUPABASE_ANON_KEY === "string" && !SUPABASE_ANON_KEY.startsWith("YOUR_") &&
-    typeof LIFE_SECRET === "string";
+    typeof SUPABASE_ANON_KEY === "string" && !SUPABASE_ANON_KEY.startsWith("YOUR_");
   const sb = configured
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     : null;
@@ -56,7 +55,7 @@
     timeline: document.getElementById("life-timeline"),
     writeBtn: document.getElementById("life-write-btn"),
     loginCard: document.getElementById("life-login"),
-    user: document.getElementById("life-username"),
+    email: document.getElementById("life-email"),
     pass: document.getElementById("life-password"),
     loginBtn: document.getElementById("life-login-btn"),
     loginStatus: document.getElementById("life-login-status"),
@@ -75,12 +74,7 @@
   const MAX_IMGS = 6;
   let dbMoments = [];
   let photos = []; // 待发布图片的 dataURL
-
-  // 登录状态与「你和我」共用同一个 session key
-  const sess = {
-    get() { try { return sessionStorage.getItem("space-user"); } catch (e) { return null; } },
-    set(v) { try { sessionStorage.setItem("space-user", v); } catch (e) {} }
-  };
+  let authed = false; // Supabase Auth 站长会话是否有效
 
   // ===== 时间线渲染（main.js 委托到这里） =====
   window.renderLifeTimeline = function () {
@@ -136,14 +130,13 @@
 
   // ===== 登录与发布器显隐 =====
   function syncPanels() {
-    const logged = !!sess.get();
     els.loginCard.classList.add("hidden");
-    els.composer.classList.toggle("hidden", !logged);
+    els.composer.classList.toggle("hidden", !authed);
     renderTexts();
   }
 
   els.writeBtn.addEventListener("click", () => {
-    if (sess.get()) {
+    if (authed) {
       els.composer.classList.toggle("hidden");
       els.loginCard.classList.add("hidden");
     } else {
@@ -153,19 +146,22 @@
     renderTexts();
   });
 
-  function tryLogin() {
-    const u = els.user.value.trim();
-    const p = els.pass.value;
-    const hit = (typeof SPACE_USERS !== "undefined" ? SPACE_USERS : [])
-      .find(x => x.username === u && x.password === p);
-    if (!hit) {
+  async function tryLogin() {
+    if (!sb) return;
+    els.loginBtn.disabled = true;
+    const { error } = await sb.auth.signInWithPassword({
+      email: els.email.value.trim(),
+      password: els.pass.value
+    });
+    els.loginBtn.disabled = false;
+    if (error) {
       els.loginStatus.textContent = tl("wrong");
       els.loginStatus.className = "inbox-status error";
       return;
     }
-    sess.set(u);
+    authed = true;
     els.loginStatus.textContent = "";
-    els.user.value = "";
+    els.email.value = "";
     els.pass.value = "";
     syncPanels();
   }
@@ -247,8 +243,7 @@
       date: els.date.value.trim() || els.date.placeholder,
       text,
       text_en: els.textEn.value.trim() || null,
-      images: photos,
-      secret: LIFE_SECRET
+      images: photos
     });
     els.publishBtn.disabled = false;
     els.publishBtn.textContent = tl("publish");
@@ -279,7 +274,7 @@
   function renderTexts() {
     els.writeBtn.textContent = els.composer.classList.contains("hidden")
       ? tl("write") : tl("collapse");
-    els.user.placeholder = tl("userPh");
+    els.email.placeholder = tl("userPh");
     els.pass.placeholder = tl("passPh");
     els.loginBtn.textContent = tl("login");
     els.date.placeholder = todayStr();
@@ -294,6 +289,14 @@
   });
 
   renderTexts();
-  syncPanels();
+  // 已登录过（留言信箱那边登录过也会带上同一份会话）就直接打开发布器
+  if (sb) {
+    sb.auth.getSession().then(({ data }) => {
+      authed = !!(data && data.session);
+      syncPanels();
+    }).catch(() => syncPanels());
+  } else {
+    syncPanels();
+  }
   fetchMoments();
 })();
