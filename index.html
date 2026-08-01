@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=47">
+  <link rel="stylesheet" href="css/style.css?v=48">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -144,6 +144,9 @@
         <button class="game-box box-gomoku" data-game="gomoku">
           <span class="box-chip"><span class="box-name" data-i18n="tabGomoku">五子棋</span></span>
         </button>
+        <button class="game-box box-match" data-game="match">
+          <span class="box-chip"><span class="box-name" data-i18n="tabMatch">消消乐</span></span>
+        </button>
       </div>
       <button id="game-back" class="game-back hidden" data-i18n="backToGames">← 返回游戏列表</button>
       <div id="panel-sudoku" class="game-panel">
@@ -261,6 +264,22 @@
             <button id="gomoku-again" class="inbox-submit"></button>
             <button id="gomoku-rematch" class="inbox-submit hidden"></button>
             <button id="gomoku-endmatch" class="inbox-submit hidden"></button>
+          </div>
+        </div>
+      </div>
+      <div id="panel-match" class="game-panel">
+        <div class="game-card match-card">
+          <div id="match-levels" class="ms-levels match-levels"></div>
+          <div class="match-wrap">
+            <canvas id="match-canvas" width="720" height="640"></canvas>
+            <div id="match-overlay" class="match-overlay">
+              <p id="match-ov-title" class="match-ov-title"></p>
+              <p id="match-ov-sub" class="match-ov-sub"></p>
+              <div class="match-ov-btns">
+                <button id="match-ov-main" class="inbox-submit"></button>
+                <button id="match-ov-alt" class="inbox-submit hidden"></button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -429,26 +448,27 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=47"></script>
-  <script src="js/data.js?v=47"></script>
-  <script src="js/main.js?v=47"></script>
-  <script src="js/nav-fx.js?v=47"></script>
-  <script src="js/inbox.js?v=47"></script>
-  <script src="js/game.js?v=47"></script>
-  <script src="js/pvz.js?v=47"></script>
-  <script src="js/minesweeper.js?v=47"></script>
-  <script src="js/snake.js?v=47"></script>
-  <script src="js/space-data.js?v=47"></script>
-  <script src="js/space.js?v=47"></script>
-  <script src="js/poem-data.js?v=47"></script>
-  <script src="js/poem.js?v=47"></script>
-  <script src="js/kids-content.js?v=47"></script>
-  <script src="js/kids.js?v=47"></script>
-  <script src="js/life.js?v=47"></script>
-  <script src="js/sudoku-data.js?v=47"></script>
-  <script src="js/sudoku.js?v=47"></script>
-  <script src="js/gomoku.js?v=47"></script>
-  <script src="js/daily-data.js?v=47"></script>
-  <script src="js/daily.js?v=47"></script>
+  <script src="js/config.js?v=48"></script>
+  <script src="js/data.js?v=48"></script>
+  <script src="js/main.js?v=48"></script>
+  <script src="js/nav-fx.js?v=48"></script>
+  <script src="js/inbox.js?v=48"></script>
+  <script src="js/game.js?v=48"></script>
+  <script src="js/pvz.js?v=48"></script>
+  <script src="js/minesweeper.js?v=48"></script>
+  <script src="js/snake.js?v=48"></script>
+  <script src="js/space-data.js?v=48"></script>
+  <script src="js/space.js?v=48"></script>
+  <script src="js/poem-data.js?v=48"></script>
+  <script src="js/poem.js?v=48"></script>
+  <script src="js/kids-content.js?v=48"></script>
+  <script src="js/kids.js?v=48"></script>
+  <script src="js/life.js?v=48"></script>
+  <script src="js/sudoku-data.js?v=48"></script>
+  <script src="js/sudoku.js?v=48"></script>
+  <script src="js/gomoku.js?v=48"></script>
+  <script src="js/daily-data.js?v=48"></script>
+  <script src="js/daily.js?v=48"></script>
+  <script src="js/match.js?v=48"></script>
 </body>
 </html>

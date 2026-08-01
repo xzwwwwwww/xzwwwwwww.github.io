@@ -595,6 +595,7 @@ h1, h2, h3, h4, .logo, .section-title {
 .box-snake   { background-image: url("../assets/boxes/snake.svg"); }
 .box-poem    { background-image: url("../assets/boxes/poem.svg"); }
 .box-gomoku  { background-image: url("../assets/boxes/gomoku.svg"); }
+.box-match   { background-image: url("../assets/boxes/match.svg"); }
 @media (max-width: 600px) {
   .game-box { min-height: 140px; padding: 10px; }
   .box-pvz { background-position: 25% center; }
@@ -621,6 +622,38 @@ h1, h2, h3, h4, .logo, .section-title {
 }
 .ms-level:hover { border-color: var(--accent); color: var(--accent); }
 .ms-level.active { border-color: var(--accent); color: var(--accent); }
+
+/* 消消乐 */
+.match-card { position: relative; }
+.match-levels { max-height: 108px; overflow-y: auto; }
+.match-locked { opacity: 0.35; cursor: not-allowed; }
+.match-wrap {
+  position: relative;
+  max-width: 720px; margin: 0 auto;
+}
+#match-canvas {
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--line); border-radius: 4px;
+  background: #FBF6EC;
+}
+.match-overlay {
+  position: absolute; inset: 0; z-index: 6;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  background: rgba(251, 246, 236, 0.92);
+  border-radius: 4px;
+  text-align: center;
+}
+.match-ov-title {
+  font-size: 28px; letter-spacing: 0.08em;
+  color: var(--text); margin: 0;
+}
+.match-ov-sub {
+  font-size: 14px; color: var(--muted);
+  letter-spacing: 0.06em; margin: 0;
+}
+.match-ov-btns { display: flex; gap: 12px; margin-top: 12px; }
+.match-overlay .inbox-submit { align-self: auto; padding: 12px 34px; font-size: 16px; }
 
 .ms-bar {
   display: flex; justify-content: space-between; align-items: center;
