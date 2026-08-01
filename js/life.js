@@ -96,7 +96,9 @@
     thoughtTextEn: document.getElementById("thought-text-en"),
     thoughtPublish: document.getElementById("thought-publish"),
     thoughtStatus: document.getElementById("thought-status"),
-    thoughtList: document.getElementById("thought-list")
+    thoughtList: document.getElementById("thought-list"),
+    thoughtToggle: document.getElementById("thought-toggle"),
+    thoughtBody: document.getElementById("thought-body")
   };
 
   const store = {
@@ -343,6 +345,12 @@
 
   // ===== 我的生活思考：站长感悟 + 访客免审评论 =====
   let thoughts = [];
+
+  // 标题折叠/展开（同「写碎碎念」的开合方式）
+  els.thoughtToggle.addEventListener("click", () => {
+    const hidden = els.thoughtBody.classList.toggle("hidden");
+    els.thoughtToggle.classList.toggle("open", !hidden);
+  });
 
   function fmtWhen(iso) {
     const d = new Date(iso);

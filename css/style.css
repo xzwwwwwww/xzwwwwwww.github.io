@@ -242,15 +242,24 @@ h1, h2, h3, h4, .logo, .section-title {
 
 /* 我的生活思考 */
 .thoughts { margin: 34px 0 30px; }
-.thoughts-title {
-  display: flex; align-items: baseline; gap: 12px;
-  font-size: 18px; letter-spacing: 0.06em;
-  margin: 0 0 16px; color: var(--text);
+.thought-toggle {
+  display: flex; align-items: baseline; gap: 10px;
+  width: 100%; padding: 0;
+  background: none; border: none;
+  font-family: inherit; cursor: pointer;
+  font-size: 18px; letter-spacing: 0.06em; color: var(--text);
+  margin: 0 0 16px; text-align: left;
 }
-.thoughts-title::after {
+.thought-toggle::after {
   content: ""; flex: 1; align-self: center;
   border-top: 1px solid var(--line);
 }
+.thought-toggle:hover .thought-toggle-text { color: var(--accent); }
+.thought-caret {
+  font-size: 13px; color: var(--muted);
+  transition: transform 0.2s ease;
+}
+.thought-toggle.open .thought-caret { transform: rotate(180deg); }
 #thought-composer { margin-bottom: 20px; }
 .thought-empty {
   text-align: center; color: var(--faint);
