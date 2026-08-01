@@ -64,7 +64,7 @@
 
   const canvas = document.getElementById("match-canvas");
   const ctx = canvas.getContext("2d");
-  const levelsEl = document.getElementById("match-levels");
+  const levelsEl = document.getElementById("match-level-select");
   const overlayEl = document.getElementById("match-overlay");
   const ovTitle = document.getElementById("match-ov-title");
   const ovSub = document.getElementById("match-ov-sub");
@@ -392,18 +392,19 @@
     showOverlay(tf("level", { n: level }), goalText(cfg.goal), tp("start"), null);
   }
 
-  // ===== 关卡按钮 =====
+  // ===== 关卡下拉 =====
   function renderLevels() {
     levelsEl.innerHTML = "";
     for (let n = 1; n <= TOTAL; n++) {
-      const b = document.createElement("button");
-      b.className = "ms-level" + (n === level ? " active" : "") + (n > unlocked ? " match-locked" : "");
-      b.textContent = n;
-      b.disabled = n > unlocked;
-      b.addEventListener("click", () => loadLevel(n));
-      levelsEl.appendChild(b);
+      const o = document.createElement("option");
+      o.value = n;
+      o.disabled = n > unlocked;
+      o.textContent = (o.disabled ? "🔒 " : "") + tf("level", { n });
+      levelsEl.appendChild(o);
     }
+    levelsEl.value = level;
   }
+  levelsEl.addEventListener("change", () => loadLevel(Number(levelsEl.value)));
 
   // ===== 绘制 =====
   function drawBear(x, y, size, type, scale, alpha) {

@@ -134,7 +134,7 @@
   const canvas = document.getElementById("pvz-canvas");
   const ctx = canvas.getContext("2d");
   const startBtn = document.getElementById("pvz-start");
-  const levelsEl = document.getElementById("pvz-levels");
+  const levelsEl = document.getElementById("pvz-level-select");
 
   // localStorage 可能在沙箱环境不可用，包一层
   const store = {
@@ -200,19 +200,19 @@
     renderLevels();
   }
 
-  // 关卡列表：已解锁的数字按钮随时回去重玩，未解锁的置灰
+  // 关卡下拉：已解锁的随时回去重玩，未解锁的置灰
   function renderLevels() {
-    levelsEl.innerHTML = Array.from({ length: MAX_LEVEL }, (_, i) => {
-      const lv = i + 1;
-      const locked = lv > unlocked;
-      return `<button class="ms-level ${lv === level ? "active" : ""}" data-lv="${lv}"${locked ? " disabled" : ""}>${locked ? "🔒" : lv}</button>`;
-    }).join("");
+    levelsEl.innerHTML = "";
+    for (let lv = 1; lv <= MAX_LEVEL; lv++) {
+      const o = document.createElement("option");
+      o.value = lv;
+      o.disabled = lv > unlocked;
+      o.textContent = (o.disabled ? "🔒 " : "") + tp("level") + " " + lv;
+      levelsEl.appendChild(o);
+    }
+    levelsEl.value = level;
   }
-  levelsEl.addEventListener("click", e => {
-    const btn = e.target.closest("[data-lv]");
-    if (!btn || btn.disabled) return;
-    changeLevel(Number(btn.dataset.lv));
-  });
+  levelsEl.addEventListener("change", () => changeLevel(Number(levelsEl.value)));
 
   // ===== 坐标辅助 =====
   const cellCX = c => LAWN_X + c * CELL_W + CELL_W / 2;

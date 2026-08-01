@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=49">
+  <link rel="stylesheet" href="css/style.css?v=50">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -151,7 +151,10 @@
       <button id="game-back" class="game-back hidden" data-i18n="backToGames">← 返回游戏列表</button>
       <div id="panel-sudoku" class="game-panel">
         <div class="game-card sudoku-card">
-          <div id="sudoku-levels" class="ms-levels sudoku-levels"></div>
+          <div class="level-bar">
+            <label class="level-label" data-i18n="levelPick">选择关卡</label>
+            <select id="sudoku-level-select" class="level-select"></select>
+          </div>
           <div class="sudoku-info">
             <span id="sudoku-level-label"></span>
             <span id="sudoku-stars" class="sudoku-stars"></span>
@@ -185,7 +188,10 @@
       </div>
       <div id="panel-pvz" class="game-panel">
         <div class="game-card">
-          <div id="pvz-levels" class="ms-levels pvz-levels"></div>
+          <div class="level-bar">
+            <label class="level-label" data-i18n="levelPick">选择关卡</label>
+            <select id="pvz-level-select" class="level-select"></select>
+          </div>
           <canvas id="pvz-canvas" width="800" height="600"></canvas>
           <div class="game-bar">
             <button id="pvz-start" class="inbox-submit"></button>
@@ -220,7 +226,7 @@
         <div class="game-card poem-card">
           <div class="poem-bar">
             <span id="poem-progress"></span>
-            <select id="poem-level-select"></select>
+            <select id="poem-level-select" class="level-select"></select>
           </div>
           <h3 id="poem-title"></h3>
           <p id="poem-author" class="poem-author"></p>
@@ -269,7 +275,10 @@
       </div>
       <div id="panel-match" class="game-panel">
         <div class="game-card match-card">
-          <div id="match-levels" class="ms-levels match-levels"></div>
+          <div class="level-bar">
+            <label class="level-label" data-i18n="levelPick">选择关卡</label>
+            <select id="match-level-select" class="level-select"></select>
+          </div>
           <div class="match-wrap">
             <canvas id="match-canvas" width="720" height="640"></canvas>
             <div id="match-overlay" class="match-overlay">
@@ -448,27 +457,27 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=49"></script>
-  <script src="js/data.js?v=49"></script>
-  <script src="js/main.js?v=49"></script>
-  <script src="js/nav-fx.js?v=49"></script>
-  <script src="js/inbox.js?v=49"></script>
-  <script src="js/game.js?v=49"></script>
-  <script src="js/pvz.js?v=49"></script>
-  <script src="js/minesweeper.js?v=49"></script>
-  <script src="js/snake.js?v=49"></script>
-  <script src="js/space-data.js?v=49"></script>
-  <script src="js/space.js?v=49"></script>
-  <script src="js/poem-data.js?v=49"></script>
-  <script src="js/poem.js?v=49"></script>
-  <script src="js/kids-content.js?v=49"></script>
-  <script src="js/kids.js?v=49"></script>
-  <script src="js/life.js?v=49"></script>
-  <script src="js/sudoku-data.js?v=49"></script>
-  <script src="js/sudoku.js?v=49"></script>
-  <script src="js/gomoku.js?v=49"></script>
-  <script src="js/daily-data.js?v=49"></script>
-  <script src="js/daily.js?v=49"></script>
-  <script src="js/match.js?v=49"></script>
+  <script src="js/config.js?v=50"></script>
+  <script src="js/data.js?v=50"></script>
+  <script src="js/main.js?v=50"></script>
+  <script src="js/nav-fx.js?v=50"></script>
+  <script src="js/inbox.js?v=50"></script>
+  <script src="js/game.js?v=50"></script>
+  <script src="js/pvz.js?v=50"></script>
+  <script src="js/minesweeper.js?v=50"></script>
+  <script src="js/snake.js?v=50"></script>
+  <script src="js/space-data.js?v=50"></script>
+  <script src="js/space.js?v=50"></script>
+  <script src="js/poem-data.js?v=50"></script>
+  <script src="js/poem.js?v=50"></script>
+  <script src="js/kids-content.js?v=50"></script>
+  <script src="js/kids.js?v=50"></script>
+  <script src="js/life.js?v=50"></script>
+  <script src="js/sudoku-data.js?v=50"></script>
+  <script src="js/sudoku.js?v=50"></script>
+  <script src="js/gomoku.js?v=50"></script>
+  <script src="js/daily-data.js?v=50"></script>
+  <script src="js/daily.js?v=50"></script>
+  <script src="js/match.js?v=50"></script>
 </body>
 </html>

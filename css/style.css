@@ -623,10 +623,27 @@ h1, h2, h3, h4, .logo, .section-title {
 .ms-level:hover { border-color: var(--accent); color: var(--accent); }
 .ms-level.active { border-color: var(--accent); color: var(--accent); }
 
+/* 关卡下拉组件（数独 / PvZ / 消消乐 / 古诗词） */
+.level-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; margin-bottom: 14px;
+}
+.level-label {
+  font-size: 12px; color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.level-select {
+  padding: 6px 12px;
+  font-size: 13px; font-family: inherit; letter-spacing: 0.04em;
+  color: var(--text); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 2px;
+  cursor: pointer; outline: none;
+  transition: border-color 0.15s ease;
+}
+.level-select:hover, .level-select:focus { border-color: var(--accent); }
+
 /* 消消乐 */
 .match-card { position: relative; }
-.match-levels { max-height: 108px; overflow-y: auto; }
-.match-locked { opacity: 0.35; cursor: not-allowed; }
 .match-wrap {
   position: relative;
   max-width: 720px; margin: 0 auto;
@@ -750,7 +767,7 @@ h1, h2, h3, h4, .logo, .section-title {
 .sc-form .inbox-submit { align-self: auto; padding: 8px 18px; }
 
 /* PvZ 关卡列表 / 贪吃蛇模式选择（复用扫雷按钮样式） */
-.pvz-levels, .snake-modes { justify-content: center; }
+.snake-modes { justify-content: center; }
 .ms-level:disabled { opacity: 0.35; cursor: default; }
 .ms-level:disabled:hover { border-color: var(--line); color: var(--muted); }
 
@@ -797,13 +814,6 @@ h1, h2, h3, h4, .logo, .section-title {
 
 /* ===== 数独 ===== */
 .sudoku-card { position: relative; }
-.sudoku-levels {
-  display: grid; grid-template-columns: repeat(10, auto);
-  justify-content: center;
-}
-@media (max-width: 640px) {
-  .sudoku-levels { grid-template-columns: repeat(5, auto); }
-}
 .sudoku-info {
   display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center;
   font-size: 14px; color: var(--text); margin-bottom: 12px;

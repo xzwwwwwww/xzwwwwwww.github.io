@@ -53,7 +53,7 @@
   let best = {};   // { 关卡号: 秒 }
   try { best = JSON.parse(store.get("sudokuBest") || "{}") || {}; } catch (e) {}
 
-  const levelsEl = document.getElementById("sudoku-levels");
+  const levelsEl = document.getElementById("sudoku-level-select");
   const levelLabelEl = document.getElementById("sudoku-level-label");
   const starsEl = document.getElementById("sudoku-stars");
   const timeEl = document.getElementById("sudoku-time");
@@ -118,14 +118,16 @@
   function renderLevels() {
     levelsEl.innerHTML = "";
     for (let lv = 1; lv <= TOTAL; lv++) {
-      const b = document.createElement("button");
-      b.className = "ms-level" + (lv === level ? " active" : "");
-      b.textContent = progress.done.includes(lv) ? lv + "✓" : lv;
-      b.disabled = lv > progress.u;
-      b.addEventListener("click", () => loadLevel(lv));
-      levelsEl.appendChild(b);
+      const o = document.createElement("option");
+      o.value = lv;
+      o.disabled = lv > progress.u;
+      o.textContent = (o.disabled ? "🔒 " : "") +
+        tp("level").replace("{n}", lv) + (progress.done.includes(lv) ? " ✓" : "");
+      levelsEl.appendChild(o);
     }
+    levelsEl.value = level;
   }
+  levelsEl.addEventListener("change", () => loadLevel(Number(levelsEl.value)));
 
   function renderInfo() {
     levelLabelEl.textContent = tp("level").replace("{n}", level);
