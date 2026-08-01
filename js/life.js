@@ -33,7 +33,8 @@
       commentPh: "写下你的评论…",
       commentBtn: "评论",
       commentNeed: "昵称和内容都要填哦",
-      commentFail: "评论失败，请稍后再试"
+      commentFail: "评论失败，请稍后再试",
+      thoughtWrite: "✎ 写感悟"
     },
     en: {
       write: "✎ Write",
@@ -61,7 +62,8 @@
       commentPh: "Leave a comment…",
       commentBtn: "Comment",
       commentNeed: "Nickname and comment are both required",
-      commentFail: "Failed, try again later"
+      commentFail: "Failed, try again later",
+      thoughtWrite: "✎ Write"
     }
   };
   const tl = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -97,8 +99,7 @@
     thoughtPublish: document.getElementById("thought-publish"),
     thoughtStatus: document.getElementById("thought-status"),
     thoughtList: document.getElementById("thought-list"),
-    thoughtToggle: document.getElementById("thought-toggle"),
-    thoughtBody: document.getElementById("thought-body")
+    thoughtWriteBtn: document.getElementById("thought-write-btn")
   };
 
   const store = {
@@ -210,7 +211,8 @@
   function syncPanels() {
     els.loginCard.classList.add("hidden");
     els.composer.classList.toggle("hidden", !authed);
-    els.thoughtComposer.classList.toggle("hidden", !authed);
+    els.thoughtComposer.classList.add("hidden");
+    els.thoughtWriteBtn.classList.toggle("hidden", !authed);
     renderTexts();
   }
 
@@ -346,10 +348,10 @@
   // ===== 我的生活思考：站长感悟 + 访客免审评论 =====
   let thoughts = [];
 
-  // 标题折叠/展开（同「写碎碎念」的开合方式）
-  els.thoughtToggle.addEventListener("click", () => {
-    const hidden = els.thoughtBody.classList.toggle("hidden");
-    els.thoughtToggle.classList.toggle("open", !hidden);
+  // 列表直接摊在页面上；写作框默认收起，站长登录后点「✎ 写感悟」才展开
+  els.thoughtWriteBtn.addEventListener("click", () => {
+    els.thoughtComposer.classList.toggle("hidden");
+    renderTexts();
   });
 
   function fmtWhen(iso) {
@@ -517,6 +519,8 @@
     els.thoughtText.placeholder = tl("thoughtPh");
     els.thoughtTextEn.placeholder = tl("thoughtEnPh");
     els.thoughtPublish.textContent = tl("thoughtPublish");
+    els.thoughtWriteBtn.textContent =
+      els.thoughtComposer.classList.contains("hidden") ? tl("thoughtWrite") : tl("collapse");
   }
 
   document.addEventListener("langchange", () => {

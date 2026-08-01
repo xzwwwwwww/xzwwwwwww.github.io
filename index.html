@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=51">
+  <link rel="stylesheet" href="css/style.css?v=52">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -90,19 +90,17 @@
         <p id="life-status" class="inbox-status"></p>
       </div>
       <div class="thoughts">
-        <button id="thought-toggle" class="thought-toggle" type="button">
-          <span class="thought-toggle-text" data-i18n="thoughtsTitle">我的生活思考</span>
-          <span class="thought-caret" aria-hidden="true">▾</span>
-        </button>
-        <div id="thought-body" class="hidden">
-          <div id="thought-composer" class="inbox-form-card hidden">
-            <textarea id="thought-text" rows="3" maxlength="800"></textarea>
-            <textarea id="thought-text-en" rows="2" maxlength="800"></textarea>
-            <button id="thought-publish" class="inbox-submit"></button>
-            <p id="thought-status" class="inbox-status"></p>
-          </div>
-          <div id="thought-list"></div>
+        <h3 class="thoughts-title">
+          <span data-i18n="thoughtsTitle">我的生活思考</span>
+          <button id="thought-write-btn" class="owner-toggle thought-write hidden" type="button"></button>
+        </h3>
+        <div id="thought-composer" class="inbox-form-card hidden">
+          <textarea id="thought-text" rows="3" maxlength="800"></textarea>
+          <textarea id="thought-text-en" rows="2" maxlength="800"></textarea>
+          <button id="thought-publish" class="inbox-submit"></button>
+          <p id="thought-status" class="inbox-status"></p>
         </div>
+        <div id="thought-list"></div>
       </div>
       <div id="life-timeline" class="timeline"></div>
       <div id="life-lightbox" class="life-lightbox hidden"><img id="life-lightbox-img" alt=""></div>
@@ -462,27 +460,27 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=51"></script>
-  <script src="js/data.js?v=51"></script>
-  <script src="js/main.js?v=51"></script>
-  <script src="js/nav-fx.js?v=51"></script>
-  <script src="js/inbox.js?v=51"></script>
-  <script src="js/game.js?v=51"></script>
-  <script src="js/pvz.js?v=51"></script>
-  <script src="js/minesweeper.js?v=51"></script>
-  <script src="js/snake.js?v=51"></script>
-  <script src="js/space-data.js?v=51"></script>
-  <script src="js/space.js?v=51"></script>
-  <script src="js/poem-data.js?v=51"></script>
-  <script src="js/poem.js?v=51"></script>
-  <script src="js/kids-content.js?v=51"></script>
-  <script src="js/kids.js?v=51"></script>
-  <script src="js/life.js?v=51"></script>
-  <script src="js/sudoku-data.js?v=51"></script>
-  <script src="js/sudoku.js?v=51"></script>
-  <script src="js/gomoku.js?v=51"></script>
-  <script src="js/daily-data.js?v=51"></script>
-  <script src="js/daily.js?v=51"></script>
-  <script src="js/match.js?v=51"></script>
+  <script src="js/config.js?v=52"></script>
+  <script src="js/data.js?v=52"></script>
+  <script src="js/main.js?v=52"></script>
+  <script src="js/nav-fx.js?v=52"></script>
+  <script src="js/inbox.js?v=52"></script>
+  <script src="js/game.js?v=52"></script>
+  <script src="js/pvz.js?v=52"></script>
+  <script src="js/minesweeper.js?v=52"></script>
+  <script src="js/snake.js?v=52"></script>
+  <script src="js/space-data.js?v=52"></script>
+  <script src="js/space.js?v=52"></script>
+  <script src="js/poem-data.js?v=52"></script>
+  <script src="js/poem.js?v=52"></script>
+  <script src="js/kids-content.js?v=52"></script>
+  <script src="js/kids.js?v=52"></script>
+  <script src="js/life.js?v=52"></script>
+  <script src="js/sudoku-data.js?v=52"></script>
+  <script src="js/sudoku.js?v=52"></script>
+  <script src="js/gomoku.js?v=52"></script>
+  <script src="js/daily-data.js?v=52"></script>
+  <script src="js/daily.js?v=52"></script>
+  <script src="js/match.js?v=52"></script>
 </body>
 </html>
