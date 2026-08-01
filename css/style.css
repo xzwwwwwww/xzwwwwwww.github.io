@@ -444,6 +444,14 @@ h1, h2, h3, h4, .logo, .section-title {
   display: flex; align-items: center; justify-content: center;
   background: var(--panel); border-radius: 2px;
 }
+/* 数独开始按钮：大字号、画面正中间（覆盖 .inbox-submit 的 align-self: flex-end） */
+#sudoku-start .inbox-submit {
+  align-self: center;
+  padding: 16px 46px;
+  font-size: 20px; letter-spacing: 0.2em; text-indent: 0.2em;
+  border-width: 2px;
+  box-shadow: 0 6px 18px rgba(193, 80, 46, 0.15);
+}
 #game-canvas {
   display: block; width: 100%; height: auto;
   border: 1px solid var(--line);
