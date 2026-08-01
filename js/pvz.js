@@ -1,6 +1,8 @@
-/* 植物大战僵尸（网页简化版）：Canvas 手绘，10 个关卡
- * 关卡越高僵尸越多，并逐步出现撑杆 / 报纸 / 铁桶僵尸；
- * 植物随关卡解锁：寒冰射手(L2)、樱桃炸弹(L3)、食人花(L4)、窝瓜(L5)
+/* 植物大战僵尸（网页简化版）：Canvas 手绘，白天 10 关 + 夜晚 10 关
+ * 白天：关卡越高僵尸越多，并逐步出现撑杆 / 报纸 / 铁桶僵尸；
+ *      植物随关卡解锁：寒冰射手(L2)、樱桃炸弹(L3)、食人花(L4)、窝瓜(L5)
+ * 夜晚：无天光（全靠阳光菇产阳光），蘑菇登场——阳光菇/小喷菇/胆小菇/大喷菇；
+ *      新僵尸：铁栅门（挡子弹怕烟雾）、橄榄球（高速高防）、舞王（召唤伴舞）
  * 进度存档在 localStorage；依赖 main.js 的全局 currentLang，每帧重绘
  */
 
@@ -20,7 +22,8 @@
       start: "开始",
       next: "下一关",
       wave: "进度",
-      level: "关卡"
+      level: "关卡",
+      night: "夜晚"
     },
     en: {
       sun: "Sun",
@@ -36,7 +39,8 @@
       start: "Start",
       next: "Next level",
       wave: "Wave",
-      level: "Level"
+      level: "Level",
+      night: "Night"
     }
   };
   const tp = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -46,7 +50,8 @@
   const CELL_W = 80, CELL_H = 100;
   const LAWN_X = 40, LAWN_Y = 90;
   const PEA_DPS = 20;          // 豌豆单发伤害
-  const MAX_LEVEL = 10;
+  const MAX_LEVEL = 20;
+  const NIGHT_START = 11;      // 11 关起为夜晚模式
 
   const PLANTS = {
     sunflower:  { cost: 50,  hp: 300,  cd: 5,  name: "向日葵" },
@@ -55,10 +60,14 @@
     snowpea:    { cost: 175, hp: 300,  cd: 7,  name: "寒冰射手" },
     cherrybomb: { cost: 150, hp: 300,  cd: 18, name: "樱桃炸弹" },
     chomper:    { cost: 150, hp: 300,  cd: 8,  name: "食人花" },
-    squash:     { cost: 50,  hp: 300,  cd: 10, name: "窝瓜" }
+    squash:     { cost: 50,  hp: 300,  cd: 10, name: "窝瓜" },
+    sunshroom:  { cost: 25,  hp: 300,  cd: 5,  name: "阳光菇" },
+    puffshroom: { cost: 0,   hp: 300,  cd: 3,  name: "小喷菇" },
+    scaredy:    { cost: 25,  hp: 300,  cd: 5,  name: "胆小菇" },
+    fumeshroom: { cost: 75,  hp: 300,  cd: 7,  name: "大喷菇" }
   };
 
-  // 每关可用的卡片：1~5 关逐个解锁新植物，第 5 关起全卡池
+  // 白天 1~5 关逐个解锁新植物，第 5 关起全卡池
   const LEVEL_CARDS = [
     null,
     ["sunflower", "peashooter", "wallnut"],
@@ -67,17 +76,36 @@
     ["sunflower", "peashooter", "wallnut", "snowpea", "cherrybomb", "chomper"],
     ["sunflower", "peashooter", "wallnut", "snowpea", "cherrybomb", "chomper", "squash"]
   ];
-  const cardsFor = lv => LEVEL_CARDS[Math.min(lv, 5)];
+  // 夜晚卡池：阳光菇替代向日葵，蘑菇逐个解锁
+  const NIGHT_CARDS = [
+    null,
+    ["sunshroom", "puffshroom", "peashooter", "wallnut"],
+    ["sunshroom", "puffshroom", "scaredy", "peashooter", "wallnut"],
+    ["sunshroom", "puffshroom", "scaredy", "fumeshroom", "peashooter", "wallnut"],
+    ["sunshroom", "puffshroom", "scaredy", "fumeshroom", "peashooter", "wallnut", "cherrybomb"],
+    ["sunshroom", "puffshroom", "scaredy", "fumeshroom", "snowpea", "peashooter", "wallnut", "cherrybomb"],
+    ["sunshroom", "puffshroom", "scaredy", "fumeshroom", "snowpea", "peashooter", "wallnut", "cherrybomb", "chomper"],
+    ["sunshroom", "puffshroom", "scaredy", "fumeshroom", "snowpea", "peashooter", "wallnut", "cherrybomb", "chomper", "squash"]
+  ];
+  const cardsFor = lv =>
+    lv >= NIGHT_START ? NIGHT_CARDS[Math.min(lv - NIGHT_START + 1, 7)]
+                      : LEVEL_CARDS[Math.min(lv, 5)];
 
   // 僵尸类型：armor 为防具值；报纸(paper)防具破碎后暴怒加速
+  // 铁门(door)挡直线子弹但大喷菇烟雾可穿透；橄榄球(helmet)高速高防；
+  // 舞王(dancer)定期召唤伴舞(backup)
   const ZOMBIE_TYPES = {
-    normal: { hp: 200, armor: 0,   armorType: null,     speed: 12 },
-    pole:   { hp: 340, armor: 0,   armorType: null,     speed: 22 },
-    news:   { hp: 200, armor: 150, armorType: "paper",  speed: 10 },
-    bucket: { hp: 200, armor: 900, armorType: "bucket", speed: 12 }
+    normal:   { hp: 200, armor: 0,    armorType: null,     speed: 12 },
+    pole:     { hp: 340, armor: 0,    armorType: null,     speed: 22 },
+    news:     { hp: 200, armor: 150,  armorType: "paper",  speed: 10 },
+    bucket:   { hp: 200, armor: 900,  armorType: "bucket", speed: 12 },
+    door:     { hp: 200, armor: 1100, armorType: "door",   speed: 11 },
+    football: { hp: 200, armor: 1400, armorType: "helmet", speed: 20 },
+    dancer:   { hp: 350, armor: 0,    armorType: null,     speed: 9 },
+    backup:   { hp: 150, armor: 0,    armorType: null,     speed: 12 }
   };
 
-  // 10 个关卡：出怪总数与类型配比，难度递增
+  // 白天 10 关：出怪总数与类型配比，难度递增
   const LEVELS = [
     null,
     { total: 10, mix: [["normal", 1]] },
@@ -89,7 +117,18 @@
     { total: 22, mix: [["normal", .4], ["pole", .2], ["news", .2], ["bucket", .2]] },
     { total: 24, mix: [["normal", .35], ["pole", .2], ["news", .2], ["bucket", .25]] },
     { total: 26, mix: [["normal", .3], ["pole", .2], ["news", .2], ["bucket", .3]] },
-    { total: 28, mix: [["normal", .25], ["pole", .2], ["news", .25], ["bucket", .3]] }
+    { total: 28, mix: [["normal", .25], ["pole", .2], ["news", .25], ["bucket", .3]] },
+    // 夜晚 10 关：铁门 / 橄榄球 / 舞王陆续登场
+    { total: 12, mix: [["normal", 1]] },
+    { total: 14, mix: [["normal", .75], ["news", .25]] },
+    { total: 16, mix: [["normal", .65], ["news", .2], ["door", .15]] },
+    { total: 18, mix: [["normal", .55], ["news", .2], ["door", .15], ["pole", .1]] },
+    { total: 20, mix: [["normal", .45], ["news", .2], ["door", .25], ["pole", .1]] },
+    { total: 22, mix: [["normal", .4], ["news", .2], ["door", .2], ["football", .2]] },
+    { total: 24, mix: [["normal", .3], ["news", .2], ["door", .25], ["football", .25]] },
+    { total: 26, mix: [["normal", .3], ["news", .15], ["door", .2], ["football", .2], ["dancer", .15]] },
+    { total: 30, mix: [["normal", .25], ["news", .15], ["door", .2], ["football", .25], ["dancer", .15]] },
+    { total: 34, mix: [["normal", .2], ["news", .15], ["door", .25], ["football", .25], ["dancer", .15]] }
   ];
 
   const canvas = document.getElementById("pvz-canvas");
@@ -110,7 +149,7 @@
   if (level > unlocked) level = unlocked;
   let sun = 150;
   let plants = [];       // [row][col] -> plant
-  let zombies = [], peas = [], suns = [], explosions = [];
+  let zombies = [], peas = [], suns = [], explosions = [], fumes = [];
   let cards = [];        // {key, cdLeft}
   let selected = null;   // 植物 key 或 "shovel"
   let spawned = 0, killed = 0;
@@ -119,6 +158,9 @@
   let lastT = 0, now = 0;
 
   const L = () => LEVELS[level];
+  const isNight = () => level >= NIGHT_START;
+  // 出怪节奏按「白天 1-10 / 夜晚重新从缓」计算
+  const effLv = () => (isNight() ? level - NIGHT_START + 1 : level);
 
   function resetGrid() {
     plants = Array.from({ length: ROWS }, () => new Array(COLS).fill(null));
@@ -127,11 +169,11 @@
   function startGame() {
     state = "playing";
     sun = 150;
-    zombies = []; peas = []; suns = []; explosions = [];
+    zombies = []; peas = []; suns = []; explosions = []; fumes = [];
     cards = cardsFor(level).map(k => ({ key: k, cdLeft: 0 }));
     selected = null;
     spawned = 0; killed = 0;
-    spawnTimer = Math.max(6, 12 - level * 0.7);   // 首只僵尸出现时间随关卡提前
+    spawnTimer = Math.max(6, 12 - effLv() * 0.7);   // 首只僵尸出现时间随关卡提前
     skySunTimer = 4;
     resetGrid();
   }
@@ -183,34 +225,41 @@
     return mix[mix.length - 1][0];
   }
 
-  function spawnZombie() {
-    const type = pickType(L().mix);
+  function spawnZombie(forceType, row, x) {
+    const type = forceType || pickType(L().mix);
     const t = ZOMBIE_TYPES[type];
-    zombies.push({
-      row: Math.floor(Math.random() * ROWS), x: W + 30,
+    const z = {
+      row: row !== undefined ? row : Math.floor(Math.random() * ROWS),
+      x: x !== undefined ? x : W + 30,
       type,
       hp: t.hp, maxHp: t.hp,
       armor: t.armor, maxArmor: t.armor, armorType: t.armorType,
       speed: t.speed, slowT: 0,
       hasPole: type === "pole",
-      eating: false, jumpT: 0
-    });
-    spawned++;
+      eating: false, jumpT: 0,
+      summonT: type === "dancer" ? 5 : 0,   // 舞王首次召唤时间
+      minions: []
+    };
+    zombies.push(z);
+    if (!forceType) spawned++;
+    return z;
   }
 
-  function dropSun(fromSky, x, y) {
+  function dropSun(fromSky, x, y, value) {
     suns.push({
       x: fromSky ? x : x + (Math.random() * 40 - 20),
       y: fromSky ? -20 : y,
       targetY: fromSky ? LAWN_Y + 40 + Math.random() * (H - LAWN_Y - 80) : y + 28,
       vy: fromSky ? 40 : 60,
       life: 12,
+      value: value || 25,     // 阳光菇未长成时产小阳光 15
       settled: !fromSky
     });
   }
 
   // ===== 伤害 =====
-  function hurt(z, dmg) {
+  function hurt(z, dmg, pierce) {
+    if (pierce) { z.hp -= dmg; return; }   // 大喷菇烟雾：穿门穿报直接伤本体
     if (z.armor > 0) {
       z.armor -= dmg;
       if (z.armor <= 0 && z.armorType === "paper") z.speed = 26;  // 报纸碎了，暴怒
@@ -232,15 +281,17 @@
       spawnTimer -= dt;
       if (spawnTimer <= 0) {
         spawnZombie();
-        spawnTimer = Math.max(3, (12 - level * 0.7) - (spawned / L().total) * 5);
+        spawnTimer = Math.max(3, (12 - effLv() * 0.7) - (spawned / L().total) * 5);
       }
     }
 
-    // 天上掉阳光
-    skySunTimer -= dt;
-    if (skySunTimer <= 0) {
-      dropSun(true, 80 + Math.random() * (W - 160), 0);
-      skySunTimer = 8;
+    // 天上掉阳光（夜晚没有天光，全靠阳光菇）
+    if (!isNight()) {
+      skySunTimer -= dt;
+      if (skySunTimer <= 0) {
+        dropSun(true, 80 + Math.random() * (W - 160), 0);
+        skySunTimer = 8;
+      }
     }
 
     // 阳光落地与过期
@@ -250,9 +301,11 @@
     });
     suns = suns.filter(s => s.life > 0);
 
-    // 爆炸特效
+    // 爆炸与烟雾特效
     explosions.forEach(e => { e.t -= dt; });
     explosions = explosions.filter(e => e.t > 0);
+    fumes.forEach(f => { f.t -= dt; f.x += 90 * dt; });
+    fumes = fumes.filter(f => f.t > 0);
 
     // 植物行为
     for (let r = 0; r < ROWS; r++) {
@@ -264,12 +317,54 @@
           dropSun(false, cellCX(c), rowCY(r) - 20);
           p.timer = 12;
         }
+        if (p.key === "sunshroom") {
+          // 阳光菇：120 秒长成，长成前产小阳光 15、长成后产 25
+          if (p.growT === undefined) p.growT = 0;
+          p.growT += dt;
+          if (p.timer <= 0) {
+            dropSun(false, cellCX(c), rowCY(r) - 20, p.growT >= 120 ? 25 : 15);
+            p.timer = 12;
+          }
+        }
         if (p.key === "peashooter" || p.key === "snowpea") {
           const hasTarget = zombies.some(z => z.row === r && z.x > cellCX(c) && z.x < W + 40 && z.jumpT <= 0);
           if (hasTarget && p.timer <= 0) {
             peas.push({ row: r, x: cellCX(c) + 24, y: rowCY(r) - 18, ice: p.key === "snowpea" });
             p.timer = 1.5;
             p.recoil = 0.12;
+          }
+        }
+        if (p.key === "puffshroom") {
+          // 小喷菇：免费，射程 3 格
+          const hasTarget = zombies.some(z => z.row === r && z.jumpT <= 0 &&
+            z.x > cellCX(c) && z.x - cellCX(c) < CELL_W * 3);
+          if (hasTarget && p.timer <= 0) {
+            peas.push({ row: r, x: cellCX(c) + 18, y: rowCY(r) - 14, spore: true });
+            p.timer = 1.5;
+            p.recoil = 0.12;
+          }
+        }
+        if (p.key === "scaredy") {
+          // 胆小菇：射程与豌豆射手相同，但僵尸靠近（约 1.5 格、含邻行）就缩头
+          p.cower = zombies.some(z => z.jumpT <= 0 &&
+            Math.abs(z.row - r) <= 1 && Math.abs(z.x - cellCX(c)) < CELL_W * 1.5);
+          if (!p.cower) {
+            const hasTarget = zombies.some(z => z.row === r && z.x > cellCX(c) && z.x < W + 40 && z.jumpT <= 0);
+            if (hasTarget && p.timer <= 0) {
+              peas.push({ row: r, x: cellCX(c) + 18, y: rowCY(r) - 22, spore: true });
+              p.timer = 1.5;
+              p.recoil = 0.12;
+            }
+          }
+        }
+        if (p.key === "fumeshroom" && p.timer <= 0) {
+          // 大喷菇：烟雾覆盖前方 4 格，群伤且穿透防具
+          const zone = zombies.filter(z => z.row === r && z.jumpT <= 0 &&
+            z.x > cellCX(c) && z.x - cellCX(c) < CELL_W * 4);
+          if (zone.length) {
+            zone.forEach(z => hurt(z, PEA_DPS, true));
+            fumes.push({ row: r, x: cellCX(c) + 24, t: 0.35 });
+            p.timer = 1.5;
           }
         }
         if (p.key === "cherrybomb") {          // 1.1 秒后 3x3 爆炸
@@ -330,6 +425,19 @@
         z.jumpT -= dt;
         z.x -= 130 * dt;
         return;
+      }
+      // 舞王：每 9 秒召唤一圈伴舞（最多 4 只）
+      if (z.type === "dancer") {
+        z.minions = z.minions.filter(m => m.hp > 0);
+        z.summonT -= dt;
+        if (z.summonT <= 0 && z.minions.length < 4) {
+          const spots = [[z.row, z.x + 45], [z.row - 1, z.x], [z.row + 1, z.x], [z.row, z.x - 45]];
+          for (const [sr, sx] of spots) {
+            if (sr < 0 || sr >= ROWS || z.minions.length >= 4) continue;
+            z.minions.push(spawnZombie("backup", sr, sx));
+          }
+          z.summonT = 9;
+        }
       }
       // 面前是否有植物
       const col = Math.floor((z.x - 20 - LAWN_X) / CELL_W);
@@ -528,6 +636,96 @@
       ctx.beginPath(); ctx.arc(-5, 0, 2, 0, Math.PI * 2); ctx.arc(5, 0, 2, 0, Math.PI * 2); ctx.fill();
       ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 1.8;
       ctx.beginPath(); ctx.moveTo(-4, 8); ctx.lineTo(4, 8); ctx.stroke();
+    } else if (p.key === "sunshroom") {
+      // 阳光菇：黄色小蘑菇，120 秒长成后变大
+      const grown = (p.growT || 0) >= 120;
+      const k = grown ? 1.25 : 0.85;
+      ctx.save();
+      ctx.scale(k, k);
+      ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 2.5;
+      // 柄
+      ctx.fillStyle = "#FFF1D6";
+      ctx.beginPath(); ctx.roundRect(-7, -2, 14, 24, 6); ctx.fill(); ctx.stroke();
+      // 伞盖
+      ctx.fillStyle = grown ? "#FFD94D" : "#F5CE6E";
+      ctx.beginPath();
+      ctx.moveTo(-18, 0);
+      ctx.quadraticCurveTo(0, -26, 18, 0);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      // 光斑
+      ctx.fillStyle = "rgba(255,255,255,0.6)";
+      ctx.beginPath(); ctx.arc(-6, -9, 3, 0, Math.PI * 2); ctx.arc(6, -6, 2, 0, Math.PI * 2); ctx.fill();
+      // 眯眯眼
+      ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 1.8; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.arc(-4, 8, 2.4, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke();
+      ctx.beginPath(); ctx.arc(4, 8, 2.4, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke();
+      ctx.restore();
+    } else if (p.key === "puffshroom") {
+      // 小喷菇：矮小的紫色蘑菇
+      ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 2.2;
+      ctx.fillStyle = "#F3E9DC";
+      ctx.beginPath(); ctx.roundRect(-6, 0, 12, 18, 5); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#9B7BC0";
+      ctx.beginPath();
+      ctx.moveTo(-14, 2);
+      ctx.quadraticCurveTo(0, -18, 14, 2);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      // 炮口
+      ctx.fillStyle = "#9B7BC0";
+      ctx.beginPath(); ctx.roundRect(4, -2, 10, 7, 3); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#4A3226";
+      ctx.beginPath(); ctx.arc(-2, 8, 1.6, 0, Math.PI * 2); ctx.fill();
+    } else if (p.key === "scaredy") {
+      // 胆小菇：瘦高紫菇，缩头时伏低
+      const cower = p.cower;
+      ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 2.2;
+      ctx.fillStyle = "#F3E9DC";
+      if (cower) {
+        ctx.beginPath(); ctx.roundRect(-6, 6, 12, 12, 5); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = "#B08CCF";
+        ctx.beginPath();
+        ctx.moveTo(-15, 8);
+        ctx.quadraticCurveTo(0, -6, 15, 8);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        // 害怕的眼睛（豆豆眼 + 抖线）
+        ctx.fillStyle = "#4A3226";
+        ctx.beginPath(); ctx.arc(-3, 12, 1.5, 0, Math.PI * 2); ctx.arc(3, 12, 1.5, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.beginPath(); ctx.roundRect(-6, -14, 12, 32, 5); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = "#B08CCF";
+        ctx.beginPath();
+        ctx.moveTo(-15, -12);
+        ctx.quadraticCurveTo(0, -30, 15, -12);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        // 炮口
+        ctx.fillStyle = "#B08CCF";
+        ctx.beginPath(); ctx.roundRect(5, -16, 11, 8, 3); ctx.fill(); ctx.stroke();
+        // 紧张的小眼睛
+        ctx.fillStyle = "#4A3226";
+        ctx.beginPath(); ctx.arc(-3, -4, 1.6, 0, Math.PI * 2); ctx.arc(3, -4, 1.6, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(-4, 2); ctx.quadraticCurveTo(0, 0, 4, 2); ctx.stroke();
+      }
+    } else if (p.key === "fumeshroom") {
+      // 大喷菇：大块头深紫菇，宽喷嘴
+      ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 2.5;
+      ctx.fillStyle = "#F3E9DC";
+      ctx.beginPath(); ctx.roundRect(-10, -2, 20, 26, 8); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#7E5AA7";
+      ctx.beginPath();
+      ctx.moveTo(-22, 0);
+      ctx.quadraticCurveTo(0, -34, 22, 0);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      // 大喷嘴
+      ctx.fillStyle = "#7E5AA7";
+      ctx.beginPath(); ctx.roundRect(8, -14, 20, 15, 5); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#5E3372";
+      ctx.beginPath(); ctx.ellipse(26, -7, 4, 6, 0, 0, Math.PI * 2); ctx.fill();
+      // 坚定的眼神
+      ctx.fillStyle = "#4A3226";
+      ctx.beginPath(); ctx.arc(-4, 4, 2, 0, Math.PI * 2); ctx.arc(4, 4, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(-5, 11); ctx.lineTo(5, 11); ctx.stroke();
     }
     ctx.restore();
   }
@@ -585,6 +783,37 @@
         ctx.beginPath(); ctx.moveTo(-4, -8 + i * 6); ctx.lineTo(6, -8 + i * 6); ctx.stroke();
       }
       ctx.restore();
+    }
+    // 铁栅门：挡在正前方（烟雾可穿透）
+    if (z.armorType === "door" && z.armor > 0) {
+      ctx.fillStyle = "rgba(176, 188, 200, 0.85)";
+      ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.roundRect(-28, -46, 14, 66, 4); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = "#6B7280"; ctx.lineWidth = 1.5;
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath(); ctx.moveTo(-25, -36 + i * 18); ctx.lineTo(-17, -36 + i * 18); ctx.stroke();
+      }
+      ctx.beginPath(); ctx.moveTo(-21, -44); ctx.lineTo(-21, 18); ctx.stroke();
+    }
+    // 橄榄球头盔
+    if (z.armorType === "helmet" && z.armor > 0) {
+      ctx.fillStyle = "#C44B41";
+      ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(0, -36, 14, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = "#FFF1E0"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, -50); ctx.lineTo(0, -37); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-8, -40); ctx.lineTo(8, -40); ctx.stroke();
+    }
+    // 舞王：爆炸头 + 亮片上衣
+    if (z.type === "dancer") {
+      ctx.fillStyle = "#3A2A20";
+      ctx.beginPath(); ctx.arc(0, -42, 12, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#D94F8E";
+      ctx.beginPath(); ctx.roundRect(-11, -22, 24, 24, 8); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#FFD166";
+      for (const [sx, sy] of [[-4, -16], [4, -10], [0, -4]]) {
+        ctx.beginPath(); ctx.arc(sx, sy, 1.6, 0, Math.PI * 2); ctx.fill();
+      }
     }
     // 血条（本体 + 防具合并）
     const frac = (z.hp + Math.max(0, z.armor)) / (z.maxHp + z.maxArmor);
@@ -647,15 +876,27 @@
   }
 
   function draw() {
-    // 顶栏
-    ctx.fillStyle = "#FFF3E4";
+    const night = isNight();
+    // 顶栏（夜晚为夜空 + 月亮星星）
+    ctx.fillStyle = night ? "#232A3D" : "#FFF3E4";
     ctx.fillRect(0, 0, W, LAWN_Y);
     ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.moveTo(0, LAWN_Y); ctx.lineTo(W, LAWN_Y); ctx.stroke();
+    if (night) {
+      // 星星（固定位置闪两颗）与月亮
+      ctx.fillStyle = "rgba(255, 217, 77, 0.9)";
+      for (const [sx, sy, sr] of [[330, 22, 2], [420, 44, 1.6], [520, 18, 2.2], [620, 40, 1.6], [700, 26, 2]]) {
+        ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.fillStyle = "#F5CE6E";
+      ctx.beginPath(); ctx.arc(120, 40, 20, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#232A3D";
+      ctx.beginPath(); ctx.arc(128, 34, 17, 0, Math.PI * 2); ctx.fill();
+    }
 
     // 阳光计数
     drawSunShape(34, 34, 16);
-    ctx.fillStyle = "#4A3226";
+    ctx.fillStyle = night ? "#F3EAD8" : "#4A3226";
     ctx.font = "20px 'ZCOOL KuaiLe', sans-serif";
     ctx.textAlign = "left";
     ctx.fillText(`${tp("sun")}: ${sun}`, 60, 42);
@@ -675,9 +916,11 @@
     ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.roundRect(shx + 30, shy + 40, 20, 20, 5); ctx.fill(); ctx.stroke();
 
-    // 草坪
+    // 草坪（夜晚为深蓝调）
     for (let r = 0; r < ROWS; r++) {
-      ctx.fillStyle = r % 2 ? "#AED695" : "#BFE3A8";
+      ctx.fillStyle = night
+        ? (r % 2 ? "#3E4A63" : "#47536E")
+        : (r % 2 ? "#AED695" : "#BFE3A8");
       ctx.fillRect(LAWN_X, LAWN_Y + r * CELL_H, COLS * CELL_W, CELL_H);
     }
     ctx.strokeStyle = "rgba(74,50,38,0.15)"; ctx.lineWidth = 1;
@@ -699,11 +942,22 @@
       for (let c = 0; c < COLS; c++)
         if (plants[r][c]) drawPlant(plants[r][c], cellCX(c), rowCY(r));
 
-    // 豌豆（寒冰豌豆为冰蓝色）
+    // 豌豆（寒冰豌豆为冰蓝色，蘑菇孢子为紫色小泡）
     peas.forEach(p => {
-      ctx.fillStyle = p.ice ? "#9BDCF0" : "#6CBE52";
+      ctx.fillStyle = p.spore ? "#B08CCF" : p.ice ? "#9BDCF0" : "#6CBE52";
       ctx.strokeStyle = "#4A3226"; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.spore ? 5 : 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    });
+
+    // 大喷菇的烟雾（紫色泡群向前推进）
+    fumes.forEach(f => {
+      const alpha = Math.min(0.5, f.t * 1.6);
+      ctx.fillStyle = `rgba(176, 140, 207, ${alpha})`;
+      for (let i = 0; i < 8; i++) {
+        const bx = f.x + i * 34 + Math.sin(now / 90 + i * 2) * 4;
+        const by = rowCY(f.row) - 16 + (i % 3) * 12;
+        ctx.beginPath(); ctx.arc(bx, by, 7 + (i % 2) * 3, 0, Math.PI * 2); ctx.fill();
+      }
     });
 
     // 僵尸
@@ -716,8 +970,8 @@
       ctx.beginPath(); ctx.arc(e.x, e.y, 40 + k * 90, 0, Math.PI * 2); ctx.fill();
     });
 
-    // 阳光
-    suns.forEach(s => drawSunShape(s.x, s.y, 15));
+    // 阳光（大 25 / 小 15）
+    suns.forEach(s => drawSunShape(s.x, s.y, (s.value || 25) >= 25 ? 15 : 11));
 
     // 击杀进度（右下角小胶囊，避免与卡片挤占顶栏）
     ctx.fillStyle = "rgba(255, 247, 239, 0.85)";
@@ -730,7 +984,7 @@
 
     // 遮罩
     if (state === "ready") {
-      drawOverlay(`${tp("readyTitle")} · ${tp("level")} ${level}`, [tp("readySub"), tp("readyHint")]);
+      drawOverlay(`${tp("readyTitle")}${isNight() ? " · " + tp("night") : ""} · ${tp("level")} ${level}`, [tp("readySub"), tp("readyHint")]);
     } else if (state === "win") {
       if (level < MAX_LEVEL) {
         drawOverlay(tp("win"), [tp("winSub"), tp("next") + " →"]);
@@ -761,7 +1015,7 @@
     // 点阳光
     for (const s of suns) {
       if (Math.hypot(s.x - x, s.y - y) < 24) {
-        sun += 25;
+        sun += s.value || 25;
         suns = suns.filter(v => v !== s);
         return;
       }
@@ -798,9 +1052,9 @@
       if (sun >= info.cost) {
         plants[r][c] = {
           key: selected, hp: info.hp,
-          timer: selected === "sunflower" ? 5 : 0,
+          timer: (selected === "sunflower" || selected === "sunshroom") ? 5 : 0,
           fuse: selected === "cherrybomb" ? 1.1 : 0,
-          chew: 0
+          chew: 0, growT: 0
         };
         sun -= info.cost;
         cards.find(cd => cd.key === selected).cdLeft = info.cd;
