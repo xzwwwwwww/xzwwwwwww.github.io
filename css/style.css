@@ -225,6 +225,21 @@ h1, h2, h3, h4, .logo, .section-title {
 }
 .timeline-item p { margin-top: 4px; font-size: 15px; }
 
+/* 生活碎碎念：温馨小场景与节气条 */
+.life-scene {
+  aspect-ratio: 4 / 1;
+  margin-bottom: 12px;
+  background: url("../assets/life-scene.svg") center / contain no-repeat #FBF6EC;
+  border: 1px solid var(--line); border-radius: 4px;
+}
+.life-warm {
+  display: flex; justify-content: center; align-items: baseline;
+  gap: 8px 18px; flex-wrap: wrap;
+  margin-bottom: 18px;
+  font-size: 12px; letter-spacing: 0.1em; color: var(--muted);
+}
+.warm-term { color: var(--accent); }
+
 /* 生活碎碎念：登录与发布器 */
 .life-owner-bar { display: flex; justify-content: flex-end; margin: -14px 0 16px; }
 .life-login, .life-composer { margin-bottom: 22px; }

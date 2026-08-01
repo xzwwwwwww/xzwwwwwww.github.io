@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 180">
+  <rect width="720" height="180" fill="#FBF6EC"/>
+  <g transform="translate(96 24)">
+    <rect x="0" y="0" width="150" height="118" rx="6" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>
+    <line x1="75" y1="0" x2="75" y2="118" stroke="#4A3226" stroke-width="2"/>
+    <line x1="0" y1="59" x2="150" y2="59" stroke="#4A3226" stroke-width="2"/>
+    <g transform="translate(45 38)">
+      <g stroke="#F0C24E" stroke-width="3" stroke-linecap="round">
+        <line x1="0" y1="-22" x2="0" y2="-28"/><line x1="-16" y1="-16" x2="-20" y2="-20"/>
+        <line x1="16" y1="-16" x2="20" y2="-20"/><line x1="-22" y1="0" x2="-28" y2="0"/>
+        <line x1="22" y1="0" x2="28" y2="0"/><line x1="-16" y1="16" x2="-20" y2="20"/>
+        <line x1="16" y1="16" x2="20" y2="20"/>
+      </g>
+      <circle cx="0" cy="0" r="16" fill="#F0C24E" stroke="#4A3226" stroke-width="2.5">
+        <animate attributeName="r" values="16;17.5;16" dur="3s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <path d="M 96,86 q 8,-10 16,0 q 8,10 16,0" fill="none" stroke="#8FD8E8" stroke-width="2.5" stroke-linecap="round"/>
+    <g transform="translate(150 0)">
+      <path d="M 0,0 C 14,30 14,86 4,118 L 22,118 C 28,84 26,36 18,0 Z" fill="#E4A79A" stroke="#4A3226" stroke-width="2"/>
+      <animateTransform attributeName="transform" type="translate" values="150 0;152 0;150 0" dur="4s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  <rect x="0" y="142" width="720" height="38" fill="#E8B96F" opacity="0.45"/>
+  <line x1="0" y1="142" x2="720" y2="142" stroke="#4A3226" stroke-width="2.5"/>
+  <g transform="translate(300 108)">
+    <g stroke="#C9C4B8" stroke-width="2.5" stroke-linecap="round" fill="none">
+      <path d="M -8,-26 Q -10,-34 -6,-40">
+        <animateTransform attributeName="transform" type="translate" values="0 2;0 -3;0 2" dur="2.2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2.2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M 4,-26 Q 2,-34 6,-40">
+        <animateTransform attributeName="transform" type="translate" values="0 -2;0 3;0 -2" dur="2.6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2.6s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <path d="M -20,-24 L 20,-24 L 16,6 Q 15,12 8,12 L -8,12 Q -15,12 -16,6 Z" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M 20,-18 Q 32,-16 28,-6 Q 25,1 17,-1" fill="none" stroke="#4A3226" stroke-width="2.5"/>
+    <ellipse cx="0" cy="-24" rx="20" ry="4.5" fill="#C98A5E" stroke="#4A3226" stroke-width="2"/>
+  </g>
+  <g transform="translate(392 118)">
+    <rect x="-26" y="10" width="60" height="8" rx="2" fill="#C1502E" stroke="#4A3226" stroke-width="2"/>
+    <rect x="-30" y="2" width="60" height="8" rx="2" fill="#7E8464" stroke="#4A3226" stroke-width="2"/>
+    <rect x="-24" y="-6" width="60" height="8" rx="2" fill="#F0C24E" stroke="#4A3226" stroke-width="2"/>
+  </g>
+  <g transform="translate(478 96)">
+    <path d="M -16,26 L 16,26 L 12,48 L -12,48 Z" fill="#C1502E" stroke="#4A3226" stroke-width="2.5" stroke-linejoin="round"/>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="-3 0 26;3 0 26;-3 0 26" dur="3.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"/>
+      <path d="M 0,26 L 0,-6" stroke="#4CAF7D" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M 0,8 Q -16,4 -18,-12 Q -4,-10 0,2" fill="#7FB069" stroke="#4A3226" stroke-width="2"/>
+      <path d="M 0,0 Q 14,-6 15,-22 Q 2,-18 0,-4" fill="#9CCC65" stroke="#4A3226" stroke-width="2"/>
+    </g>
+  </g>
+  <g transform="translate(580 118)">
+    <g>
+      <animateTransform attributeName="transform" type="scale" values="1 1;1 1.04;1 1" dur="2.8s" repeatCount="indefinite"/>
+      <ellipse cx="0" cy="16" rx="40" ry="18" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>
+      <path d="M 30,8 Q 44,2 40,-10 Q 34,-20 24,-14" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>
+      <circle cx="28" cy="-12" r="12" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>
+      <path d="M 20,-20 L 17,-27 L 24,-23 Z" fill="#FFFDF8" stroke="#4A3226" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M 34,-21 L 37,-28 L 30,-24 Z" fill="#FFFDF8" stroke="#4A3226" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M 24,-12 Q 26,-10 28,-12 M 30,-12 Q 32,-10 34,-12" fill="none" stroke="#4A3226" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M -38,8 Q -52,14 -46,24 Q -40,30 -34,22" fill="none" stroke="#4A3226" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>
