@@ -22,7 +22,18 @@
       fail: "发布失败，请检查网络或稍后再试",
       needText: "先写点内容再发布",
       imgLimit: "一次最多 6 张图片",
-      collapse: "收起"
+      collapse: "收起",
+      thoughtPh: "此刻在想什么…",
+      thoughtEnPh: "英文版（可选）",
+      thoughtPublish: "发布感悟",
+      thoughtPublishing: "发布中…",
+      thoughtPublished: "已发布！",
+      thoughtEmpty: "还没有感悟，坐等第一篇",
+      commentName: "你的昵称",
+      commentPh: "写下你的评论…",
+      commentBtn: "评论",
+      commentNeed: "昵称和内容都要填哦",
+      commentFail: "评论失败，请稍后再试"
     },
     en: {
       write: "✎ Write",
@@ -39,7 +50,18 @@
       fail: "Failed — check your network or try again later",
       needText: "Write something first",
       imgLimit: "Up to 6 photos at a time",
-      collapse: "Collapse"
+      collapse: "Collapse",
+      thoughtPh: "What's on your mind…",
+      thoughtEnPh: "English version (optional)",
+      thoughtPublish: "Publish",
+      thoughtPublishing: "Publishing…",
+      thoughtPublished: "Published!",
+      thoughtEmpty: "No thoughts yet — stay tuned",
+      commentName: "Your nickname",
+      commentPh: "Leave a comment…",
+      commentBtn: "Comment",
+      commentNeed: "Nickname and comment are both required",
+      commentFail: "Failed, try again later"
     }
   };
   const tl = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -68,7 +90,18 @@
     publishBtn: document.getElementById("life-publish"),
     status: document.getElementById("life-status"),
     lightbox: document.getElementById("life-lightbox"),
-    lightboxImg: document.getElementById("life-lightbox-img")
+    lightboxImg: document.getElementById("life-lightbox-img"),
+    thoughtComposer: document.getElementById("thought-composer"),
+    thoughtText: document.getElementById("thought-text"),
+    thoughtTextEn: document.getElementById("thought-text-en"),
+    thoughtPublish: document.getElementById("thought-publish"),
+    thoughtStatus: document.getElementById("thought-status"),
+    thoughtList: document.getElementById("thought-list")
+  };
+
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   };
 
   const MAX_IMGS = 6;
@@ -175,6 +208,7 @@
   function syncPanels() {
     els.loginCard.classList.add("hidden");
     els.composer.classList.toggle("hidden", !authed);
+    els.thoughtComposer.classList.toggle("hidden", !authed);
     renderTexts();
   }
 
@@ -307,6 +341,154 @@
   // ===== 灯箱 =====
   els.lightbox.addEventListener("click", () => els.lightbox.classList.add("hidden"));
 
+  // ===== 我的生活思考：站长感悟 + 访客免审评论 =====
+  let thoughts = [];
+
+  function fmtWhen(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return "";
+    const p = n => String(n).padStart(2, "0");
+    return p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+  }
+
+  async function fetchThoughts() {
+    if (!sb) return;
+    const { data: ts, error } = await sb.from("life_thoughts")
+      .select("id,text,text_en,created_at")
+      .order("created_at", { ascending: false });
+    if (error) { renderThoughts(); return; } // 表还没建：显示空态
+    const { data: cs } = await sb.from("life_thought_comments")
+      .select("thought_id,username,content,created_at")
+      .order("created_at", { ascending: true });
+    const byId = {};
+    (cs || []).forEach(c => {
+      (byId[c.thought_id] = byId[c.thought_id] || []).push(c);
+    });
+    thoughts = (ts || []).map(t => ({ ...t, comments: byId[t.id] || [] }));
+    renderThoughts();
+  }
+
+  function renderThoughts() {
+    els.thoughtList.innerHTML = "";
+    if (!thoughts.length) {
+      const p = document.createElement("p");
+      p.className = "thought-empty";
+      p.textContent = tl("thoughtEmpty");
+      els.thoughtList.appendChild(p);
+      return;
+    }
+    const en = currentLang === "en";
+    thoughts.forEach(t => {
+      const card = document.createElement("div");
+      card.className = "thought-card";
+      const d = document.createElement("div");
+      d.className = "thought-date";
+      d.textContent = (t.created_at || "").slice(0, 10);
+      const p = document.createElement("p");
+      p.className = "thought-text";
+      p.textContent = en && t.text_en ? t.text_en : t.text;
+      card.appendChild(d);
+      card.appendChild(p);
+
+      const box = document.createElement("div");
+      box.className = "thought-comments";
+      t.comments.forEach(c => {
+        const row = document.createElement("div");
+        row.className = "thought-comment";
+        const name = document.createElement("b");
+        name.textContent = c.username;
+        const body = document.createElement("span");
+        body.className = "tc-body";
+        body.textContent = c.content;
+        const when = document.createElement("span");
+        when.className = "tc-when";
+        when.textContent = fmtWhen(c.created_at);
+        row.appendChild(name);
+        row.appendChild(body);
+        row.appendChild(when);
+        box.appendChild(row);
+      });
+
+      // 评论表单：昵称记忆在 localStorage
+      const form = document.createElement("div");
+      form.className = "thought-cform";
+      const nameIn = document.createElement("input");
+      nameIn.type = "text";
+      nameIn.maxLength = 20;
+      nameIn.placeholder = tl("commentName");
+      nameIn.value = store.get("thought-name") || "";
+      const bodyIn = document.createElement("input");
+      bodyIn.type = "text";
+      bodyIn.maxLength = 300;
+      bodyIn.placeholder = tl("commentPh");
+      const btn = document.createElement("button");
+      btn.className = "ms-level";
+      btn.textContent = tl("commentBtn");
+      const submit = () => postComment(t.id, nameIn, bodyIn, btn);
+      btn.addEventListener("click", submit);
+      bodyIn.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
+      form.appendChild(nameIn);
+      form.appendChild(bodyIn);
+      form.appendChild(btn);
+      box.appendChild(form);
+
+      card.appendChild(box);
+      els.thoughtList.appendChild(card);
+    });
+  }
+
+  async function postComment(thoughtId, nameIn, bodyIn, btn) {
+    if (!sb) return;
+    const username = nameIn.value.trim();
+    const content = bodyIn.value.trim();
+    if (!username || !content) {
+      bodyIn.value = "";
+      bodyIn.placeholder = tl("commentNeed");
+      return;
+    }
+    btn.disabled = true;
+    const { error } = await sb.from("life_thought_comments")
+      .insert({ thought_id: thoughtId, username, content });
+    btn.disabled = false;
+    if (error) {
+      bodyIn.value = "";
+      bodyIn.placeholder = tl("commentFail");
+      return;
+    }
+    store.set("thought-name", username);
+    bodyIn.value = "";
+    bodyIn.placeholder = tl("commentPh");
+    fetchThoughts();
+  }
+
+  els.thoughtPublish.addEventListener("click", async () => {
+    if (!sb || !authed) return;
+    const text = els.thoughtText.value.trim();
+    if (!text) {
+      els.thoughtStatus.textContent = tl("needText");
+      els.thoughtStatus.className = "inbox-status error";
+      return;
+    }
+    els.thoughtPublish.disabled = true;
+    els.thoughtPublish.textContent = tl("thoughtPublishing");
+    const { error } = await sb.from("life_thoughts").insert({
+      text,
+      text_en: els.thoughtTextEn.value.trim() || null
+    });
+    els.thoughtPublish.disabled = false;
+    els.thoughtPublish.textContent = tl("thoughtPublish");
+    if (error) {
+      els.thoughtStatus.textContent = tl("fail");
+      els.thoughtStatus.className = "inbox-status error";
+      return;
+    }
+    els.thoughtText.value = "";
+    els.thoughtTextEn.value = "";
+    els.thoughtStatus.textContent = tl("thoughtPublished");
+    els.thoughtStatus.className = "inbox-status ok";
+    fetchThoughts();
+  });
+
   // ===== 文案与初始化 =====
   function todayStr() {
     const d = new Date();
@@ -324,16 +506,21 @@
     els.text.placeholder = tl("textPh");
     els.textEn.placeholder = tl("textEnPh");
     els.publishBtn.textContent = tl("publish");
+    els.thoughtText.placeholder = tl("thoughtPh");
+    els.thoughtTextEn.placeholder = tl("thoughtEnPh");
+    els.thoughtPublish.textContent = tl("thoughtPublish");
   }
 
   document.addEventListener("langchange", () => {
     renderTexts();
     renderWarm();
+    renderThoughts();
     window.renderLifeTimeline();
   });
 
   renderTexts();
   renderWarm();
+  renderThoughts();
   // 已登录过（留言信箱那边登录过也会带上同一份会话）就直接打开发布器
   if (sb) {
     sb.auth.getSession().then(({ data }) => {
@@ -344,4 +531,5 @@
     syncPanels();
   }
   fetchMoments();
+  fetchThoughts();
 })();

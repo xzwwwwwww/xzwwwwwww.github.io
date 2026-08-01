@@ -174,3 +174,47 @@ alter table life_moments drop column secret;
 ```
 
 运行完即可，不用改配置文件。想删某条：左侧 **Table Editor** → `life_moments` → 选中行删除。
+
+# 附：我的生活思考（life_thoughts + life_thought_comments）
+
+「生活碎碎念」页的「我的生活思考」组件：站长登录（Supabase Auth）后发布感悟，访客免审核直接评论。同样在 **SQL Editor** → **New query** 粘贴运行：
+
+```sql
+-- 站长感悟表
+create table life_thoughts (
+  id uuid primary key default gen_random_uuid(),
+  text text not null,                         -- 感悟正文（中文）
+  text_en text,                               -- 英文版正文（可选）
+  created_at timestamptz not null default now()
+);
+
+alter table life_thoughts enable row level security;
+
+create policy "anon read thoughts" on life_thoughts
+  for select to anon using (true);
+
+-- 只有站长（Supabase Auth 登录用户）可写/改/删
+create policy "owner write thoughts" on life_thoughts
+  for all to authenticated using (true) with check (true);
+
+-- 访客评论表（免审核，立即公开）
+create table life_thought_comments (
+  id uuid primary key default gen_random_uuid(),
+  thought_id uuid not null references life_thoughts(id) on delete cascade,
+  username text not null,
+  content text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table life_thought_comments enable row level security;
+
+create policy "anon read comments" on life_thought_comments
+  for select to anon using (true);
+
+-- 评论免审：任何人（含拿到公开 anon key 的人）都能写入——和留言信箱的公开投递同级风险，
+-- 个人小站可接受；出现垃圾评论去 Table Editor 删行即可（删感悟会连带删其评论）。
+create policy "anon insert comments" on life_thought_comments
+  for insert to anon with check (true);
+```
+
+运行完即可，不用改配置文件。

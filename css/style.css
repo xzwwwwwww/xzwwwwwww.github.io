@@ -240,6 +240,73 @@ h1, h2, h3, h4, .logo, .section-title {
 }
 .warm-term { color: var(--accent); }
 
+/* 我的生活思考 */
+.thoughts { margin: 34px 0 30px; }
+.thoughts-title {
+  display: flex; align-items: baseline; gap: 12px;
+  font-size: 18px; letter-spacing: 0.06em;
+  margin: 0 0 16px; color: var(--text);
+}
+.thoughts-title::after {
+  content: ""; flex: 1; align-self: center;
+  border-top: 1px solid var(--line);
+}
+#thought-composer { margin-bottom: 20px; }
+.thought-empty {
+  text-align: center; color: var(--faint);
+  font-size: 13px; letter-spacing: 0.08em;
+  padding: 26px 0;
+}
+.thought-card {
+  background: var(--panel);
+  border: 1px solid var(--line); border-radius: 4px;
+  padding: 16px 20px 12px;
+  margin-bottom: 16px;
+}
+.thought-date {
+  font-size: 11px; color: var(--faint);
+  letter-spacing: 0.14em; text-transform: uppercase;
+}
+.thought-text {
+  margin: 6px 0 0;
+  font-size: 15px; line-height: 1.9; color: var(--text);
+  white-space: pre-wrap;
+}
+.thought-comments {
+  margin-top: 14px; padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.thought-comment {
+  display: flex; align-items: baseline; gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+  font-size: 13px; line-height: 1.7;
+}
+.thought-comment b { color: var(--accent); font-weight: 600; }
+.thought-comment .tc-body { color: var(--text); }
+.thought-comment .tc-when {
+  margin-left: auto;
+  font-size: 11px; color: var(--faint); letter-spacing: 0.06em;
+}
+.thought-cform {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-top: 10px;
+}
+.thought-cform input {
+  padding: 6px 10px; font-size: 13px;
+  font-family: inherit;
+  border: 1px solid var(--line); border-radius: 2px;
+  background: var(--bg); color: var(--text);
+  outline: none;
+}
+.thought-cform input:focus { border-color: var(--accent); }
+.thought-cform input:first-child { width: 110px; flex: none; }
+.thought-cform input:nth-child(2) { flex: 1; min-width: 140px; }
+@media (max-width: 600px) {
+  .thought-cform input:first-child { width: 100%; }
+  .thought-comment .tc-when { margin-left: 0; width: 100%; }
+}
+
 /* 生活碎碎念：登录与发布器 */
 .life-owner-bar { display: flex; justify-content: flex-end; margin: -14px 0 16px; }
 .life-login, .life-composer { margin-bottom: 22px; }
