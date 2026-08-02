@@ -308,8 +308,8 @@ h1, h2, h3, h4, .logo, .section-title {
   .thought-comment .tc-when { margin-left: 0; width: 100%; }
 }
 
-/* 生活碎碎念：登录与发布器 */
-.life-owner-bar { display: flex; justify-content: flex-end; margin: -14px 0 16px; }
+/* 生活碎碎念：标题行（我的碎碎念/我的生活思考同款）与登录、发布器 */
+.life-moments-title { margin: 34px 0 16px; }
 .life-login, .life-composer { margin-bottom: 22px; }
 .life-img-row {
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
