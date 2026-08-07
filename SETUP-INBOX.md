@@ -218,3 +218,13 @@ create policy "anon insert comments" on life_thought_comments
 ```
 
 运行完即可，不用改配置文件。
+
+## 心情小表情加列（life_moments）
+
+发布碎碎念时可自选心情 emoji 显示在月历格子右上角。需在 `life_moments` 表加一列（SQL Editor 跑一句）：
+
+```sql
+alter table life_moments add column mood text;
+```
+
+不跑也能正常发布（网页会自动跳过心情字段），只是格子里不显示心情。

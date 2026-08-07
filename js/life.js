@@ -186,7 +186,8 @@
     pop.className = "cal-pop";
     entries.forEach(m => {
       const p = document.createElement("p");
-      p.textContent = currentLang === "en" && m.text_en ? m.text_en : m.text;
+      const body = currentLang === "en" && m.text_en ? m.text_en : m.text;
+      p.textContent = (m.mood ? m.mood + " " : "") + body;
       pop.appendChild(p);
       const imgs = Array.isArray(m.images) ? m.images : [];
       if (imgs.length) {
@@ -288,6 +289,14 @@
         num.textContent = d;
         cell.appendChild(num);
         if (entries) {
+          // 心情角标（当天第一条带心情的条目）
+          const moodEntry = entries.find(m => m.mood);
+          if (moodEntry) {
+            const ms = document.createElement("span");
+            ms.className = "cal-mood";
+            ms.textContent = moodEntry.mood;
+            cell.appendChild(ms);
+          }
           // 方格里放概述或小照片：优先用第一张带图的照片
           const withImg = entries.find(m => Array.isArray(m.images) && m.images.length);
           if (withImg) {
@@ -338,14 +347,21 @@
   // ===== 拉取在线数据 =====
   async function fetchMoments() {
     if (!sb) return;
-    const { data, error } = await sb.from("life_moments")
-      .select("date,text,text_en,images")
+    let res = await sb.from("life_moments")
+      .select("date,text,text_en,images,mood")
       .order("created_at", { ascending: false });
-    if (error) return; // 表不存在/网络问题：只显示静态内容
-    dbMoments = (data || []).map(r => ({
+    if (res.error) {
+      // mood 列还没建：退回不带 mood 的查询
+      res = await sb.from("life_moments")
+        .select("date,text,text_en,images")
+        .order("created_at", { ascending: false });
+    }
+    if (res.error) return; // 表不存在/网络问题：只显示静态内容
+    dbMoments = (res.data || []).map(r => ({
       date: r.date,
       text: r.text,
       text_en: r.text_en || "",
+      mood: r.mood || null,
       images: Array.isArray(r.images) ? r.images : []
     }));
     window.renderLifeTimeline();
@@ -453,6 +469,24 @@
     renderPreviews();
   });
 
+  // ===== 心情选择（单选，可再点取消；默认 😊） =====
+  const moodBox = document.getElementById("life-mood");
+  moodBox.querySelectorAll("button").forEach(b => {
+    b.addEventListener("click", () => {
+      const was = b.classList.contains("on");
+      moodBox.querySelectorAll("button").forEach(x => x.classList.remove("on"));
+      if (!was) b.classList.add("on");
+    });
+  });
+  function currentMood() {
+    const on = moodBox.querySelector("button.on");
+    return on ? on.dataset.mood : null;
+  }
+  function resetMood() {
+    moodBox.querySelectorAll("button").forEach(x =>
+      x.classList.toggle("on", x.dataset.mood === "😊"));
+  }
+
   // ===== 发布 =====
   els.publishBtn.addEventListener("click", async () => {
     if (!sb) { els.status.textContent = tl("fail"); els.status.className = "inbox-status error"; return; }
@@ -464,12 +498,18 @@
     }
     els.publishBtn.disabled = true;
     els.publishBtn.textContent = tl("publishing");
-    const { error } = await sb.from("life_moments").insert({
+    const payload = {
       date: els.date.value.trim() || els.date.placeholder,
       text,
       text_en: els.textEn.value.trim() || null,
-      images: photos
-    });
+      images: photos,
+      mood: currentMood()
+    };
+    let error = (await sb.from("life_moments").insert(payload)).error;
+    if (error && payload.mood) {
+      delete payload.mood;   // mood 列还没建：去掉再试一次
+      error = (await sb.from("life_moments").insert(payload)).error;
+    }
     els.publishBtn.disabled = false;
     els.publishBtn.textContent = tl("publish");
     if (error) {
@@ -481,6 +521,7 @@
     els.textEn.value = "";
     photos = [];
     renderPreviews();
+    resetMood();
     els.status.textContent = tl("published");
     els.status.className = "inbox-status ok";
     fetchMoments();

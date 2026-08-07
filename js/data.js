@@ -56,11 +56,13 @@ const MOMENTS = [
   },
   {
     date: "2026-07-25",
+    mood: "😎",
     text: "kimi好贵用的好快，今天升级了kimi月会员，感觉自己像个土豪。",
     text_en: "Kimi is pricey and burns fast. Upgraded to a monthly Kimi membership today — feeling like a big shot."
   },
   {
     date: "2026-07-19",
+    mood: "🥳",
     text: "今天学会了用agent制作网站，感觉很有成就感！欢迎大家来我的小站看看。",
     text_en: "Learned to build a website with an agent today — so rewarding! Welcome to my little corner."
   }
