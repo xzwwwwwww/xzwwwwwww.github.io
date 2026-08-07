@@ -103,13 +103,15 @@
   // ===== 状态 =====
   let level = unlocked;
   let cfg = levelCfg(level);
-  let grid = [];          // grid[r][c] = tile | null; tile = {t, ice, px, py, dying}
+  let grid = [];          // grid[r][c] = tile | null; tile = {t, ice, sp, px, py, dying}
   let movesLeft = 0, score = 0, collected = 0, iceLeft = 0;
   let selected = null;    // [r, c]
   let state = "start";    // start | idle | busy | win | lose
   let chain = 0;
   let toast = "", toastUntil = 0;
   let started = false;
+  let beams = [];         // 特效光带 {sp, r, c, t}
+  let lastSwap = null;    // 玩家刚交换的格子（特殊熊生成落点优先）
 
   const rndT = () => Math.floor(Math.random() * cfg.types);
 
@@ -160,7 +162,7 @@
           do { t = rndT(); } while (
             (c >= 2 && grid[r][c - 1].t === t && grid[r][c - 2].t === t) ||
             (r >= 2 && grid[r - 1][c].t === t && grid[r - 2][c].t === t));
-          grid[r].push({ t, ice: false, px: 0, py: 0, dying: 0 });
+          grid[r].push({ t, ice: false, sp: null, px: 0, py: 0, dying: 0 });
         }
       }
       // 放冰块（不放在前两行，避免开局卡死）
@@ -180,17 +182,20 @@
     }
   }
 
-  // ===== 消除检测 =====
-  function findMatches() {
-    const hit = new Set();
+  // ===== 消除检测：返回所有 ≥3 的段（含方向，供特殊熊判定） =====
+  function findRuns() {
+    const runs = [];
     for (let r = 0; r < ROWS; r++) {
       let c = 0;
       while (c < COLS) {
-        const t = grid[r][c] && grid[r][c].t;
+        const tile = grid[r][c];
+        const t = tile ? tile.t : -1;
         let e = c;
-        while (e + 1 < COLS && grid[r][e + 1] && grid[r][e + 1].t === t && t !== null && t !== undefined) e++;
-        if (t !== null && t !== undefined && e - c + 1 >= 3) {
-          for (let i = c; i <= e; i++) hit.add(r * COLS + i);
+        while (e + 1 < COLS && grid[r][e + 1] && grid[r][e + 1].t === t && t >= 0) e++;
+        if (t >= 0 && e - c + 1 >= 3) {
+          const cells = [];
+          for (let i = c; i <= e; i++) cells.push([r, i]);
+          runs.push({ cells, dir: "h" });
         }
         c = e + 1;
       }
@@ -198,23 +203,81 @@
     for (let c = 0; c < COLS; c++) {
       let r = 0;
       while (r < ROWS) {
-        const t = grid[r][c] && grid[r][c].t;
+        const tile = grid[r][c];
+        const t = tile ? tile.t : -1;
         let e = r;
-        while (e + 1 < ROWS && grid[e + 1][c] && grid[e + 1][c].t === t && t !== null && t !== undefined) e++;
-        if (t !== null && t !== undefined && e - r + 1 >= 3) {
-          for (let i = r; i <= e; i++) hit.add(i * COLS + c);
+        while (e + 1 < ROWS && grid[e + 1][c] && grid[e + 1][c].t === t && t >= 0) e++;
+        if (t >= 0 && e - r + 1 >= 3) {
+          const cells = [];
+          for (let i = r; i <= e; i++) cells.push([i, c]);
+          runs.push({ cells, dir: "v" });
         }
         r = e + 1;
       }
     }
-    return hit;
+    return runs;
+  }
+  const hasMatches = () => findRuns().length > 0;
+
+  // ===== 特殊熊生成判定：L/T 交叉 → 炸弹；≥5 → 十字；4 → 条纹 =====
+  function planCreations(runs) {
+    const creations = new Map();   // idx -> sp
+    const inH = {}, inV = {};
+    runs.forEach(run => run.cells.forEach(([r, c]) => {
+      (run.dir === "h" ? inH : inV)[r * COLS + c] = run;
+    }));
+    Object.keys(inH).forEach(k => {
+      if (inV[k]) creations.set(Number(k), "bomb");
+    });
+    runs.forEach(run => {
+      if (run.cells.length < 4) return;
+      const sp = run.cells.length >= 5 ? "cross" : (run.dir === "h" ? "row" : "col");
+      let spot;
+      if (lastSwap && run.cells.some(([r, c]) => r === lastSwap[0] && c === lastSwap[1])) {
+        spot = lastSwap[0] * COLS + lastSwap[1];
+      } else {
+        const mid = run.cells[Math.floor(run.cells.length / 2)];
+        spot = mid[0] * COLS + mid[1];
+      }
+      if (!creations.has(spot)) creations.set(spot, sp);
+    });
+    return creations;
+  }
+
+  // ===== 特效展开：命中集里的特殊熊触发并连锁 =====
+  function expandEffects(hit) {
+    const out = new Set(hit);
+    const queue = [...hit];
+    const fired = new Set();
+    while (queue.length) {
+      const idx = queue.shift();
+      if (fired.has(idx)) continue;
+      fired.add(idx);
+      const r = Math.floor(idx / COLS), c = idx % COLS;
+      const tile = grid[r] && grid[r][c];
+      if (!tile || !tile.sp || tile.ice) continue;
+      beams.push({ sp: tile.sp, r, c, t: performance.now() });
+      const add = [];
+      if (tile.sp === "row" || tile.sp === "cross")
+        for (let i = 0; i < COLS; i++) add.push(r * COLS + i);
+      if (tile.sp === "col" || tile.sp === "cross")
+        for (let i = 0; i < ROWS; i++) add.push(i * COLS + c);
+      if (tile.sp === "bomb")
+        for (let dr = -1; dr <= 1; dr++)
+          for (let dc = -1; dc <= 1; dc++) {
+            const rr = r + dr, cc = c + dc;
+            if (rr >= 0 && rr < ROWS && cc >= 0 && cc < COLS) add.push(rr * COLS + cc);
+          }
+      add.forEach(i => { if (!out.has(i)) { out.add(i); queue.push(i); } });
+    }
+    return out;
   }
 
   // ===== 结算循环 =====
   function resolveBoard() {
     state = "busy";
-    const hit = findMatches();
-    if (!hit.size) {
+    const runs = findRuns();
+    if (!runs.length) {
       chain = 0;
       if (!hasMove()) {
         shuffle();
@@ -226,23 +289,41 @@
       return;
     }
     chain++;
+    const nowT = performance.now();
+    // 特殊熊生成
+    const creations = planCreations(runs);
+    // 命中集 = 所有段的格子，剔除生成格，再展开特效
+    let hit = new Set();
+    runs.forEach(run => run.cells.forEach(([r, c]) => hit.add(r * COLS + c)));
+    creations.forEach((sp, idx) => hit.delete(idx));
+    hit = expandEffects(hit);
     score += hit.size * 10 * chain;
     hit.forEach(idx => {
       const r = Math.floor(idx / COLS), c = idx % COLS;
       const tile = grid[r][c];
       if (!tile) return;
       if (tile.ice) {
-        tile.ice = false;   // 冰块被卷入消除：破冰而不消除
+        tile.ice = false;   // 冰块被波及：破冰而不消除（不触发其上特效）
         iceLeft--;
-      } else {
-        tile.dying = performance.now();
-        if (cfg.goal.kind === "collect" && tile.t === cfg.goal.type) collected++;
+        return;
       }
+      tile.dying = nowT;
+      tile.sp = null;
+      if (cfg.goal.kind === "collect" && tile.t === cfg.goal.type) collected++;
+    });
+    // 生成格变身（已死/带冰的跳过，带冰只破冰）
+    creations.forEach((sp, idx) => {
+      const r = Math.floor(idx / COLS), c = idx % COLS;
+      const tile = grid[r][c];
+      if (!tile || tile.dying) return;
+      if (tile.ice) { tile.ice = false; iceLeft--; return; }
+      tile.sp = sp;
+      tile.bornT = nowT;
     });
     setTimeout(() => {
       applyGravity();
       resolveBoard();
-    }, 180);
+    }, 200);
   }
 
   function applyGravity() {
@@ -257,7 +338,7 @@
         }
       }
       for (let r = write; r >= 0; r--) {
-        grid[r][c] = { t: rndT(), ice: false, px: 0, py: (r - write - 1) * CELL - CELL, dying: 0 };
+        grid[r][c] = { t: rndT(), ice: false, sp: null, px: 0, py: (r - write - 1) * CELL - CELL, dying: 0 };
       }
     }
     // 清掉已消除的
@@ -266,7 +347,6 @@
         if (grid[r][c] && grid[r][c].dying) grid[r][c] = null;
       }
     }
-    // 二次压实（把 null 再往下沉的已处理，上面循环保证无空洞）
   }
 
   function goalMet() {
@@ -311,7 +391,7 @@
           if (!grid[r][c].ice) grid[r][c].t = flat[k++];
         }
       }
-      if (!findMatches().size && hasMove()) return;
+      if (!hasMatches() && hasMove()) return;
     }
   }
 
@@ -321,14 +401,14 @@
     const ta = grid[a[0]][a[1]], tb = grid[b[0]][b[1]];
     if (!ta || !tb || ta.ice || tb.ice) return;
     [grid[a[0]][a[1]], grid[b[0]][b[1]]] = [tb, ta];
-    const hit = findMatches();
-    if (!hit.size) {
+    const runs = findRuns();
+    if (!runs.length) {
       [grid[a[0]][a[1]], grid[b[0]][b[1]]] = [ta, tb];
-      // 弹回动画：交换像素再弹回（简单处理：短暂抖动提示）
       return;
     }
     movesLeft--;
     selected = null;
+    lastSwap = b;
     resolveBoard();
   }
 
@@ -387,6 +467,8 @@
     collected = 0;
     chain = 0;
     selected = null;
+    beams = [];
+    lastSwap = null;
     buildBoard();
     state = "start";
     showOverlay(tf("level", { n: level }), goalText(cfg.goal), tp("start"), null);
@@ -444,6 +526,45 @@
     ctx.restore();
   }
 
+  // 特殊熊角标：条纹（白杠）/ 十字（✚）/ 炸弹（引信弹）
+  function drawSpBadge(x, y, sp) {
+    ctx.save();
+    ctx.translate(x, y);
+    if (sp === "row" || sp === "col") {
+      ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
+      ctx.strokeStyle = "#4A3226";
+      ctx.lineWidth = 1;
+      const horiz = sp === "row";
+      for (const off of [-7, 2]) {
+        ctx.beginPath();
+        if (horiz) ctx.roundRect(-14, off, 28, 5, 2);
+        else ctx.roundRect(off, -14, 5, 28, 2);
+        ctx.fill(); ctx.stroke();
+      }
+    } else if (sp === "cross") {
+      ctx.fillStyle = "#F2A65A";
+      ctx.strokeStyle = "#4A3226";
+      ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.arc(14, 14, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = "#FFF";
+      ctx.lineWidth = 2.5; ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(9.5, 14); ctx.lineTo(18.5, 14);
+      ctx.moveTo(14, 9.5); ctx.lineTo(14, 18.5);
+      ctx.stroke();
+    } else if (sp === "bomb") {
+      ctx.fillStyle = "#3A3A3A";
+      ctx.strokeStyle = "#4A3226";
+      ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.arc(14, 14, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(14, 6); ctx.quadraticCurveTo(17, 2, 20, 1); ctx.stroke();
+      ctx.fillStyle = "#F2A65A";
+      ctx.beginPath(); ctx.arc(20, 1, 2.2, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
   function draw(now) {
     ctx.fillStyle = "#FBF6EC";
     ctx.fillRect(0, 0, W, H);
@@ -496,6 +617,10 @@
           tile.py = Math.min(0, tile.py + CELL * 0.35);
           dy = tile.py;
         }
+        // 特殊熊变身小脉冲
+        if (tile.bornT && now - tile.bornT < 300) {
+          scale *= 1 + 0.35 * Math.sin((now - tile.bornT) / 300 * Math.PI);
+        }
         if (selected && selected[0] === r && selected[1] === c) {
           ctx.strokeStyle = "#C1502E";
           ctx.lineWidth = 3;
@@ -503,6 +628,7 @@
           scale = 1.1;
         }
         drawBear(x, y + dy, 46, tile.t, scale, alpha);
+        if (tile.sp && !tile.dying && !tile.ice) drawSpBadge(x, y + dy, tile.sp);
         if (tile.ice) {
           ctx.fillStyle = "rgba(143, 216, 232, 0.45)";
           ctx.strokeStyle = "#7AC7E3";
@@ -521,6 +647,22 @@
       }
     }
     ctx.restore();
+
+    // 特效光带（行/列亮带、炸弹扩散圈，300ms 淡出）
+    beams = beams.filter(b => now - b.t < 300);
+    beams.forEach(b => {
+      const k = (now - b.t) / 300;
+      const a = 0.45 * (1 - k);
+      ctx.fillStyle = `rgba(240, 194, 78, ${a})`;
+      if (b.sp === "row" || b.sp === "cross") ctx.fillRect(OX, OY + b.r * CELL, COLS * CELL, CELL);
+      if (b.sp === "col" || b.sp === "cross") ctx.fillRect(OX + b.c * CELL, OY, CELL, ROWS * CELL);
+      if (b.sp === "bomb") {
+        ctx.beginPath();
+        ctx.arc(OX + b.c * CELL + CELL / 2, OY + b.r * CELL + CELL / 2,
+          CELL * 1.6 * (0.6 + k * 0.6), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
 
     // 洗牌提示
     if (toast && now < toastUntil) {
