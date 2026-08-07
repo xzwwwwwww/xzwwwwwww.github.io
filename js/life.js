@@ -282,8 +282,29 @@
         const cell = document.createElement("div");
         cell.className = "cal-day" + (entries ? " has" : "");
         if (mk === todayMk && d === todayD) cell.classList.add("today");
-        cell.textContent = d;
+        // 日期数字角标
+        const num = document.createElement("span");
+        num.className = "cal-num";
+        num.textContent = d;
+        cell.appendChild(num);
         if (entries) {
+          // 方格里放概述或小照片：优先用第一张带图的照片
+          const withImg = entries.find(m => Array.isArray(m.images) && m.images.length);
+          if (withImg) {
+            const im = document.createElement("img");
+            im.className = "cal-thumb";
+            im.src = withImg.images[0];
+            im.alt = "";
+            im.loading = "lazy";
+            cell.appendChild(im);
+          } else {
+            const first = entries[0];
+            const txt = currentLang === "en" && first.text_en ? first.text_en : first.text;
+            const ex = document.createElement("span");
+            ex.className = "cal-excerpt";
+            ex.textContent = txt.length > 14 ? txt.slice(0, 14) + "…" : txt;
+            cell.appendChild(ex);
+          }
           cell.addEventListener("mouseenter", () => showPop(card, cell, entries));
           cell.addEventListener("mouseleave", scheduleClose);
           cell.addEventListener("click", e => {
