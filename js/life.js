@@ -226,9 +226,9 @@
         wrap.appendChild(actions);
       }
       pop.appendChild(wrap);
-      const imgs = (m.thumbs && m.thumbs.length) ? m.thumbs
-        : (Array.isArray(m.images) ? m.images : []);
-      if (imgs.length) {
+      // 照片：已有的缩略图直接渲染，旧条目按需补拉后再挂上浮层
+      ensureImages(m).then(imgs => {
+        if (!imgs || !imgs.length || !wrap.isConnected) return;
         const row = document.createElement("div");
         row.className = "cal-pop-photos";
         imgs.forEach((src, idx) => {
@@ -242,8 +242,8 @@
           });
           row.appendChild(img);
         });
-        pop.appendChild(row);
-      }
+        wrap.appendChild(row);
+      });
     });
     card.appendChild(pop);
     // 定位：默认在格子上方，第一行格子改放下方；横向夹在卡片内
@@ -382,7 +382,7 @@
     }
   };
 
-  // ===== 拉取在线数据（只取缩略图；旧行补拉一次 images） =====
+  // ===== 拉取在线数据（只取缩略图；旧行图片点开时才按需加载） =====
   async function fetchMoments() {
     if (!sb) return;
     let res = await sb.from("life_moments")
@@ -391,14 +391,6 @@
     let rows;
     if (!res.error) {
       rows = res.data || [];
-      // 旧行没有 thumbs：批量补拉它们的 images
-      const legacyIds = rows.filter(r => r.thumbs == null).map(r => r.id);
-      if (legacyIds.length) {
-        const r2 = await sb.from("life_moments").select("id,images").in("id", legacyIds);
-        const map = {};
-        (r2.data || []).forEach(r => { map[r.id] = r.images || []; });
-        rows.forEach(r => { if (r.thumbs == null) r.images = map[r.id] || []; });
-      }
     } else {
       // thumbs/mood 列还没建：退回带完整 images 的旧查询
       res = await sb.from("life_moments")
@@ -414,14 +406,67 @@
       text_en: r.text_en || "",
       mood: r.mood || null,
       thumbs: Array.isArray(r.thumbs) ? r.thumbs : null,
-      images: Array.isArray(r.images) ? r.images : []
+      images: Array.isArray(r.images) ? r.images : [],
+      _legacyLoaded: false
     }));
+    window.renderLifeTimeline();
+    migrateLegacy();
+  }
+
+  // 旧条目（thumbs 为 null）的图片按需加载，一次一条带缓存
+  async function ensureImages(m) {
+    if (!m.id || m.thumbs != null) return (m.thumbs && m.thumbs.length) ? m.thumbs : m.images;
+    if (!m._legacyLoaded) {
+      const { data } = await sb.from("life_moments")
+        .select("images").eq("id", m.id).single();
+      m.images = (data && Array.isArray(data.images)) ? data.images : [];
+      m._legacyLoaded = true;
+    }
+    return m.images;
+  }
+
+  // dataURL → 200px 缩略图
+  function makeThumb(dataUrl) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > 200 || h > 200) {
+          const k = 200 / Math.max(w, h);
+          w = Math.round(w * k); h = Math.round(h * k);
+        }
+        const c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL("image/jpeg", 0.6));
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  }
+
+  // 站长登录后后台静默迁移：给旧条目生成缩略图，之后加载走快速通道
+  let migrating = false;
+  async function migrateLegacy() {
+    if (!authed || !sb || migrating) return;
+    const legacy = dbMoments.filter(m => m.id && m.thumbs == null);
+    if (!legacy.length) return;
+    migrating = true;
+    for (const m of legacy) {
+      await ensureImages(m);
+      const thumbs = [];
+      for (const u of m.images) thumbs.push(await makeThumb(u));
+      await sb.from("life_moments").update({ thumbs }).eq("id", m.id);
+      m.thumbs = thumbs;
+    }
+    migrating = false;
     window.renderLifeTimeline();
   }
 
   // 点开大图：先给缩略图，再按条目 id 懒加载完整图片（一次一条，带缓存）
   async function openLightbox(m, idx) {
-    const thumbs = m.thumbs && m.thumbs.length ? m.thumbs : m.images;
+    if (m.id && m.thumbs == null) await ensureImages(m);  // 旧条目先补拉
+    const thumbs = (m.thumbs && m.thumbs.length) ? m.thumbs : m.images;
     els.lightboxImg.src = thumbs[idx] || "";
     els.lightbox.classList.remove("hidden");
     if (!m.id) return; // 静态条目图片本来就在本地
@@ -625,12 +670,18 @@
     }
     els.publishBtn.disabled = true;
     els.publishBtn.textContent = tl("publishing");
+    // 照片统一保证有独立缩略图（编辑旧条目时可能只有大图）
+    const thumbsOut = [];
+    for (const p of photos) {
+      if (p.thumb && p.thumb !== p.full) thumbsOut.push(p.thumb);
+      else thumbsOut.push(await makeThumb(p.full || p.thumb || p));
+    }
     const payload = {
       date: els.date.value.trim() || els.date.placeholder,
       text,
       text_en: els.textEn.value.trim() || null,
       images: photos.map(p => p.full || p),
-      thumbs: photos.map(p => p.thumb || p),
+      thumbs: thumbsOut,
       mood: currentMood()
     };
     let error;
