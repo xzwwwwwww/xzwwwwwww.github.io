@@ -297,6 +297,17 @@ h1, h2, h3, h4, .logo, .section-title {
 }
 .cal-pop p { margin: 0 0 8px; }
 .cal-pop p:last-child { margin-bottom: 0; }
+.cal-pop-entry { padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px dashed rgba(74, 50, 38, 0.18); }
+.cal-pop-entry:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: none; }
+.cal-pop-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
+.cal-pop-actions button {
+  background: none; border: none; padding: 0;
+  font-size: 11px; font-family: inherit; letter-spacing: 0.04em;
+  color: var(--accent); cursor: pointer;
+}
+.cal-pop-actions button:hover { text-decoration: underline; }
+.cal-pop-actions button.danger { color: var(--faint); }
+.cal-pop-actions button.danger:hover { color: #C0392B; }
 .cal-pop-photos { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
 .cal-pop-photos img {
   width: 56px; height: 56px; object-fit: cover;

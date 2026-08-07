@@ -228,3 +228,12 @@ alter table life_moments add column mood text;
 ```
 
 不跑也能正常发布（网页会自动跳过心情字段），只是格子里不显示心情。
+
+## 编辑/删除碎碎念的权限（life_moments 更新与删除策略）
+
+站长登录后可在月历浮层里编辑/删除每条碎碎念。需给 `life_moments` 表补两条策略（SQL Editor 整段跑）：
+
+```sql
+create policy "owner update moments" on life_moments for update to authenticated using (true) with check (true);
+create policy "owner delete moments" on life_moments for delete to authenticated using (true);
+```

@@ -35,7 +35,12 @@
       commentNeed: "昵称和内容都要填哦",
       commentFail: "评论失败，请稍后再试",
       thoughtWrite: "✎ 写感悟",
-      looseNotes: "随手记"
+      looseNotes: "随手记",
+      edit: "✏️ 编辑",
+      del: "🗑 删除",
+      save: "保存修改",
+      cancel: "取消",
+      delConfirm: "确定删除这条碎碎念吗？删除后不可恢复"
     },
     en: {
       write: "✎ Write",
@@ -65,7 +70,12 @@
       commentNeed: "Nickname and comment are both required",
       commentFail: "Failed, try again later",
       thoughtWrite: "✎ Write",
-      looseNotes: "Loose notes"
+      looseNotes: "Loose notes",
+      edit: "✏️ Edit",
+      del: "🗑 Delete",
+      save: "Save changes",
+      cancel: "Cancel",
+      delConfirm: "Delete this moment? This can't be undone."
     }
   };
   const tl = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -95,6 +105,7 @@
     status: document.getElementById("life-status"),
     lightbox: document.getElementById("life-lightbox"),
     lightboxImg: document.getElementById("life-lightbox-img"),
+    editCancel: document.getElementById("life-edit-cancel"),
     thoughtComposer: document.getElementById("thought-composer"),
     thoughtText: document.getElementById("thought-text"),
     thoughtTextEn: document.getElementById("thought-text-en"),
@@ -185,10 +196,36 @@
     const pop = document.createElement("div");
     pop.className = "cal-pop";
     entries.forEach(m => {
+      const wrap = document.createElement("div");
+      wrap.className = "cal-pop-entry";
       const p = document.createElement("p");
       const body = currentLang === "en" && m.text_en ? m.text_en : m.text;
       p.textContent = (m.mood ? m.mood + " " : "") + body;
-      pop.appendChild(p);
+      wrap.appendChild(p);
+      // 站长登录后：DB 条目带编辑/删除
+      if (m.id && authed) {
+        const actions = document.createElement("div");
+        actions.className = "cal-pop-actions";
+        const eb = document.createElement("button");
+        eb.type = "button";
+        eb.textContent = tl("edit");
+        eb.addEventListener("click", e => {
+          e.stopPropagation();
+          startEdit(m);
+        });
+        const db = document.createElement("button");
+        db.type = "button";
+        db.className = "danger";
+        db.textContent = tl("del");
+        db.addEventListener("click", e => {
+          e.stopPropagation();
+          deleteMoment(m.id);
+        });
+        actions.appendChild(eb);
+        actions.appendChild(db);
+        wrap.appendChild(actions);
+      }
+      pop.appendChild(wrap);
       const imgs = Array.isArray(m.images) ? m.images : [];
       if (imgs.length) {
         const row = document.createElement("div");
@@ -348,16 +385,17 @@
   async function fetchMoments() {
     if (!sb) return;
     let res = await sb.from("life_moments")
-      .select("date,text,text_en,images,mood")
+      .select("id,date,text,text_en,images,mood")
       .order("created_at", { ascending: false });
     if (res.error) {
       // mood 列还没建：退回不带 mood 的查询
       res = await sb.from("life_moments")
-        .select("date,text,text_en,images")
+        .select("id,date,text,text_en,images")
         .order("created_at", { ascending: false });
     }
     if (res.error) return; // 表不存在/网络问题：只显示静态内容
     dbMoments = (res.data || []).map(r => ({
+      id: r.id,
       date: r.date,
       text: r.text,
       text_en: r.text_en || "",
@@ -374,6 +412,8 @@
     els.thoughtComposer.classList.add("hidden");
     els.thoughtWriteBtn.classList.toggle("hidden", !authed);
     renderTexts();
+    // 登录态决定浮层里有没有编辑/删除按钮，重渲日历
+    if (typeof window.renderLifeTimeline === "function") window.renderLifeTimeline();
   }
 
   els.writeBtn.addEventListener("click", () => {
@@ -487,6 +527,49 @@
       x.classList.toggle("on", x.dataset.mood === "😊"));
   }
 
+  // ===== 站长编辑/删除碎碎念 =====
+  let editingId = null;
+
+  function startEdit(m) {
+    closePop();
+    editingId = m.id;
+    els.composer.classList.remove("hidden");
+    els.date.value = m.date;
+    els.text.value = m.text;
+    els.textEn.value = m.text_en || "";
+    photos = (Array.isArray(m.images) ? m.images : []).slice();
+    renderPreviews();
+    moodBox.querySelectorAll("button").forEach(x =>
+      x.classList.toggle("on", x.dataset.mood === (m.mood || "😊")));
+    els.editCancel.classList.remove("hidden");
+    renderTexts();
+    els.publishBtn.textContent = tl("save");
+    els.composer.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    els.composer.classList.add("hidden");
+    els.editCancel.classList.add("hidden");
+    els.text.value = "";
+    els.textEn.value = "";
+    photos = [];
+    renderPreviews();
+    resetMood();
+    renderTexts();
+  }
+  els.editCancel.addEventListener("click", cancelEdit);
+
+  async function deleteMoment(id) {
+    if (!sb || !authed) return;
+    if (!confirm(tl("delConfirm"))) return;
+    const { error } = await sb.from("life_moments").delete().eq("id", id);
+    if (!error) {
+      closePop();
+      fetchMoments();
+    }
+  }
+
   // ===== 发布 =====
   els.publishBtn.addEventListener("click", async () => {
     if (!sb) { els.status.textContent = tl("fail"); els.status.className = "inbox-status error"; return; }
@@ -505,10 +588,20 @@
       images: photos,
       mood: currentMood()
     };
-    let error = (await sb.from("life_moments").insert(payload)).error;
-    if (error && payload.mood) {
-      delete payload.mood;   // mood 列还没建：去掉再试一次
+    let error;
+    if (editingId) {
+      // 编辑模式：更新原行
+      error = (await sb.from("life_moments").update(payload).eq("id", editingId)).error;
+      if (error && payload.mood) {
+        delete payload.mood;   // mood 列还没建：去掉再试一次
+        error = (await sb.from("life_moments").update(payload).eq("id", editingId)).error;
+      }
+    } else {
       error = (await sb.from("life_moments").insert(payload)).error;
+      if (error && payload.mood) {
+        delete payload.mood;
+        error = (await sb.from("life_moments").insert(payload)).error;
+      }
     }
     els.publishBtn.disabled = false;
     els.publishBtn.textContent = tl("publish");
@@ -522,6 +615,12 @@
     photos = [];
     renderPreviews();
     resetMood();
+    if (editingId) {
+      editingId = null;
+      els.editCancel.classList.add("hidden");
+      els.composer.classList.add("hidden");
+      renderTexts();
+    }
     els.status.textContent = tl("published");
     els.status.className = "inbox-status ok";
     fetchMoments();
@@ -706,6 +805,7 @@
     els.thoughtPublish.textContent = tl("thoughtPublish");
     els.thoughtWriteBtn.textContent =
       els.thoughtComposer.classList.contains("hidden") ? tl("thoughtWrite") : tl("collapse");
+    els.editCancel.textContent = tl("cancel");
   }
 
   document.addEventListener("langchange", () => {
