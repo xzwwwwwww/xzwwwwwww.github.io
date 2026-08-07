@@ -34,7 +34,8 @@
       commentBtn: "评论",
       commentNeed: "昵称和内容都要填哦",
       commentFail: "评论失败，请稍后再试",
-      thoughtWrite: "✎ 写感悟"
+      thoughtWrite: "✎ 写感悟",
+      looseNotes: "随手记"
     },
     en: {
       write: "✎ Write",
@@ -63,7 +64,8 @@
       commentBtn: "Comment",
       commentNeed: "Nickname and comment are both required",
       commentFail: "Failed, try again later",
-      thoughtWrite: "✎ Write"
+      thoughtWrite: "✎ Write",
+      looseNotes: "Loose notes"
     }
   };
   const tl = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -155,40 +157,155 @@
     el.appendChild(s2);
   }
 
-  // ===== 时间线渲染（main.js 委托到这里） =====
-  window.renderLifeTimeline = function () {
-    const merged = MOMENTS.concat(dbMoments);
-    merged.sort((a, b) => b.date.localeCompare(a.date));
-    els.timeline.innerHTML = "";
-    merged.forEach(m => {
-      const item = document.createElement("div");
-      item.className = "timeline-item";
-      const d = document.createElement("div");
-      d.className = "date";
-      d.textContent = m.date;
+  // ===== 月历渲染（main.js 的 renderTimeline 委托到这里） =====
+  let openPop = null, popTimer = null;
+
+  function closePop() {
+    if (openPop) { openPop.remove(); openPop = null; }
+  }
+  function scheduleClose() {
+    clearTimeout(popTimer);
+    popTimer = setTimeout(closePop, 150);
+  }
+
+  function monthLabel(mk) {
+    const [y, m] = mk.split("-").map(Number);
+    if (currentLang === "en") {
+      return new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" })
+        .format(new Date(y, m - 1, 1));
+    }
+    return y + " 年 " + m + " 月";
+  }
+
+  function showPop(card, cell, entries) {
+    clearTimeout(popTimer);
+    closePop();
+    const pop = document.createElement("div");
+    pop.className = "cal-pop";
+    entries.forEach(m => {
       const p = document.createElement("p");
       p.textContent = currentLang === "en" && m.text_en ? m.text_en : m.text;
-      item.appendChild(d);
-      item.appendChild(p);
+      pop.appendChild(p);
       const imgs = Array.isArray(m.images) ? m.images : [];
       if (imgs.length) {
         const row = document.createElement("div");
-        row.className = "life-photos";
+        row.className = "cal-pop-photos";
         imgs.forEach(src => {
           const img = document.createElement("img");
           img.src = src;
           img.alt = "";
           img.loading = "lazy";
-          img.addEventListener("click", () => {
+          img.addEventListener("click", e => {
+            e.stopPropagation();
             els.lightboxImg.src = src;
             els.lightbox.classList.remove("hidden");
           });
           row.appendChild(img);
         });
-        item.appendChild(row);
+        pop.appendChild(row);
       }
-      els.timeline.appendChild(item);
     });
+    card.appendChild(pop);
+    // 定位：默认在格子上方，第一行格子改放下方；横向夹在卡片内
+    const cw = card.clientWidth;
+    const pw = Math.min(260, cw - 24);
+    pop.style.width = pw + "px";
+    let left = cell.offsetLeft + cell.offsetWidth / 2 - pw / 2;
+    left = Math.max(12, Math.min(left, cw - pw - 12));
+    pop.style.left = left + "px";
+    if (cell.offsetTop < 120) {
+      pop.style.top = (cell.offsetTop + cell.offsetHeight + 6) + "px";
+    } else {
+      pop.style.bottom = (card.clientHeight - cell.offsetTop + 6) + "px";
+    }
+    // 鼠标移上浮层不收起（可点图片）
+    pop.addEventListener("mouseenter", () => clearTimeout(popTimer));
+    pop.addEventListener("mouseleave", scheduleClose);
+    openPop = pop;
+  }
+
+  document.addEventListener("click", closePop);
+
+  window.renderLifeTimeline = function () {
+    closePop();
+    const merged = MOMENTS.concat(dbMoments);
+    const dateRe = /^\d{4}-\d{2}-\d{2}$/;
+    const byMonth = {};
+    const loose = [];
+    merged.forEach(m => {
+      if (dateRe.test(m.date || "")) {
+        const mk = m.date.slice(0, 7), dk = m.date.slice(8, 10);
+        (byMonth[mk] = byMonth[mk] || {});
+        (byMonth[mk][dk] = byMonth[mk][dk] || []).push(m);
+      } else {
+        loose.push(m);
+      }
+    });
+    els.timeline.innerHTML = "";
+    const wdays = currentLang === "en"
+      ? ["M", "T", "W", "T", "F", "S", "S"]
+      : ["一", "二", "三", "四", "五", "六", "日"];
+
+    Object.keys(byMonth).sort().reverse().forEach(mk => {
+      const [y, mo] = mk.split("-").map(Number);
+      const card = document.createElement("div");
+      card.className = "cal-month";
+      const title = document.createElement("div");
+      title.className = "cal-month-title";
+      title.textContent = monthLabel(mk);
+      card.appendChild(title);
+
+      const grid = document.createElement("div");
+      grid.className = "cal-grid";
+      wdays.forEach(w => {
+        const h = document.createElement("div");
+        h.className = "cal-wday";
+        h.textContent = w;
+        grid.appendChild(h);
+      });
+      // 周一为首列
+      const firstDow = (new Date(y, mo - 1, 1).getDay() + 6) % 7;
+      const daysInMonth = new Date(y, mo, 0).getDate();
+      for (let i = 0; i < firstDow; i++) {
+        const empty = document.createElement("div");
+        empty.className = "cal-day";
+        grid.appendChild(empty);
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        const key = String(d).padStart(2, "0");
+        const entries = byMonth[mk][key];
+        const cell = document.createElement("div");
+        cell.className = "cal-day" + (entries ? " has" : "");
+        cell.textContent = d;
+        if (entries) {
+          cell.addEventListener("mouseenter", () => showPop(card, cell, entries));
+          cell.addEventListener("mouseleave", scheduleClose);
+          cell.addEventListener("click", e => {
+            e.stopPropagation();
+            showPop(card, cell, entries);
+          });
+        }
+        grid.appendChild(cell);
+      }
+      card.appendChild(grid);
+      els.timeline.appendChild(card);
+    });
+
+    // 非日期条目（如「未完待续」）收在下方
+    if (loose.length) {
+      const box = document.createElement("div");
+      box.className = "cal-loose";
+      const t = document.createElement("div");
+      t.className = "cal-loose-title";
+      t.textContent = tl("looseNotes");
+      box.appendChild(t);
+      loose.forEach(m => {
+        const p = document.createElement("p");
+        p.textContent = currentLang === "en" && m.text_en ? m.text_en : m.text;
+        box.appendChild(p);
+      });
+      els.timeline.appendChild(box);
+    }
   };
 
   // ===== 拉取在线数据 =====

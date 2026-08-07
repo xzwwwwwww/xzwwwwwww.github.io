@@ -210,20 +210,71 @@ h1, h2, h3, h4, .logo, .section-title {
 #life { position: relative; }
 
 /* ===== 生活时间线 ===== */
-.timeline { position: relative; padding-left: 26px; border-left: 1px solid var(--line); }
-.timeline-item { position: relative; margin-bottom: 30px; }
-.timeline-item::before {
-  content: ""; position: absolute; left: -30px; top: 9px;
-  width: 7px; height: 7px;
+/* 碎碎念月历：有内容的月份各一张卡片 */
+.cal-month {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--line); border-radius: 4px;
+  padding: 16px 18px 18px;
+  margin-bottom: 18px;
+}
+.cal-month-title {
+  font-size: 16px; letter-spacing: 0.06em;
+  margin-bottom: 12px; color: var(--text);
+}
+.cal-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.cal-wday {
+  text-align: center; font-size: 11px; color: var(--faint);
+  letter-spacing: 0.08em; padding-bottom: 4px;
+}
+.cal-day {
+  position: relative;
+  height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12.5px; color: var(--muted);
+  border-radius: 4px;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.cal-day.has { color: var(--text); font-weight: 600; cursor: pointer; }
+.cal-day.has::after {
+  content: ""; position: absolute; bottom: 3px;
+  width: 4px; height: 4px; border-radius: 50%;
   background: var(--accent);
-  /* 墨点外一圈细环，盖住时间线穿出的小边 */
-  box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--line);
 }
-.timeline-item .date {
-  font-size: 11px; color: var(--faint);
-  letter-spacing: 0.14em; text-transform: uppercase;
+.cal-day.has:hover {
+  transform: scale(1.35);
+  background: var(--accent); color: #FFF;
+  z-index: 5;
 }
-.timeline-item p { margin-top: 4px; font-size: 15px; }
+.cal-day.has:hover::after { background: #FFF; }
+.cal-pop {
+  position: absolute; z-index: 8;
+  background: var(--panel);
+  border: 1px solid var(--line); border-radius: 4px;
+  box-shadow: 0 10px 26px rgba(26, 26, 26, 0.14);
+  padding: 12px 14px;
+  font-size: 13px; line-height: 1.7; color: var(--text);
+}
+.cal-pop p { margin: 0 0 8px; }
+.cal-pop p:last-child { margin-bottom: 0; }
+.cal-pop-photos { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.cal-pop-photos img {
+  width: 56px; height: 56px; object-fit: cover;
+  border: 1px solid var(--line); cursor: zoom-in;
+}
+.cal-loose { margin-top: 6px; }
+.cal-loose-title {
+  font-size: 12px; color: var(--faint); letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.cal-loose p { font-size: 14px; color: var(--text); margin: 0 0 6px; }
+@media (max-width: 600px) {
+  .cal-day { height: 28px; font-size: 11.5px; }
+  .cal-pop { font-size: 12.5px; }
+}
 
 /* 生活碎碎念：温馨小场景与节气条 */
 .life-scene {
