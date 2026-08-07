@@ -168,13 +168,15 @@
     popTimer = setTimeout(closePop, 150);
   }
 
+  const MONTH_EMOJI = ["❄️", "🧣", "🌸", "🌿", "🌷", "🌧️", "🍉", "🌻", "🍂", "🎃", "🍁", "⛄"];
+
   function monthLabel(mk) {
     const [y, m] = mk.split("-").map(Number);
-    if (currentLang === "en") {
-      return new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" })
-        .format(new Date(y, m - 1, 1));
-    }
-    return y + " 年 " + m + " 月";
+    const label = currentLang === "en"
+      ? new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" })
+        .format(new Date(y, m - 1, 1))
+      : y + " 年 " + m + " 月";
+    return label + " " + MONTH_EMOJI[m - 1];
   }
 
   function showPop(card, cell, entries) {
@@ -242,6 +244,9 @@
       }
     });
     els.timeline.innerHTML = "";
+    const nowD = new Date();
+    const todayMk = nowD.getFullYear() + "-" + String(nowD.getMonth() + 1).padStart(2, "0");
+    const todayD = nowD.getDate();
     const wdays = currentLang === "en"
       ? ["M", "T", "W", "T", "F", "S", "S"]
       : ["一", "二", "三", "四", "五", "六", "日"];
@@ -276,6 +281,7 @@
         const entries = byMonth[mk][key];
         const cell = document.createElement("div");
         cell.className = "cal-day" + (entries ? " has" : "");
+        if (mk === todayMk && d === todayD) cell.classList.add("today");
         cell.textContent = d;
         if (entries) {
           cell.addEventListener("mouseenter", () => showPop(card, cell, entries));

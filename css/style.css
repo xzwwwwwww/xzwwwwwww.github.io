@@ -210,67 +210,87 @@ h1, h2, h3, h4, .logo, .section-title {
 #life { position: relative; }
 
 /* ===== 生活时间线 ===== */
-/* 碎碎念月历：有内容的月份各一张卡片 */
+/* 碎碎念月历：手帐贴纸风（奶油底 + 棕线描边 + 和纸胶带） */
 .cal-month {
   position: relative;
-  background: var(--panel);
-  border: 1px solid var(--line); border-radius: 4px;
-  padding: 16px 18px 18px;
-  margin-bottom: 18px;
+  background: #FFF7EF;
+  border: 2px solid #4A3226; border-radius: 12px;
+  padding: 20px 20px 18px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 14px rgba(74, 50, 38, 0.08);
 }
+.cal-month:nth-child(odd) { transform: rotate(-0.4deg); }
+.cal-month:nth-child(even) { transform: rotate(0.4deg); }
+/* 和纸胶带 */
+.cal-month::before {
+  content: ""; position: absolute; top: -9px; left: 50%;
+  width: 72px; height: 18px;
+  transform: translateX(-50%) rotate(-2deg);
+  background: rgba(242, 165, 106, 0.55);
+  border-radius: 2px;
+}
+.cal-month:nth-child(even)::before { transform: translateX(-50%) rotate(2deg); }
 .cal-month-title {
-  font-size: 16px; letter-spacing: 0.06em;
-  margin-bottom: 12px; color: var(--text);
+  font-size: 17px; letter-spacing: 0.06em;
+  margin-bottom: 12px; color: #4A3226;
 }
 .cal-grid {
   display: grid; grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
+  gap: 4px;
 }
 .cal-wday {
-  text-align: center; font-size: 11px; color: var(--faint);
+  text-align: center; font-size: 11px; color: #B08C7A;
   letter-spacing: 0.08em; padding-bottom: 4px;
 }
+.cal-wday:nth-child(6), .cal-wday:nth-child(7) { color: #D98C6A; }
 .cal-day {
   position: relative;
   height: 34px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 12.5px; color: var(--muted);
-  border-radius: 4px;
-  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  font-size: 12.5px; color: #8A7B70;
+  border-radius: 8px;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.15s ease, color 0.15s ease;
 }
-.cal-day.has { color: var(--text); font-weight: 600; cursor: pointer; }
-.cal-day.has::after {
-  content: ""; position: absolute; bottom: 3px;
-  width: 4px; height: 4px; border-radius: 50%;
-  background: var(--accent);
+.cal-day.has {
+  background: #FBE3CE; color: #4A3226; font-weight: 600;
+  cursor: pointer;
 }
 .cal-day.has:hover {
-  transform: scale(1.35);
-  background: var(--accent); color: #FFF;
+  transform: scale(1.3);
+  background: #C1502E; color: #FFF;
+  box-shadow: 0 4px 10px rgba(193, 80, 46, 0.3);
   z-index: 5;
 }
-.cal-day.has:hover::after { background: #FFF; }
+.cal-day.today { border: 1.5px dashed #C1502E; }
 .cal-pop {
   position: absolute; z-index: 8;
-  background: var(--panel);
-  border: 1px solid var(--line); border-radius: 4px;
-  box-shadow: 0 10px 26px rgba(26, 26, 26, 0.14);
+  background: #FFF7EF;
+  border: 2px solid #4A3226; border-radius: 12px;
+  box-shadow: 0 10px 26px rgba(74, 50, 38, 0.18);
   padding: 12px 14px;
-  font-size: 13px; line-height: 1.7; color: var(--text);
+  font-size: 13px; line-height: 1.7; color: #4A3226;
 }
 .cal-pop p { margin: 0 0 8px; }
 .cal-pop p:last-child { margin-bottom: 0; }
 .cal-pop-photos { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
 .cal-pop-photos img {
   width: 56px; height: 56px; object-fit: cover;
-  border: 1px solid var(--line); cursor: zoom-in;
+  border: 1.5px solid #4A3226; border-radius: 6px; cursor: zoom-in;
 }
-.cal-loose { margin-top: 6px; }
+.cal-loose {
+  margin: 10px 0 4px;
+  background: #FFF8DC;
+  border: 1.5px solid #4A3226; border-radius: 6px;
+  transform: rotate(-0.3deg);
+  padding: 12px 16px;
+  box-shadow: 0 3px 10px rgba(74, 50, 38, 0.08);
+}
 .cal-loose-title {
-  font-size: 12px; color: var(--faint); letter-spacing: 0.1em;
+  font-size: 12px; color: #A0785F; letter-spacing: 0.1em;
   margin-bottom: 8px;
 }
-.cal-loose p { font-size: 14px; color: var(--text); margin: 0 0 6px; }
+.cal-loose p { font-size: 14px; color: #4A3226; margin: 0 0 6px; }
 @media (max-width: 600px) {
   .cal-day { height: 28px; font-size: 11.5px; }
   .cal-pop { font-size: 12.5px; }
