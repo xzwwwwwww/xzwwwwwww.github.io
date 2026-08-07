@@ -237,3 +237,12 @@ alter table life_moments add column mood text;
 create policy "owner update moments" on life_moments for update to authenticated using (true) with check (true);
 create policy "owner delete moments" on life_moments for delete to authenticated using (true);
 ```
+
+## 缩略图列（life_moments 性能优化，必跑）
+
+碎碎念图片改为「大图 + 200px 缩略图」双份存储后，页面只加载缩略图（提速约 20 倍）。跑这两句（可重复跑不报错）：
+
+```sql
+alter table life_moments add column if not exists mood text;
+alter table life_moments add column if not exists thumbs jsonb;
+```

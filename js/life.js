@@ -226,19 +226,19 @@
         wrap.appendChild(actions);
       }
       pop.appendChild(wrap);
-      const imgs = Array.isArray(m.images) ? m.images : [];
+      const imgs = (m.thumbs && m.thumbs.length) ? m.thumbs
+        : (Array.isArray(m.images) ? m.images : []);
       if (imgs.length) {
         const row = document.createElement("div");
         row.className = "cal-pop-photos";
-        imgs.forEach(src => {
+        imgs.forEach((src, idx) => {
           const img = document.createElement("img");
           img.src = src;
           img.alt = "";
           img.loading = "lazy";
           img.addEventListener("click", e => {
             e.stopPropagation();
-            els.lightboxImg.src = src;
-            els.lightbox.classList.remove("hidden");
+            openLightbox(m, idx);
           });
           row.appendChild(img);
         });
@@ -334,12 +334,13 @@
             ms.textContent = moodEntry.mood;
             cell.appendChild(ms);
           }
-          // 方格里放概述或小照片：优先用第一张带图的照片
-          const withImg = entries.find(m => Array.isArray(m.images) && m.images.length);
+          // 方格里放概述或小照片：优先用第一张带图的照片（缩略图）
+          const withImg = entries.find(m =>
+            (m.thumbs && m.thumbs.length) || (m.images && m.images.length));
           if (withImg) {
             const im = document.createElement("img");
             im.className = "cal-thumb";
-            im.src = withImg.images[0];
+            im.src = (withImg.thumbs && withImg.thumbs[0]) || withImg.images[0];
             im.alt = "";
             im.loading = "lazy";
             cell.appendChild(im);
@@ -381,28 +382,60 @@
     }
   };
 
-  // ===== 拉取在线数据 =====
+  // ===== 拉取在线数据（只取缩略图；旧行补拉一次 images） =====
   async function fetchMoments() {
     if (!sb) return;
     let res = await sb.from("life_moments")
-      .select("id,date,text,text_en,images,mood")
+      .select("id,date,text,text_en,mood,thumbs")
       .order("created_at", { ascending: false });
-    if (res.error) {
-      // mood 列还没建：退回不带 mood 的查询
+    let rows;
+    if (!res.error) {
+      rows = res.data || [];
+      // 旧行没有 thumbs：批量补拉它们的 images
+      const legacyIds = rows.filter(r => r.thumbs == null).map(r => r.id);
+      if (legacyIds.length) {
+        const r2 = await sb.from("life_moments").select("id,images").in("id", legacyIds);
+        const map = {};
+        (r2.data || []).forEach(r => { map[r.id] = r.images || []; });
+        rows.forEach(r => { if (r.thumbs == null) r.images = map[r.id] || []; });
+      }
+    } else {
+      // thumbs/mood 列还没建：退回带完整 images 的旧查询
       res = await sb.from("life_moments")
         .select("id,date,text,text_en,images")
         .order("created_at", { ascending: false });
+      if (res.error) return; // 表不存在/网络问题：只显示静态内容
+      rows = res.data || [];
     }
-    if (res.error) return; // 表不存在/网络问题：只显示静态内容
-    dbMoments = (res.data || []).map(r => ({
+    dbMoments = rows.map(r => ({
       id: r.id,
       date: r.date,
       text: r.text,
       text_en: r.text_en || "",
       mood: r.mood || null,
+      thumbs: Array.isArray(r.thumbs) ? r.thumbs : null,
       images: Array.isArray(r.images) ? r.images : []
     }));
     window.renderLifeTimeline();
+  }
+
+  // 点开大图：先给缩略图，再按条目 id 懒加载完整图片（一次一条，带缓存）
+  async function openLightbox(m, idx) {
+    const thumbs = m.thumbs && m.thumbs.length ? m.thumbs : m.images;
+    els.lightboxImg.src = thumbs[idx] || "";
+    els.lightbox.classList.remove("hidden");
+    if (!m.id) return; // 静态条目图片本来就在本地
+    if (m._full) {
+      els.lightboxImg.src = m._full[idx] || els.lightboxImg.src;
+      return;
+    }
+    const { data } = await sb.from("life_moments")
+      .select("images").eq("id", m.id).single();
+    if (data && Array.isArray(data.images)) {
+      m._full = data.images;
+      m.images = data.images;
+      if (data.images[idx]) els.lightboxImg.src = data.images[idx];
+    }
   }
 
   // ===== 登录与发布器显隐 =====
@@ -449,7 +482,7 @@
   els.loginBtn.addEventListener("click", tryLogin);
   els.pass.addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
 
-  // ===== 图片选择与压缩 =====
+  // ===== 图片选择与压缩（大图 1000px + 缩略图 200px 双份） =====
   function compressImage(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -458,17 +491,19 @@
         const img = new Image();
         img.onerror = reject;
         img.onload = () => {
-          const MAX = 1000;
-          let w = img.width, h = img.height;
-          if (w > MAX || h > MAX) {
-            const k = MAX / Math.max(w, h);
-            w = Math.round(w * k);
-            h = Math.round(h * k);
-          }
-          const c = document.createElement("canvas");
-          c.width = w; c.height = h;
-          c.getContext("2d").drawImage(img, 0, 0, w, h);
-          resolve(c.toDataURL("image/jpeg", 0.75));
+          const make = (max, q) => {
+            let w = img.width, h = img.height;
+            if (w > max || h > max) {
+              const k = max / Math.max(w, h);
+              w = Math.round(w * k);
+              h = Math.round(h * k);
+            }
+            const c = document.createElement("canvas");
+            c.width = w; c.height = h;
+            c.getContext("2d").drawImage(img, 0, 0, w, h);
+            return c.toDataURL("image/jpeg", q);
+          };
+          resolve({ full: make(1000, 0.72), thumb: make(200, 0.6) });
         };
         img.src = reader.result;
       };
@@ -478,11 +513,11 @@
 
   function renderPreviews() {
     els.previews.innerHTML = "";
-    photos.forEach((src, i) => {
+    photos.forEach((p, i) => {
       const pv = document.createElement("div");
       pv.className = "pv";
       const img = document.createElement("img");
-      img.src = src;
+      img.src = p.thumb || p;
       const x = document.createElement("button");
       x.type = "button";
       x.textContent = "×";
@@ -530,14 +565,23 @@
   // ===== 站长编辑/删除碎碎念 =====
   let editingId = null;
 
-  function startEdit(m) {
+  async function startEdit(m) {
     closePop();
+    // 编辑需要完整图片：只有缩略图时先按 id 拉一次
+    if (m.id && (!m.images || !m.images.length) && m.thumbs && m.thumbs.length && !m._full) {
+      const { data } = await sb.from("life_moments")
+        .select("images").eq("id", m.id).single();
+      if (data && Array.isArray(data.images)) {
+        m._full = data.images;
+        m.images = data.images;
+      }
+    }
     editingId = m.id;
     els.composer.classList.remove("hidden");
     els.date.value = m.date;
     els.text.value = m.text;
     els.textEn.value = m.text_en || "";
-    photos = (Array.isArray(m.images) ? m.images : []).slice();
+    photos = (Array.isArray(m.images) ? m.images : []).map(u => ({ full: u, thumb: u }));
     renderPreviews();
     moodBox.querySelectorAll("button").forEach(x =>
       x.classList.toggle("on", x.dataset.mood === (m.mood || "😊")));
@@ -585,20 +629,23 @@
       date: els.date.value.trim() || els.date.placeholder,
       text,
       text_en: els.textEn.value.trim() || null,
-      images: photos,
+      images: photos.map(p => p.full || p),
+      thumbs: photos.map(p => p.thumb || p),
       mood: currentMood()
     };
     let error;
     if (editingId) {
       // 编辑模式：更新原行
       error = (await sb.from("life_moments").update(payload).eq("id", editingId)).error;
-      if (error && payload.mood) {
-        delete payload.mood;   // mood 列还没建：去掉再试一次
+      if (error && (payload.thumbs || payload.mood)) {
+        delete payload.thumbs;   // thumbs/mood 列还没建：去掉再试一次
+        delete payload.mood;
         error = (await sb.from("life_moments").update(payload).eq("id", editingId)).error;
       }
     } else {
       error = (await sb.from("life_moments").insert(payload)).error;
-      if (error && payload.mood) {
+      if (error && (payload.thumbs || payload.mood)) {
+        delete payload.thumbs;
         delete payload.mood;
         error = (await sb.from("life_moments").insert(payload)).error;
       }
