@@ -190,6 +190,15 @@
     return label + " " + MONTH_EMOJI[m - 1];
   }
 
+  // 日期归一化：接受 2026-7-2 / 2026/7/2 / 2026年7月2日 等写法 → 2026-07-02
+  function parseDateStr(s) {
+    const m = String(s || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})\D*$/);
+    if (!m) return null;
+    const mm = +m[2], dd = +m[3];
+    if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return null;
+    return m[1] + "-" + String(mm).padStart(2, "0") + "-" + String(dd).padStart(2, "0");
+  }
+
   function showPop(card, cell, entries) {
     clearTimeout(popTimer);
     closePop();
@@ -269,12 +278,12 @@
   window.renderLifeTimeline = function () {
     closePop();
     const merged = MOMENTS.concat(dbMoments);
-    const dateRe = /^\d{4}-\d{2}-\d{2}$/;
     const byMonth = {};
     const loose = [];
     merged.forEach(m => {
-      if (dateRe.test(m.date || "")) {
-        const mk = m.date.slice(0, 7), dk = m.date.slice(8, 10);
+      const nd = parseDateStr(m.date);
+      if (nd) {
+        const mk = nd.slice(0, 7), dk = nd.slice(8, 10);
         (byMonth[mk] = byMonth[mk] || {});
         (byMonth[mk][dk] = byMonth[mk][dk] || []).push(m);
       } else {
@@ -365,7 +374,7 @@
       els.timeline.appendChild(card);
     });
 
-    // 非日期条目（如「未完待续」）收在下方
+    // 非日期条目（如「未完待续」）收在下方，带心情和图片
     if (loose.length) {
       const box = document.createElement("div");
       box.className = "cal-loose";
@@ -374,9 +383,30 @@
       t.textContent = tl("looseNotes");
       box.appendChild(t);
       loose.forEach(m => {
+        const wrap = document.createElement("div");
+        wrap.className = "cal-pop-entry";
         const p = document.createElement("p");
-        p.textContent = currentLang === "en" && m.text_en ? m.text_en : m.text;
-        box.appendChild(p);
+        const body = currentLang === "en" && m.text_en ? m.text_en : m.text;
+        p.textContent = (m.mood ? m.mood + " " : "") + body;
+        wrap.appendChild(p);
+        box.appendChild(wrap);
+        ensureImages(m).then(imgs => {
+          if (!imgs || !imgs.length || !wrap.isConnected) return;
+          const row = document.createElement("div");
+          row.className = "cal-pop-photos";
+          imgs.forEach((src, idx) => {
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = "";
+            img.loading = "lazy";
+            img.addEventListener("click", e => {
+              e.stopPropagation();
+              openLightbox(m, idx);
+            });
+            row.appendChild(img);
+          });
+          wrap.appendChild(row);
+        });
       });
       els.timeline.appendChild(box);
     }
@@ -677,7 +707,8 @@
       else thumbsOut.push(await makeThumb(p.full || p.thumb || p));
     }
     const payload = {
-      date: els.date.value.trim() || els.date.placeholder,
+      date: parseDateStr(els.date.value.trim() || els.date.placeholder) ||
+        (els.date.value.trim() || els.date.placeholder),
       text,
       text_en: els.textEn.value.trim() || null,
       images: photos.map(p => p.full || p),
