@@ -394,6 +394,11 @@ h1, h2, h3, h4, .logo, .section-title {
   width: 56px; height: 56px; object-fit: cover;
   border: 1.5px solid #4A3226; border-radius: 6px; cursor: zoom-in;
 }
+.cal-pop-photos img.can-cover { cursor: pointer; }
+.cal-pop-photos img.is-cover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
 .cal-loose {
   margin: 10px 0 4px;
   background: #FFF8DC;

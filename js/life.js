@@ -250,9 +250,17 @@
           img.src = src;
           img.alt = "";
           img.loading = "lazy";
+          // 站长登录后点小照片即可设为日历封面
+          if (authed && m.id) {
+            img.className = "can-cover" +
+              ((m.cover || 0) === idx ? " is-cover" : "");
+            img.title = tl("setCover");
+          }
           img.addEventListener("click", e => {
             e.stopPropagation();
-            openLightbox(m, idx);
+            // 登录时：点非封面的照片设为封面；点已是封面的照片则看大图
+            if (authed && m.id && (m.cover || 0) !== idx) setMomentCover(m, idx);
+            else openLightbox(m, idx);
           });
           row.appendChild(img);
         });
@@ -791,6 +799,17 @@
       closePop();
       fetchMoments();
     }
+  }
+
+  // 点浮层里的小照片设为日历封面
+  async function setMomentCover(m, idx) {
+    if (!sb) return;
+    const { error } = await sb.from("life_moments")
+      .update({ cover: idx }).eq("id", m.id);
+    if (error) return;
+    m.cover = idx;
+    closePop();
+    window.renderLifeTimeline();
   }
 
   // ===== 发布 =====
