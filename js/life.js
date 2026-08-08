@@ -164,14 +164,19 @@
   }
 
   // ===== 月历渲染（main.js 的 renderTimeline 委托到这里） =====
-  let openPop = null, popTimer = null;
+  let openPop = null, popTimer = null, openPopCell = null;
 
   function closePop() {
     if (openPop) { openPop.remove(); openPop = null; }
+    openPopCell = null;
   }
   function scheduleClose() {
     clearTimeout(popTimer);
-    popTimer = setTimeout(closePop, 150);
+    popTimer = setTimeout(() => {
+      // 正在浮层里输入（焦点在评论框）就不收起
+      if (openPop && openPop.contains(document.activeElement)) return;
+      closePop();
+    }, 400);
   }
 
   const MONTH_EMOJI = ["❄️", "🧣", "🌸", "🌿", "🌷", "🌧️", "🍉", "🌻", "🍂", "🎃", "🍁", "⛄"];
@@ -196,7 +201,10 @@
 
   function showPop(card, cell, entries) {
     clearTimeout(popTimer);
+    // 同一个格子不重建（避免正在输入的评论框被毁掉）
+    if (openPop && openPopCell === cell) return;
     closePop();
+    openPopCell = cell;
     const pop = document.createElement("div");
     pop.className = "cal-pop";
     entries.forEach(m => {
