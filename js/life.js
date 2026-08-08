@@ -535,6 +535,7 @@
       const { data } = await sb.from("life_moments")
         .select("images").eq("id", m.id).single();
       m.images = (data && Array.isArray(data.images)) ? data.images : [];
+      m._full = m.images;   // 旧条目的 images 即完整大图
       m._legacyLoaded = true;
     }
     return m.images;
@@ -578,25 +579,34 @@
     window.renderLifeTimeline();
   }
 
-  // 点开大图：先给缩略图，再按条目 id 懒加载完整图片（一次一条，带缓存）
+  // 点开大图：缩略图先显示，小蛇在大图加载期间常驻
   async function openLightbox(m, idx) {
+    els.lightbox.classList.remove("hidden");
+    lbExpect = null;
     if (m.id && m.thumbs == null) await ensureImages(m);  // 旧条目先补拉
-    lbLoading.classList.remove("hidden");   // 图片加载期间显示小蛇吃面
     const thumbs = (m.thumbs && m.thumbs.length) ? m.thumbs : m.images;
     els.lightboxImg.src = thumbs[idx] || "";
-    els.lightbox.classList.remove("hidden");
     if (!m.id) return; // 静态条目图片本来就在本地
     if (m._full) {
-      els.lightboxImg.src = m._full[idx] || els.lightboxImg.src;
+      lbLoading.classList.remove("hidden");
+      lbExpect = m._full[idx] || "";
+      if (lbExpect) els.lightboxImg.src = lbExpect;
+      else lbLoading.classList.add("hidden");
       return;
     }
+    lbLoading.classList.remove("hidden");
     const { data } = await sb.from("life_moments")
       .select("images").eq("id", m.id).single();
     if (data && Array.isArray(data.images)) {
       m._full = data.images;
       m.images = data.images;
-      if (data.images[idx]) els.lightboxImg.src = data.images[idx];
+      if (data.images[idx]) {
+        lbExpect = data.images[idx];
+        els.lightboxImg.src = data.images[idx];
+        return;  // 大图 load 事件匹配后收起小蛇
+      }
     }
+    lbLoading.classList.add("hidden");  // 拉取失败：只留缩略图
   }
 
   // ===== 登录与发布器显隐 =====
@@ -875,13 +885,23 @@
     '</g></g></svg>';
   const loadingEl = document.getElementById("life-loading");
   const lbLoading = document.getElementById("lb-loading");
+  let lbExpect = null;   // 灯箱正在等待加载完成的图片地址
   function renderLoaders() {
     const html = SNAKE_SVG + "<p>" + tl("loading") + "</p>";
     loadingEl.innerHTML = html;
     lbLoading.innerHTML = html;
   }
-  els.lightboxImg.addEventListener("load", () => lbLoading.classList.add("hidden"));
-  els.lightboxImg.addEventListener("error", () => lbLoading.classList.add("hidden"));
+  // 只有等到目标大图才收起小蛇；缩略图秒载不触发
+  els.lightboxImg.addEventListener("load", () => {
+    if (lbExpect && els.lightboxImg.src === lbExpect) {
+      lbExpect = null;
+      lbLoading.classList.add("hidden");
+    }
+  });
+  els.lightboxImg.addEventListener("error", () => {
+    lbExpect = null;
+    lbLoading.classList.add("hidden");
+  });
 
   // ===== 灯箱 =====
   els.lightbox.addEventListener("click", () => els.lightbox.classList.add("hidden"));
