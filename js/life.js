@@ -40,7 +40,11 @@
       del: "🗑 删除",
       save: "保存修改",
       cancel: "取消",
-      delConfirm: "确定删除这条碎碎念吗？删除后不可恢复"
+      delConfirm: "确定删除这条碎碎念吗？删除后不可恢复",
+      hmLabel: "最新碎碎念",
+      justNow: "刚刚",
+      minAgo: "{n} 分钟前",
+      hourAgo: "{n} 小时前"
     },
     en: {
       write: "✎ Write",
@@ -75,7 +79,11 @@
       del: "🗑 Delete",
       save: "Save changes",
       cancel: "Cancel",
-      delConfirm: "Delete this moment? This can't be undone."
+      delConfirm: "Delete this moment? This can't be undone.",
+      hmLabel: "Latest bit",
+      justNow: "just now",
+      minAgo: "{n}m ago",
+      hourAgo: "{n}h ago"
     }
   };
   const tl = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -752,11 +760,52 @@
     }
     els.status.textContent = tl("published");
     els.status.className = "inbox-status ok";
+    // 首页「最新碎碎念」即时更新
+    latestMoment = {
+      text, text_en: payload.text_en, mood: payload.mood || null,
+      created_at: new Date().toISOString()
+    };
+    renderHomeMoment();
     fetchMoments();
   });
 
   // ===== 灯箱 =====
   els.lightbox.addEventListener("click", () => els.lightbox.classList.add("hidden"));
+
+  // ===== 首页「最新碎碎念」：发布后即时更新，超 12 小时自动隐藏 =====
+  let latestMoment = null;
+
+  function relTime(iso) {
+    const m = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+    if (m < 1) return tl("justNow");
+    if (m < 60) return tl("minAgo").replace("{n}", m);
+    return tl("hourAgo").replace("{n}", Math.floor(m / 60));
+  }
+
+  function renderHomeMoment() {
+    const box = document.getElementById("home-moment");
+    if (!box) return;
+    const fresh = latestMoment &&
+      Date.now() - new Date(latestMoment.created_at).getTime() < 12 * 3600 * 1000;
+    box.classList.toggle("hidden", !fresh);
+    if (!fresh) return;
+    box.querySelector(".hm-label").textContent = tl("hmLabel");
+    box.querySelector(".hm-mood").textContent = latestMoment.mood || "";
+    box.querySelector(".hm-text").textContent =
+      currentLang === "en" && latestMoment.text_en ? latestMoment.text_en : latestMoment.text;
+    box.querySelector(".hm-when").textContent = relTime(latestMoment.created_at);
+  }
+
+  async function fetchLatestMoment() {
+    if (!sb) return;
+    const { data, error } = await sb.from("life_moments")
+      .select("text,text_en,mood,created_at")
+      .order("created_at", { ascending: false }).limit(1);
+    if (error) return;
+    latestMoment = (data && data[0]) || null;
+    renderHomeMoment();
+  }
+  setInterval(renderHomeMoment, 60000);  // 相对时间/过期隐藏随时间刷新
 
   // ===== 我的生活思考：站长感悟 + 访客免审评论 =====
   let thoughts = [];
@@ -941,6 +990,7 @@
     renderTexts();
     renderWarm();
     renderThoughts();
+    renderHomeMoment();
     window.renderLifeTimeline();
   });
 
@@ -958,4 +1008,5 @@
   }
   fetchMoments();
   fetchThoughts();
+  fetchLatestMoment();
 })();

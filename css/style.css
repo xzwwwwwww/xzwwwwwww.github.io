@@ -133,6 +133,30 @@ h1, h2, h3, h4, .logo, .section-title {
   letter-spacing: 0.12em;
 }
 
+/* 首页「最新碎碎念」胶囊 */
+.home-moment {
+  margin-top: 16px;
+  display: inline-flex; align-items: baseline; gap: 8px;
+  max-width: 100%;
+  font-size: 12.5px; color: var(--muted);
+  border: 1px dashed var(--line); border-radius: 999px;
+  padding: 6px 16px;
+}
+.hm-label {
+  flex: none;
+  color: var(--accent);
+  font-size: 11px; letter-spacing: 0.1em;
+}
+.hm-text {
+  color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 420px;
+}
+.hm-when { flex: none; font-size: 11px; color: var(--faint); }
+@media (max-width: 600px) {
+  .hm-text { max-width: 200px; }
+}
+
 /* 首页「今天」卡片：日期/时钟/农历/宜忌 */
 .day-card {
   max-width: 620px; margin: 28px auto 0;
