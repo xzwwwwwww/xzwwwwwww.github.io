@@ -36,6 +36,9 @@
       commentFail: "评论失败，请稍后再试",
       thoughtWrite: "✎ 写感悟",
       looseNotes: "随手记",
+      moBits: "{n} 条碎碎念",
+      moOpen: "点开看看",
+      moClose: "收起 ✕",
       edit: "✏️ 编辑",
       del: "🗑 删除",
       save: "保存修改",
@@ -76,6 +79,9 @@
       commentFail: "Failed, try again later",
       thoughtWrite: "✎ Write",
       looseNotes: "Loose notes",
+      moBits: "{n} bits",
+      moOpen: "Open",
+      moClose: "Close ✕",
       edit: "✏️ Edit",
       del: "🗑 Delete",
       save: "Save changes",
@@ -310,11 +316,27 @@
 
     Object.keys(byMonth).sort().reverse().forEach(mk => {
       const [y, mo] = mk.split("-").map(Number);
+      const isCurrent = mk === todayMk;
+      let cover = null;
       const card = document.createElement("div");
       card.className = "cal-month";
       const title = document.createElement("div");
       title.className = "cal-month-title";
-      title.textContent = monthLabel(mk);
+      const titleText = document.createElement("span");
+      titleText.textContent = monthLabel(mk);
+      title.appendChild(titleText);
+      if (!isCurrent) {
+        // 收起回封面
+        const closeBtn = document.createElement("button");
+        closeBtn.type = "button";
+        closeBtn.className = "cal-month-close";
+        closeBtn.textContent = tl("moClose");
+        closeBtn.addEventListener("click", () => {
+          card.classList.add("hidden");
+          if (cover) cover.classList.remove("hidden");
+        });
+        title.appendChild(closeBtn);
+      }
       card.appendChild(title);
 
       const grid = document.createElement("div");
@@ -381,6 +403,55 @@
         grid.appendChild(cell);
       }
       card.appendChild(grid);
+      if (isCurrent) {
+        els.timeline.appendChild(card);
+        return;
+      }
+      // 非当月：收成月份封面组件，点开才展开月历
+      card.classList.add("hidden");
+      cover = document.createElement("button");
+      cover.type = "button";
+      cover.className = "cal-cover";
+      let coverSrc = null;
+      const dayKeys = Object.keys(byMonth[mk]);
+      for (const dk of dayKeys) {
+        for (const m of byMonth[mk][dk]) {
+          const s = (m.thumbs && m.thumbs[0]) || (m.images && m.images[0]);
+          if (s && !coverSrc) coverSrc = s;
+        }
+      }
+      if (coverSrc) {
+        const img = document.createElement("img");
+        img.className = "cal-cover-thumb";
+        img.src = coverSrc;
+        img.alt = "";
+        img.loading = "lazy";
+        cover.appendChild(img);
+      } else {
+        const em = document.createElement("span");
+        em.className = "cal-cover-emoji";
+        em.textContent = MONTH_EMOJI[mo - 1];
+        cover.appendChild(em);
+      }
+      const meta = document.createElement("span");
+      meta.className = "cal-cover-meta";
+      const t = document.createElement("b");
+      t.textContent = monthLabel(mk);
+      const cnt = Object.values(byMonth[mk]).reduce((n, arr) => n + arr.length, 0);
+      const sub = document.createElement("span");
+      sub.textContent = tl("moBits").replace("{n}", cnt) + " · " + tl("moOpen");
+      meta.appendChild(t);
+      meta.appendChild(sub);
+      cover.appendChild(meta);
+      const arrow = document.createElement("span");
+      arrow.className = "cal-cover-arrow";
+      arrow.textContent = "▾";
+      cover.appendChild(arrow);
+      cover.addEventListener("click", () => {
+        cover.classList.add("hidden");
+        card.classList.remove("hidden");
+      });
+      els.timeline.appendChild(cover);
       els.timeline.appendChild(card);
     });
 
