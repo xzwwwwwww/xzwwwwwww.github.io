@@ -513,6 +513,24 @@ h1, h2, h3, h4, .logo, .section-title {
   padding: 24px; cursor: zoom-out;
 }
 .life-lightbox img { max-width: 92%; max-height: 92%; }
+.life-lightbox { position: fixed; }
+.lb-loading {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; pointer-events: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px; letter-spacing: 0.12em;
+}
+.lb-loading svg { width: 240px; height: 60px; }
+
+/* 贪吃小蛇加载动画（碎碎念月历加载） */
+.life-loading {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; padding: 26px 0;
+  color: var(--faint); font-size: 12px; letter-spacing: 0.12em;
+}
+.life-loading svg { width: 240px; height: 60px; }
+.life-loading.hidden, .lb-loading.hidden { display: none; }
 
 /* ===== 页脚 ===== */
 .site-footer {

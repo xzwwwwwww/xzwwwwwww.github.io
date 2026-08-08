@@ -44,7 +44,8 @@
       hmLabel: "最新碎碎念",
       justNow: "刚刚",
       minAgo: "{n} 分钟前",
-      hourAgo: "{n} 小时前"
+      hourAgo: "{n} 小时前",
+      loading: "正在加载中…"
     },
     en: {
       write: "✎ Write",
@@ -83,7 +84,8 @@
       hmLabel: "Latest bit",
       justNow: "just now",
       minAgo: "{n}m ago",
-      hourAgo: "{n}h ago"
+      hourAgo: "{n}h ago",
+      loading: "Loading…"
     }
   };
   const tl = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -422,33 +424,37 @@
 
   // ===== 拉取在线数据（只取缩略图；旧行图片点开时才按需加载） =====
   async function fetchMoments() {
-    if (!sb) return;
-    let res = await sb.from("life_moments")
-      .select("id,date,text,text_en,mood,thumbs")
-      .order("created_at", { ascending: false });
-    let rows;
-    if (!res.error) {
-      rows = res.data || [];
-    } else {
-      // thumbs/mood 列还没建：退回带完整 images 的旧查询
-      res = await sb.from("life_moments")
-        .select("id,date,text,text_en,images")
+    try {
+      if (!sb) return;
+      let res = await sb.from("life_moments")
+        .select("id,date,text,text_en,mood,thumbs")
         .order("created_at", { ascending: false });
-      if (res.error) return; // 表不存在/网络问题：只显示静态内容
-      rows = res.data || [];
+      let rows;
+      if (!res.error) {
+        rows = res.data || [];
+      } else {
+        // thumbs/mood 列还没建：退回带完整 images 的旧查询
+        res = await sb.from("life_moments")
+          .select("id,date,text,text_en,images")
+          .order("created_at", { ascending: false });
+        if (res.error) return; // 表不存在/网络问题：只显示静态内容
+        rows = res.data || [];
+      }
+      dbMoments = rows.map(r => ({
+        id: r.id,
+        date: r.date,
+        text: r.text,
+        text_en: r.text_en || "",
+        mood: r.mood || null,
+        thumbs: Array.isArray(r.thumbs) ? r.thumbs : null,
+        images: Array.isArray(r.images) ? r.images : [],
+        _legacyLoaded: false
+      }));
+      window.renderLifeTimeline();
+      migrateLegacy();
+    } finally {
+      loadingEl.classList.add("hidden");  // 首次加载完成，收起小蛇吃面
     }
-    dbMoments = rows.map(r => ({
-      id: r.id,
-      date: r.date,
-      text: r.text,
-      text_en: r.text_en || "",
-      mood: r.mood || null,
-      thumbs: Array.isArray(r.thumbs) ? r.thumbs : null,
-      images: Array.isArray(r.images) ? r.images : [],
-      _legacyLoaded: false
-    }));
-    window.renderLifeTimeline();
-    migrateLegacy();
   }
 
   // 旧条目（thumbs 为 null）的图片按需加载，一次一条带缓存
@@ -504,6 +510,7 @@
   // 点开大图：先给缩略图，再按条目 id 懒加载完整图片（一次一条，带缓存）
   async function openLightbox(m, idx) {
     if (m.id && m.thumbs == null) await ensureImages(m);  // 旧条目先补拉
+    lbLoading.classList.remove("hidden");   // 图片加载期间显示小蛇吃面
     const thumbs = (m.thumbs && m.thumbs.length) ? m.thumbs : m.images;
     els.lightboxImg.src = thumbs[idx] || "";
     els.lightbox.classList.remove("hidden");
@@ -771,6 +778,40 @@
     fetchMoments();
   });
 
+  // ===== 加载动画：贪吃小蛇从左到右吃面循环 =====
+  const SNAKE_SVG =
+    '<svg viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<g fill="#F0C24E" stroke="#4A3226" stroke-width="1.5">' +
+    '<circle cx="30" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.323;0.353;0.92;1" dur="2.6s" repeatCount="indefinite"/></circle>' +
+    '<circle cx="65" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.435;0.465;0.92;1" dur="2.6s" repeatCount="indefinite"/></circle>' +
+    '<circle cx="100" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.548;0.578;0.92;1" dur="2.6s" repeatCount="indefinite"/></circle>' +
+    '<circle cx="135" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.661;0.691;0.92;1" dur="2.6s" repeatCount="indefinite"/></circle>' +
+    '<circle cx="170" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.774;0.804;0.92;1" dur="2.6s" repeatCount="indefinite"/></circle>' +
+    '</g>' +
+    '<g transform="translate(0 26)"><g>' +
+    '<animateTransform attributeName="transform" type="translate" values="-70 0;240 0" dur="2.6s" repeatCount="indefinite"/>' +
+    '<circle cx="-27" cy="8" r="9" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>' +
+    '<circle cx="-13" cy="8" r="9" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>' +
+    '<circle cx="-8" cy="-9" r="4.5" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.2"/>' +
+    '<circle cx="8" cy="-9" r="4.5" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.2"/>' +
+    '<circle cx="-8" cy="-9" r="2" fill="#FBE3CE"/><circle cx="8" cy="-9" r="2" fill="#FBE3CE"/>' +
+    '<circle cx="0" cy="0" r="12.5" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>' +
+    '<path d="M -5,-1.5 Q -3,2.5 -1,-1.5" fill="none" stroke="#4A3226" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<path d="M 1,-1.5 Q 3,2.5 5,-1.5" fill="none" stroke="#4A3226" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<ellipse cx="-7" cy="4.5" rx="2.6" ry="1.5" fill="#F2A65A"/>' +
+    '<ellipse cx="7" cy="4.5" rx="2.6" ry="1.5" fill="#F2A65A"/>' +
+    '<path d="M -2,6 Q 0,8 2,6" fill="none" stroke="#4A3226" stroke-width="1.6" stroke-linecap="round"/>' +
+    '</g></g></svg>';
+  const loadingEl = document.getElementById("life-loading");
+  const lbLoading = document.getElementById("lb-loading");
+  function renderLoaders() {
+    const html = SNAKE_SVG + "<p>" + tl("loading") + "</p>";
+    loadingEl.innerHTML = html;
+    lbLoading.innerHTML = html;
+  }
+  els.lightboxImg.addEventListener("load", () => lbLoading.classList.add("hidden"));
+  els.lightboxImg.addEventListener("error", () => lbLoading.classList.add("hidden"));
+
   // ===== 灯箱 =====
   els.lightbox.addEventListener("click", () => els.lightbox.classList.add("hidden"));
 
@@ -1003,6 +1044,7 @@
     els.thoughtWriteBtn.textContent =
       els.thoughtComposer.classList.contains("hidden") ? tl("thoughtWrite") : tl("collapse");
     els.editCancel.textContent = tl("cancel");
+    renderLoaders();
   }
 
   document.addEventListener("langchange", () => {

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=66">
+  <link rel="stylesheet" href="css/style.css?v=67">
 </head>
 <body>
   <!-- 顶部导航 -->
@@ -91,6 +91,7 @@
         <span data-i18n="momentsTitle">我的碎碎念</span>
         <button id="life-write-btn" class="owner-toggle thought-write" type="button"></button>
       </h3>
+      <div id="life-loading" class="life-loading"></div>
       <div id="life-login" class="inbox-form-card life-login hidden">
         <input id="life-email" type="email" maxlength="40" autocomplete="off">
         <input id="life-password" type="password" maxlength="30">
@@ -123,7 +124,7 @@
         <p id="life-status" class="inbox-status"></p>
       </div>
       <div id="life-timeline" class="cal-wrap"></div>
-      <div id="life-lightbox" class="life-lightbox hidden"><img id="life-lightbox-img" alt=""></div>
+      <div id="life-lightbox" class="life-lightbox hidden"><img id="life-lightbox-img" alt=""><div id="lb-loading" class="lb-loading hidden"></div></div>
     </section>
 
     <!-- 留言信箱 -->
@@ -480,27 +481,27 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/config.js?v=66"></script>
-  <script src="js/data.js?v=66"></script>
-  <script src="js/main.js?v=66"></script>
-  <script src="js/nav-fx.js?v=66"></script>
-  <script src="js/inbox.js?v=66"></script>
-  <script src="js/game.js?v=66"></script>
-  <script src="js/pvz.js?v=66"></script>
-  <script src="js/minesweeper.js?v=66"></script>
-  <script src="js/snake.js?v=66"></script>
-  <script src="js/space-data.js?v=66"></script>
-  <script src="js/space.js?v=66"></script>
-  <script src="js/poem-data.js?v=66"></script>
-  <script src="js/poem.js?v=66"></script>
-  <script src="js/kids-content.js?v=66"></script>
-  <script src="js/kids.js?v=66"></script>
-  <script src="js/life.js?v=66"></script>
-  <script src="js/sudoku-data.js?v=66"></script>
-  <script src="js/sudoku.js?v=66"></script>
-  <script src="js/gomoku.js?v=66"></script>
-  <script src="js/daily-data.js?v=66"></script>
-  <script src="js/daily.js?v=66"></script>
-  <script src="js/match.js?v=66"></script>
+  <script src="js/config.js?v=67"></script>
+  <script src="js/data.js?v=67"></script>
+  <script src="js/main.js?v=67"></script>
+  <script src="js/nav-fx.js?v=67"></script>
+  <script src="js/inbox.js?v=67"></script>
+  <script src="js/game.js?v=67"></script>
+  <script src="js/pvz.js?v=67"></script>
+  <script src="js/minesweeper.js?v=67"></script>
+  <script src="js/snake.js?v=67"></script>
+  <script src="js/space-data.js?v=67"></script>
+  <script src="js/space.js?v=67"></script>
+  <script src="js/poem-data.js?v=67"></script>
+  <script src="js/poem.js?v=67"></script>
+  <script src="js/kids-content.js?v=67"></script>
+  <script src="js/kids.js?v=67"></script>
+  <script src="js/life.js?v=67"></script>
+  <script src="js/sudoku-data.js?v=67"></script>
+  <script src="js/sudoku.js?v=67"></script>
+  <script src="js/gomoku.js?v=67"></script>
+  <script src="js/daily-data.js?v=67"></script>
+  <script src="js/daily.js?v=67"></script>
+  <script src="js/match.js?v=67"></script>
 </body>
 </html>
