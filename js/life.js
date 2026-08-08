@@ -863,14 +863,14 @@
   const SNAKE_SVG =
     '<svg viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
     '<g fill="#F0C24E" stroke="#4A3226" stroke-width="1.5">' +
-    '<circle cx="30" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.323;0.353;0.92;1" dur="2.6s" repeatCount="indefinite"/></circle>' +
-    '<circle cx="65" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.435;0.465;0.92;1" dur="2.6s" repeatCount="indefinite"/></circle>' +
-    '<circle cx="100" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.548;0.578;0.92;1" dur="2.6s" repeatCount="indefinite"/></circle>' +
-    '<circle cx="135" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.661;0.691;0.92;1" dur="2.6s" repeatCount="indefinite"/></circle>' +
-    '<circle cx="170" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.774;0.804;0.92;1" dur="2.6s" repeatCount="indefinite"/></circle>' +
+    '<circle cx="30" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.323;0.353;0.92;1" begin="-1.3s" dur="2.6s" repeatCount="indefinite"/></circle>' +
+    '<circle cx="65" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.435;0.465;0.92;1" begin="-1.3s" dur="2.6s" repeatCount="indefinite"/></circle>' +
+    '<circle cx="100" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.548;0.578;0.92;1" begin="-1.3s" dur="2.6s" repeatCount="indefinite"/></circle>' +
+    '<circle cx="135" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.661;0.691;0.92;1" begin="-1.3s" dur="2.6s" repeatCount="indefinite"/></circle>' +
+    '<circle cx="170" cy="36" r="4.5"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.774;0.804;0.92;1" begin="-1.3s" dur="2.6s" repeatCount="indefinite"/></circle>' +
     '</g>' +
     '<g transform="translate(0 26)"><g>' +
-    '<animateTransform attributeName="transform" type="translate" values="-70 0;240 0" dur="2.6s" repeatCount="indefinite"/>' +
+    '<animateTransform attributeName="transform" type="translate" values="-70 0;240 0" begin="-1.3s" dur="2.6s" repeatCount="indefinite"/>' +
     '<circle cx="-27" cy="8" r="9" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>' +
     '<circle cx="-13" cy="8" r="9" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.5"/>' +
     '<circle cx="-8" cy="-9" r="4.5" fill="#FFFDF8" stroke="#4A3226" stroke-width="2.2"/>' +
