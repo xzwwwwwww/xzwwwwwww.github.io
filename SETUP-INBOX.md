@@ -246,3 +246,34 @@ create policy "owner delete moments" on life_moments for delete to authenticated
 alter table life_moments add column if not exists mood text;
 alter table life_moments add column if not exists thumbs jsonb;
 ```
+
+# 附：碎碎念评论（life_moment_comments）
+
+月历浮层里每条在线碎碎念下方可留言（访客自定义昵称、免审核、立即公开）。同样在 **SQL Editor** → **New query** 粘贴运行：
+
+```sql
+create table life_moment_comments (
+  id uuid primary key default gen_random_uuid(),
+  moment_id uuid not null references life_moments(id) on delete cascade,
+  username text not null,
+  content text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table life_moment_comments enable row level security;
+
+create policy "anon read moment comments" on life_moment_comments
+  for select to anon using (true);
+
+create policy "anon insert moment comments" on life_moment_comments
+  for insert to anon with check (true);
+```
+
+## 可选：清理「我的生活思考」遗留表
+
+感悟组件已从页面移除，数据库里的两张表可留可删。要删就跑：
+
+```sql
+drop table if exists life_thought_comments;
+drop table if exists life_thoughts;
+```

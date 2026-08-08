@@ -23,18 +23,11 @@
       needText: "先写点内容再发布",
       imgLimit: "一次最多 6 张图片",
       collapse: "收起",
-      thoughtPh: "此刻在想什么…",
-      thoughtEnPh: "英文版（可选）",
-      thoughtPublish: "发布感悟",
-      thoughtPublishing: "发布中…",
-      thoughtPublished: "已发布！",
-      thoughtEmpty: "还没有感悟，坐等第一篇",
       commentName: "你的昵称",
       commentPh: "写下你的评论…",
       commentBtn: "评论",
       commentNeed: "昵称和内容都要填哦",
       commentFail: "评论失败，请稍后再试",
-      thoughtWrite: "✎ 写感悟",
       looseNotes: "随手记",
       moBits: "{n} 条碎碎念",
       moOpen: "点开看看",
@@ -66,18 +59,11 @@
       needText: "Write something first",
       imgLimit: "Up to 6 photos at a time",
       collapse: "Collapse",
-      thoughtPh: "What's on your mind…",
-      thoughtEnPh: "English version (optional)",
-      thoughtPublish: "Publish",
-      thoughtPublishing: "Publishing…",
-      thoughtPublished: "Published!",
-      thoughtEmpty: "No thoughts yet — stay tuned",
       commentName: "Your nickname",
       commentPh: "Leave a comment…",
       commentBtn: "Comment",
       commentNeed: "Nickname and comment are both required",
       commentFail: "Failed, try again later",
-      thoughtWrite: "✎ Write",
       looseNotes: "Loose notes",
       moBits: "{n} bits",
       moOpen: "Open",
@@ -122,13 +108,6 @@
     lightbox: document.getElementById("life-lightbox"),
     lightboxImg: document.getElementById("life-lightbox-img"),
     editCancel: document.getElementById("life-edit-cancel"),
-    thoughtComposer: document.getElementById("thought-composer"),
-    thoughtText: document.getElementById("thought-text"),
-    thoughtTextEn: document.getElementById("thought-text-en"),
-    thoughtPublish: document.getElementById("thought-publish"),
-    thoughtStatus: document.getElementById("thought-status"),
-    thoughtList: document.getElementById("thought-list"),
-    thoughtWriteBtn: document.getElementById("thought-write-btn")
   };
 
   const store = {
@@ -251,7 +230,7 @@
         wrap.appendChild(actions);
       }
       pop.appendChild(wrap);
-      // 照片：已有的缩略图直接渲染，旧条目按需补拉后再挂上浮层
+      // 照片：已有的缩略图直接渲染，旧条目按需补拉后再挂上浮层（排在评论区前）
       ensureImages(m).then(imgs => {
         if (!imgs || !imgs.length || !wrap.isConnected) return;
         const row = document.createElement("div");
@@ -267,10 +246,15 @@
           });
           row.appendChild(img);
         });
-        wrap.appendChild(row);
+        const cbox = wrap.querySelector(".moment-comments");
+        wrap.insertBefore(row, cbox || null);
       });
+      // 评论区（在线条目）
+      appendComments(wrap, m);
     });
     card.appendChild(pop);
+    // 浮层内的点击（如评论输入）不冒泡到 document 的关闭监听
+    pop.addEventListener("click", e => e.stopPropagation());
     // 定位：默认在格子上方，第一行格子改放下方；横向夹在卡片内
     const cw = card.clientWidth;
     const pw = Math.min(260, cw - 24);
@@ -523,6 +507,7 @@
       }));
       window.renderLifeTimeline();
       migrateLegacy();
+      fetchMomentComments();
     } finally {
       loadingEl.classList.add("hidden");  // 首次加载完成，收起小蛇吃面
     }
@@ -613,8 +598,6 @@
   function syncPanels() {
     els.loginCard.classList.add("hidden");
     els.composer.classList.toggle("hidden", !authed);
-    els.thoughtComposer.classList.add("hidden");
-    els.thoughtWriteBtn.classList.toggle("hidden", !authed);
     renderTexts();
     // 登录态决定浮层里有没有编辑/删除按钮，重渲日历
     if (typeof window.renderLifeTimeline === "function") window.renderLifeTimeline();
@@ -958,14 +941,8 @@
   }
   setInterval(renderHomeMoment, 60000);  // 相对时间/过期隐藏随时间刷新
 
-  // ===== 我的生活思考：站长感悟 + 访客免审评论 =====
-  let thoughts = [];
-
-  // 列表直接摊在页面上；写作框默认收起，站长登录后点「✎ 写感悟」才展开
-  els.thoughtWriteBtn.addEventListener("click", () => {
-    els.thoughtComposer.classList.toggle("hidden");
-    renderTexts();
-  });
+  // ===== 碎碎念评论：每条在线碎碎念可留言（免审、逐条叠加） =====
+  let momentComments = {};   // moment_id -> [comment]
 
   function fmtWhen(iso) {
     const d = new Date(iso);
@@ -974,93 +951,66 @@
     return p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
   }
 
-  async function fetchThoughts() {
+  async function fetchMomentComments() {
     if (!sb) return;
-    const { data: ts, error } = await sb.from("life_thoughts")
-      .select("id,text,text_en,created_at")
-      .order("created_at", { ascending: false });
-    if (error) { renderThoughts(); return; } // 表还没建：显示空态
-    const { data: cs } = await sb.from("life_thought_comments")
-      .select("thought_id,username,content,created_at")
+    const { data, error } = await sb.from("life_moment_comments")
+      .select("moment_id,username,content,created_at")
       .order("created_at", { ascending: true });
-    const byId = {};
-    (cs || []).forEach(c => {
-      (byId[c.thought_id] = byId[c.thought_id] || []).push(c);
-    });
-    thoughts = (ts || []).map(t => ({ ...t, comments: byId[t.id] || [] }));
-    renderThoughts();
-  }
-
-  function renderThoughts() {
-    els.thoughtList.innerHTML = "";
-    if (!thoughts.length) {
-      const p = document.createElement("p");
-      p.className = "thought-empty";
-      p.textContent = tl("thoughtEmpty");
-      els.thoughtList.appendChild(p);
-      return;
-    }
-    const en = currentLang === "en";
-    thoughts.forEach(t => {
-      const card = document.createElement("div");
-      card.className = "thought-card";
-      const d = document.createElement("div");
-      d.className = "thought-date";
-      d.textContent = (t.created_at || "").slice(0, 10);
-      const p = document.createElement("p");
-      p.className = "thought-text";
-      p.textContent = en && t.text_en ? t.text_en : t.text;
-      card.appendChild(d);
-      card.appendChild(p);
-
-      const box = document.createElement("div");
-      box.className = "thought-comments";
-      t.comments.forEach(c => {
-        const row = document.createElement("div");
-        row.className = "thought-comment";
-        const name = document.createElement("b");
-        name.textContent = c.username;
-        const body = document.createElement("span");
-        body.className = "tc-body";
-        body.textContent = c.content;
-        const when = document.createElement("span");
-        when.className = "tc-when";
-        when.textContent = fmtWhen(c.created_at);
-        row.appendChild(name);
-        row.appendChild(body);
-        row.appendChild(when);
-        box.appendChild(row);
-      });
-
-      // 评论表单：昵称记忆在 localStorage
-      const form = document.createElement("div");
-      form.className = "thought-cform";
-      const nameIn = document.createElement("input");
-      nameIn.type = "text";
-      nameIn.maxLength = 20;
-      nameIn.placeholder = tl("commentName");
-      nameIn.value = store.get("thought-name") || "";
-      const bodyIn = document.createElement("input");
-      bodyIn.type = "text";
-      bodyIn.maxLength = 300;
-      bodyIn.placeholder = tl("commentPh");
-      const btn = document.createElement("button");
-      btn.className = "ms-level";
-      btn.textContent = tl("commentBtn");
-      const submit = () => postComment(t.id, nameIn, bodyIn, btn);
-      btn.addEventListener("click", submit);
-      bodyIn.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
-      form.appendChild(nameIn);
-      form.appendChild(bodyIn);
-      form.appendChild(btn);
-      box.appendChild(form);
-
-      card.appendChild(box);
-      els.thoughtList.appendChild(card);
+    if (error) return;   // 表还没建：评论区留空
+    momentComments = {};
+    (data || []).forEach(c => {
+      (momentComments[c.moment_id] = momentComments[c.moment_id] || []).push(c);
     });
   }
 
-  async function postComment(thoughtId, nameIn, bodyIn, btn) {
+  function commentRow(c) {
+    const row = document.createElement("div");
+    row.className = "thought-comment";
+    const name = document.createElement("b");
+    name.textContent = c.username;
+    const body = document.createElement("span");
+    body.className = "tc-body";
+    body.textContent = c.content;
+    const when = document.createElement("span");
+    when.className = "tc-when";
+    when.textContent = fmtWhen(c.created_at);
+    row.appendChild(name);
+    row.appendChild(body);
+    row.appendChild(when);
+    return row;
+  }
+
+  // 浮层里某条碎碎念的评论区（仅在线条目有 id 才可评论）
+  function appendComments(wrap, m) {
+    if (!m.id) return;
+    const box = document.createElement("div");
+    box.className = "moment-comments";
+    (momentComments[m.id] || []).forEach(c => box.appendChild(commentRow(c)));
+    const form = document.createElement("div");
+    form.className = "thought-cform";
+    const nameIn = document.createElement("input");
+    nameIn.type = "text";
+    nameIn.maxLength = 20;
+    nameIn.placeholder = tl("commentName");
+    nameIn.value = store.get("thought-name") || "";
+    const bodyIn = document.createElement("input");
+    bodyIn.type = "text";
+    bodyIn.maxLength = 300;
+    bodyIn.placeholder = tl("commentPh");
+    const btn = document.createElement("button");
+    btn.className = "ms-level";
+    btn.textContent = tl("commentBtn");
+    const submit = () => postMomentComment(m.id, nameIn, bodyIn, btn, box, form);
+    btn.addEventListener("click", submit);
+    bodyIn.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
+    form.appendChild(nameIn);
+    form.appendChild(bodyIn);
+    form.appendChild(btn);
+    box.appendChild(form);
+    wrap.appendChild(box);
+  }
+
+  async function postMomentComment(momentId, nameIn, bodyIn, btn, box, form) {
     if (!sb) return;
     const username = nameIn.value.trim();
     const content = bodyIn.value.trim();
@@ -1070,8 +1020,8 @@
       return;
     }
     btn.disabled = true;
-    const { error } = await sb.from("life_thought_comments")
-      .insert({ thought_id: thoughtId, username, content });
+    const { error } = await sb.from("life_moment_comments")
+      .insert({ moment_id: momentId, username, content });
     btn.disabled = false;
     if (error) {
       bodyIn.value = "";
@@ -1081,36 +1031,11 @@
     store.set("thought-name", username);
     bodyIn.value = "";
     bodyIn.placeholder = tl("commentPh");
-    fetchThoughts();
+    // 本地即时追加（免审即公开）
+    const c = { username, content, created_at: new Date().toISOString() };
+    (momentComments[momentId] = momentComments[momentId] || []).push(c);
+    box.insertBefore(commentRow(c), form);
   }
-
-  els.thoughtPublish.addEventListener("click", async () => {
-    if (!sb || !authed) return;
-    const text = els.thoughtText.value.trim();
-    if (!text) {
-      els.thoughtStatus.textContent = tl("needText");
-      els.thoughtStatus.className = "inbox-status error";
-      return;
-    }
-    els.thoughtPublish.disabled = true;
-    els.thoughtPublish.textContent = tl("thoughtPublishing");
-    const { error } = await sb.from("life_thoughts").insert({
-      text,
-      text_en: els.thoughtTextEn.value.trim() || null
-    });
-    els.thoughtPublish.disabled = false;
-    els.thoughtPublish.textContent = tl("thoughtPublish");
-    if (error) {
-      els.thoughtStatus.textContent = tl("fail");
-      els.thoughtStatus.className = "inbox-status error";
-      return;
-    }
-    els.thoughtText.value = "";
-    els.thoughtTextEn.value = "";
-    els.thoughtStatus.textContent = tl("thoughtPublished");
-    els.thoughtStatus.className = "inbox-status ok";
-    fetchThoughts();
-  });
 
   // ===== 文案与初始化 =====
   function todayStr() {
@@ -1129,11 +1054,6 @@
     els.text.placeholder = tl("textPh");
     els.textEn.placeholder = tl("textEnPh");
     els.publishBtn.textContent = tl("publish");
-    els.thoughtText.placeholder = tl("thoughtPh");
-    els.thoughtTextEn.placeholder = tl("thoughtEnPh");
-    els.thoughtPublish.textContent = tl("thoughtPublish");
-    els.thoughtWriteBtn.textContent =
-      els.thoughtComposer.classList.contains("hidden") ? tl("thoughtWrite") : tl("collapse");
     els.editCancel.textContent = tl("cancel");
     renderLoaders();
   }
@@ -1141,14 +1061,12 @@
   document.addEventListener("langchange", () => {
     renderTexts();
     renderWarm();
-    renderThoughts();
     renderHomeMoment();
     window.renderLifeTimeline();
   });
 
   renderTexts();
   renderWarm();
-  renderThoughts();
   // 已登录过（留言信箱那边登录过也会带上同一份会话）就直接打开发布器
   if (sb) {
     sb.auth.getSession().then(({ data }) => {
@@ -1159,6 +1077,5 @@
     syncPanels();
   }
   fetchMoments();
-  fetchThoughts();
   fetchLatestMoment();
 })();

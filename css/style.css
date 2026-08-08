@@ -428,8 +428,7 @@ h1, h2, h3, h4, .logo, .section-title {
 }
 .warm-term { color: var(--accent); }
 
-/* 我的生活思考 */
-.thoughts { margin: 34px 0 30px; }
+/* 小节标题行（我的碎碎念/通用） */
 .thoughts-title {
   display: flex; align-items: baseline; gap: 12px;
   font-size: 18px; letter-spacing: 0.06em;
@@ -440,30 +439,11 @@ h1, h2, h3, h4, .logo, .section-title {
   border-top: 1px solid var(--line);
 }
 .thought-write { font-size: 12px; }
-#thought-composer { margin-bottom: 20px; }
-.thought-empty {
-  text-align: center; color: var(--faint);
-  font-size: 13px; letter-spacing: 0.08em;
-  padding: 26px 0;
-}
-.thought-card {
-  background: var(--panel);
-  border: 1px solid var(--line); border-radius: 4px;
-  padding: 16px 20px 12px;
-  margin-bottom: 16px;
-}
-.thought-date {
-  font-size: 11px; color: var(--faint);
-  letter-spacing: 0.14em; text-transform: uppercase;
-}
-.thought-text {
-  margin: 6px 0 0;
-  font-size: 15px; line-height: 1.9; color: var(--text);
-  white-space: pre-wrap;
-}
-.thought-comments {
-  margin-top: 14px; padding-top: 10px;
-  border-top: 1px solid var(--line);
+/* 碎碎念评论（浮层内） */
+.moment-comments {
+  margin-top: 10px; padding-top: 8px;
+  border-top: 1px dashed rgba(74, 50, 38, 0.25);
+  max-height: 150px; overflow-y: auto;
 }
 .thought-comment {
   display: flex; align-items: baseline; gap: 8px;
