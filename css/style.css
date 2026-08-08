@@ -399,6 +399,20 @@ h1, h2, h3, h4, .logo, .section-title {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px var(--accent);
 }
+
+/* 底部小提示条 */
+.life-toast {
+  position: fixed; left: 50%; bottom: 34px; z-index: 120;
+  transform: translateX(-50%) translateY(16px);
+  background: #4A3226; color: #FFF7EF;
+  font-size: 13px; letter-spacing: 0.04em;
+  padding: 9px 18px; border-radius: 999px;
+  box-shadow: 0 8px 22px rgba(26, 26, 26, 0.25);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.life-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.life-toast.err { background: #B23A2E; }
 .cal-loose {
   margin: 10px 0 4px;
   background: #FFF8DC;

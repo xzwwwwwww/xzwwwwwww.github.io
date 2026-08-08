@@ -42,7 +42,9 @@
       minAgo: "{n} 分钟前",
       hourAgo: "{n} 小时前",
       loading: "正在加载中…",
-      setCover: "点我设为封面"
+      setCover: "点我设为封面",
+      coverOk: "已设为封面 ✓",
+      coverFail: "设置失败："
     },
     en: {
       write: "✎ Write",
@@ -79,7 +81,9 @@
       minAgo: "{n}m ago",
       hourAgo: "{n}h ago",
       loading: "Loading…",
-      setCover: "Set as cover"
+      setCover: "Set as cover",
+      coverOk: "Cover set ✓",
+      coverFail: "Failed: "
     }
   };
   const tl = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -801,15 +805,33 @@
     }
   }
 
+  // 底部小提示条
+  function toastMsg(text, isErr) {
+    let t = document.getElementById("life-toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "life-toast";
+      document.body.appendChild(t);
+    }
+    t.textContent = text;
+    t.className = "life-toast show" + (isErr ? " err" : "");
+    clearTimeout(t._h);
+    t._h = setTimeout(() => t.classList.remove("show"), 3000);
+  }
+
   // 点浮层里的小照片设为日历封面
   async function setMomentCover(m, idx) {
     if (!sb) return;
     const { error } = await sb.from("life_moments")
       .update({ cover: idx }).eq("id", m.id);
-    if (error) return;
+    if (error) {
+      toastMsg(tl("coverFail") + error.message, true);
+      return;
+    }
     m.cover = idx;
     closePop();
     window.renderLifeTimeline();
+    toastMsg(tl("coverOk"), false);
   }
 
   // ===== 发布 =====
