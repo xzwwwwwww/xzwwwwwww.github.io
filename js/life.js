@@ -762,7 +762,9 @@
     els.status.className = "inbox-status ok";
     // 首页「最新碎碎念」即时更新
     latestMoment = {
+      date: payload.date,
       text, text_en: payload.text_en, mood: payload.mood || null,
+      thumbs: thumbsOut, images: payload.images,
       created_at: new Date().toISOString()
     };
     renderHomeMoment();
@@ -794,15 +796,32 @@
     box.querySelector(".hm-text").textContent =
       currentLang === "en" && latestMoment.text_en ? latestMoment.text_en : latestMoment.text;
     box.querySelector(".hm-when").textContent = relTime(latestMoment.created_at);
+    // 图片缩略图（无图隐藏）
+    const thumbEl = box.querySelector(".hm-thumb");
+    const thumbSrc = (latestMoment.thumbs && latestMoment.thumbs[0]) ||
+      (latestMoment.images && latestMoment.images[0]) || null;
+    thumbEl.classList.toggle("hidden", !thumbSrc);
+    if (thumbSrc) thumbEl.src = thumbSrc;
   }
 
   async function fetchLatestMoment() {
     if (!sb) return;
     const { data, error } = await sb.from("life_moments")
-      .select("text,text_en,mood,created_at")
-      .order("created_at", { ascending: false }).limit(1);
+      .select("id,date,text,text_en,mood,thumbs,created_at")
+      .order("created_at", { ascending: false }).limit(10);
     if (error) return;
-    latestMoment = (data && data[0]) || null;
+    // 12 小时内发布的候选里，取日期字段最新的一条
+    const now = Date.now();
+    const fresh = (data || []).filter(r =>
+      now - new Date(r.created_at).getTime() < 12 * 3600 * 1000);
+    fresh.sort((a, b) =>
+      (parseDateStr(b.date) || "").localeCompare(parseDateStr(a.date) || "") ||
+      b.created_at.localeCompare(a.created_at));
+    latestMoment = fresh[0] || null;
+    // 旧结构条目补图后再渲染
+    if (latestMoment && latestMoment.thumbs == null && latestMoment.id) {
+      await ensureImages(latestMoment);
+    }
     renderHomeMoment();
   }
   setInterval(renderHomeMoment, 60000);  // 相对时间/过期隐藏随时间刷新
