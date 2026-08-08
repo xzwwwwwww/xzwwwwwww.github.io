@@ -41,7 +41,8 @@
       justNow: "刚刚",
       minAgo: "{n} 分钟前",
       hourAgo: "{n} 小时前",
-      loading: "正在加载中…"
+      loading: "正在加载中…",
+      setCover: "点我设为封面"
     },
     en: {
       write: "✎ Write",
@@ -77,7 +78,8 @@
       justNow: "just now",
       minAgo: "{n}m ago",
       hourAgo: "{n}h ago",
-      loading: "Loading…"
+      loading: "Loading…",
+      setCover: "Set as cover"
     }
   };
   const tl = k => (I18N[currentLang] || I18N.zh)[k] || k;
@@ -367,13 +369,16 @@
             ms.textContent = moodEntry.mood;
             cell.appendChild(ms);
           }
-          // 方格里放概述或小照片：优先用第一张带图的照片（缩略图）
+          // 方格里放概述或小照片：优先用第一条带图条目的封面图（thumbs[cover]）
           const withImg = entries.find(m =>
             (m.thumbs && m.thumbs.length) || (m.images && m.images.length));
           if (withImg) {
+            const arr = (withImg.thumbs && withImg.thumbs.length) ? withImg.thumbs : withImg.images;
+            const ci = (typeof withImg.cover === "number" && withImg.cover < arr.length)
+              ? withImg.cover : 0;
             const im = document.createElement("img");
             im.className = "cal-thumb";
-            im.src = (withImg.thumbs && withImg.thumbs[0]) || withImg.images[0];
+            im.src = arr[ci];
             im.alt = "";
             im.loading = "lazy";
             cell.appendChild(im);
@@ -490,7 +495,7 @@
     try {
       if (!sb) return;
       let res = await sb.from("life_moments")
-        .select("id,date,text,text_en,mood,thumbs")
+        .select("id,date,text,text_en,mood,thumbs,cover")
         .order("created_at", { ascending: false });
       let rows;
       if (!res.error) {
@@ -511,6 +516,7 @@
         mood: r.mood || null,
         thumbs: Array.isArray(r.thumbs) ? r.thumbs : null,
         images: Array.isArray(r.images) ? r.images : [],
+        cover: typeof r.cover === "number" ? r.cover : null,
         _legacyLoaded: false
       }));
       window.renderLifeTimeline();
@@ -673,17 +679,26 @@
     });
   }
 
+  let coverIdx = 0;   // 日历封面取第几张（发布时可点缩略图自选）
+
   function renderPreviews() {
     els.previews.innerHTML = "";
     photos.forEach((p, i) => {
       const pv = document.createElement("div");
-      pv.className = "pv";
+      pv.className = "pv" + (i === coverIdx ? " on" : "");
       const img = document.createElement("img");
       img.src = p.thumb || p;
+      img.title = tl("setCover");
+      img.addEventListener("click", () => { coverIdx = i; renderPreviews(); });
       const x = document.createElement("button");
       x.type = "button";
       x.textContent = "×";
-      x.addEventListener("click", () => { photos.splice(i, 1); renderPreviews(); });
+      x.addEventListener("click", () => {
+        photos.splice(i, 1);
+        if (i < coverIdx) coverIdx--;
+        else if (i === coverIdx) coverIdx = 0;
+        renderPreviews();
+      });
       pv.appendChild(img);
       pv.appendChild(x);
       els.previews.appendChild(pv);
@@ -744,6 +759,7 @@
     els.text.value = m.text;
     els.textEn.value = m.text_en || "";
     photos = (Array.isArray(m.images) ? m.images : []).map(u => ({ full: u, thumb: u }));
+    coverIdx = (typeof m.cover === "number" && m.cover < photos.length) ? m.cover : 0;
     renderPreviews();
     moodBox.querySelectorAll("button").forEach(x =>
       x.classList.toggle("on", x.dataset.mood === (m.mood || "😊")));
@@ -760,6 +776,7 @@
     els.text.value = "";
     els.textEn.value = "";
     photos = [];
+    coverIdx = 0;
     renderPreviews();
     resetMood();
     renderTexts();
@@ -800,15 +817,17 @@
       text_en: els.textEn.value.trim() || null,
       images: photos.map(p => p.full || p),
       thumbs: thumbsOut,
-      mood: currentMood()
+      mood: currentMood(),
+      cover: coverIdx
     };
     let error;
     if (editingId) {
       // 编辑模式：更新原行
       error = (await sb.from("life_moments").update(payload).eq("id", editingId)).error;
       if (error && (payload.thumbs || payload.mood)) {
-        delete payload.thumbs;   // thumbs/mood 列还没建：去掉再试一次
+        delete payload.thumbs;   // thumbs/mood/cover 列还没建：去掉再试一次
         delete payload.mood;
+        delete payload.cover;
         error = (await sb.from("life_moments").update(payload).eq("id", editingId)).error;
       }
     } else {
@@ -816,6 +835,7 @@
       if (error && (payload.thumbs || payload.mood)) {
         delete payload.thumbs;
         delete payload.mood;
+        delete payload.cover;
         error = (await sb.from("life_moments").insert(payload)).error;
       }
     }
@@ -829,6 +849,7 @@
     els.text.value = "";
     els.textEn.value = "";
     photos = [];
+    coverIdx = 0;
     renderPreviews();
     resetMood();
     if (editingId) {

@@ -277,3 +277,13 @@ create policy "anon insert moment comments" on life_moment_comments
 drop table if exists life_thought_comments;
 drop table if exists life_thoughts;
 ```
+
+## 封面列（life_moments 多图自选封面）
+
+碎碎念多图时可在发布框里点缩略图选封面（日历格子显示选中的那张）。跑一句：
+
+```sql
+alter table life_moments add column if not exists cover int;
+```
+
+不跑也能正常发布（自动降级为显示第一张）。
