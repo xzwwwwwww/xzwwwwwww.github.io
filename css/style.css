@@ -556,19 +556,22 @@ h1, h2, h3, h4, .logo, .section-title {
 .lb-loading {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 6px; pointer-events: none;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 12px; letter-spacing: 0.12em;
+  gap: 8px; pointer-events: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "ZCOOL KuaiLe", "PingFang SC", sans-serif;
+  font-size: 16px; letter-spacing: 0.12em;
 }
-.lb-loading svg { width: 240px; height: 60px; }
+.lb-loading svg { width: 320px; height: 80px; }
 
 /* 贪吃小蛇加载动画（碎碎念月历加载） */
 .life-loading {
   display: flex; flex-direction: column; align-items: center;
-  gap: 4px; padding: 26px 0;
-  color: var(--faint); font-size: 12px; letter-spacing: 0.12em;
+  gap: 8px; padding: 30px 0;
+  color: #8A7B70;
+  font-family: "ZCOOL KuaiLe", "PingFang SC", sans-serif;
+  font-size: 16px; letter-spacing: 0.12em;
 }
-.life-loading svg { width: 240px; height: 60px; }
+.life-loading svg { width: 320px; height: 80px; }
 .life-loading.hidden, .lb-loading.hidden { display: none; }
 
 /* ===== 页脚 ===== */
